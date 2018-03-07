@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "microservices" : [
+    "corporate-info",
+    "general-info",
+    "info-registro",
+    "pricing",
+    "publicidad",
+    "users",
+    "search-api",
+    "search-datastore",
+    "pdf-generator",
+    "template-store",
+    "zipkin-server",
+    "billing",
+    "publicidad-request",
+    "payment",
+    "publicidad-reply",
+    "file-manager",
+    "wallet",
+    "user-notificator"
+  ]
+}

@@ -1,0 +1,19 @@
+#!/bin/bash
+
+[[ -f $PWD/.tdkrc ]] && source $PWD/.tdkrc
+[[ -f $PWD/../.tdkrc ]] && source $PWD/../.tdkrc
+
+include "microservices"
+
+MICROSERVICE_NAME="file/pdf-generator"
+MICROSERVICE_PARAMETERS="--spring.zipkin.enabled=false \
+--spring.cloud.config.uri=http://localhost:8888/ \
+--spring.cloud.config.label=develop \
+--spring.profiles.active=dev,local \
+--server.port=8012"
+JAVA_OPTS="-Xmx100m \
+-XX:MaxMetaspaceSize=100M \
+-Djavax.net.ssl.trustStore=/home/jesus/development/tradis/file/pdf-generator/build/resources/main/keystore/desa/almacen.ks \
+-Djavax.net.ssl.trustStorePassword=edocalmacen"
+
+microservice_lifecycle "$MICROSERVICE_NAME" --parameters "$MICROSERVICE_PARAMETERS" "$@"

@@ -1,0 +1,231 @@
+{
+	"variables": [],
+	"info": {
+		"name": "EUREKA REGISTER",
+		"_postman_id": "13b8cf16-1916-f735-5670-0ce63d341d91",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "EUREKA corporate-info",
+			"request": {
+				"url": "http://localhost:8761/eureka/apps/corporate-info",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"instance\": {\r\n    \t\"instanceId\" : \"PARADTRA04.corpme.es:corporate-info\",\r\n        \"app\": \"corporate-info\",\r\n        \"hostName\": \"corporate-info-desarrollo.osrouter.dev.corpme.int\",\r\n        \"ipAddr\": \"http://corporate-info-desarrollo.osrouter.dev.corpme.int\",\r\n        \"homePageUrl\": \"http://corporate-info-desarrollo.osrouter.dev.corpme.int\",\r\n\t\t\"statusPageUrl\":\"http://corporate-info-desarrollo.osrouter.dev.corpme.int/info\",\r\n\t\t\"healthCheckUrl\":\"http://corporate-info-desarrollo.osrouter.dev.corpme.int/health\",\r\n        \"port\": {\r\n          \"$\":80, \r\n          \"@enabled\": false\r\n        },\r\n        \"leaseInfo\": {\r\n        \t\"renewalIntervalInSecs\":10000,\r\n        \t\"durationInSecs\":10000\r\n        },\r\n        \"vipAddress\": \"corporate-info\",\r\n        \"dataCenterInfo\": {\r\n          \"@class\":\"com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo\",\r\n          \"name\": \"MyOwn\"\r\n        },\r\n        \"status\": \"UP\"\r\n    }\r\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "EUREKA general-info",
+			"request": {
+				"url": "http://localhost:8761/eureka/apps/general-info",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"instance\": {\r\n    \t\"instanceId\" : \"PARADTRA04.corpme.es:general-info\",\r\n        \"app\": \"general-info\",\r\n        \"hostName\": \"general-info-desarrollo.osrouter.dev.corpme.int\",\r\n        \"ipAddr\": \"http://general-info-desarrollo.osrouter.dev.corpme.int\",\r\n        \"homePageUrl\": \"http://general-info-desarrollo.osrouter.dev.corpme.int\",\r\n\t\t\"statusPageUrl\":\"http://general-info-desarrollo.osrouter.dev.corpme.int/info\",\r\n\t\t\"healthCheckUrl\":\"http://general-info-desarrollo.osrouter.dev.corpme.int/health\",\r\n        \"port\": {\r\n          \"$\":80, \r\n          \"@enabled\": false\r\n        },\r\n        \"leaseInfo\": {\r\n        \t\"renewalIntervalInSecs\":10000,\r\n        \t\"durationInSecs\":10000\r\n        },\r\n        \"vipAddress\": \"general-info\",\r\n        \"dataCenterInfo\": {\r\n          \"@class\":\"com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo\",\r\n          \"name\": \"MyOwn\"\r\n        },\r\n        \"status\": \"UP\"\r\n    }\r\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "EUREKA info-registro",
+			"request": {
+				"url": "http://localhost:8761/eureka/apps/info-registro",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"instance\": {\r\n    \t\"instanceId\" : \"PARADTRA04.corpme.es:info-registro\",\r\n        \"app\": \"info-registro\",\r\n        \"hostName\": \"info-registro-desarrollo.osrouter.dev.corpme.int\",\r\n        \"ipAddr\": \"http://info-registro-desarrollo.osrouter.dev.corpme.int\",\r\n        \"homePageUrl\": \"http://info-registro-desarrollo.osrouter.dev.corpme.int\",\r\n\t\t\"statusPageUrl\":\"http://info-registro-desarrollo.osrouter.dev.corpme.int/info\",\r\n\t\t\"healthCheckUrl\":\"http://info-registro-desarrollo.osrouter.dev.corpme.int/health\",\r\n        \"port\": {\r\n          \"$\":80, \r\n          \"@enabled\": false\r\n        },\r\n        \"leaseInfo\": {\r\n        \t\"renewalIntervalInSecs\":10000,\r\n        \t\"durationInSecs\":10000\r\n        },\r\n        \"vipAddress\": \"info-registro\",\r\n        \"dataCenterInfo\": {\r\n          \"@class\":\"com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo\",\r\n          \"name\": \"MyOwn\"\r\n        },\r\n        \"status\": \"UP\"\r\n    }\r\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "EUREKA pricing",
+			"request": {
+				"url": "http://localhost:8761/eureka/apps/pricing",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"instance\": {\r\n    \t\"instanceId\" : \"PARADTRA04.corpme.es:pricing\",\r\n        \"app\": \"pricing\",\r\n        \"hostName\": \"pricing-desarrollo.osrouter.dev.corpme.int\",\r\n        \"ipAddr\": \"http://pricing-desarrollo.osrouter.dev.corpme.int\",\r\n        \"homePageUrl\": \"http://pricing-desarrollo.osrouter.dev.corpme.int\",\r\n\t\t\"statusPageUrl\":\"http://pricing-desarrollo.osrouter.dev.corpme.int/info\",\r\n\t\t\"healthCheckUrl\":\"http://pricing-desarrollo.osrouter.dev.corpme.int/health\",\r\n        \"port\": {\r\n          \"$\":80, \r\n          \"@enabled\": false\r\n        },\r\n        \"leaseInfo\": {\r\n        \t\"renewalIntervalInSecs\":10000,\r\n        \t\"durationInSecs\":10000\r\n        },\r\n        \"vipAddress\": \"pricing\",\r\n        \"dataCenterInfo\": {\r\n          \"@class\":\"com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo\",\r\n          \"name\": \"MyOwn\"\r\n        },\r\n        \"status\": \"UP\"\r\n    }\r\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "EUREKA publicidad",
+			"request": {
+				"url": "http://localhost:8761/eureka/apps/publicidad",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"instance\": {\r\n    \t\"instanceId\" : \"PARADTRA04.corpme.es:publicidad\",\r\n        \"app\": \"publicidad\",\r\n        \"hostName\": \"publicidad-desarrollo.osrouter.dev.corpme.int\",\r\n        \"ipAddr\": \"http://publicidad-desarrollo.osrouter.dev.corpme.int\",\r\n        \"homePageUrl\": \"http://publicidad-desarrollo.osrouter.dev.corpme.int\",\r\n\t\t\"statusPageUrl\":\"http://publicidad-desarrollo.osrouter.dev.corpme.int/info\",\r\n\t\t\"healthCheckUrl\":\"http://publicidad-desarrollo.osrouter.dev.corpme.int/health\",\r\n        \"port\": {\r\n          \"$\":80, \r\n          \"@enabled\": false\r\n        },\r\n        \"leaseInfo\": {\r\n        \t\"renewalIntervalInSecs\":10000,\r\n        \t\"durationInSecs\":10000\r\n        },\r\n        \"vipAddress\": \"publicidad\",\r\n        \"dataCenterInfo\": {\r\n          \"@class\":\"com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo\",\r\n          \"name\": \"MyOwn\"\r\n        },\r\n        \"status\": \"UP\"\r\n    }\r\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "EUREKA users",
+			"request": {
+				"url": "http://localhost:8761/eureka/apps/users",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"instance\": {\r\n    \t\"instanceId\" : \"PARADTRA04.corpme.es:users\",\r\n        \"app\": \"users\",\r\n        \"hostName\": \"users-desarrollo.osrouter.dev.corpme.int\",\r\n        \"ipAddr\": \"http://users-desarrollo.osrouter.dev.corpme.int\",\r\n        \"homePageUrl\": \"http://users-desarrollo.osrouter.dev.corpme.int\",\r\n\t\t\"statusPageUrl\":\"http://users-desarrollo.osrouter.dev.corpme.int/info\",\r\n\t\t\"healthCheckUrl\":\"http://users-desarrollo.osrouter.dev.corpme.int/health\",\r\n        \"vipAddress\": \"users\",\r\n        \"dataCenterInfo\": {\r\n          \"@class\":\"com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo\",\r\n          \"name\": \"MyOwn\"\r\n        },\r\n        \"port\": {\r\n          \"$\":80, \r\n          \"@enabled\": false\r\n        },\r\n        \"leaseInfo\": {\r\n        \t\"renewalIntervalInSecs\":10000,\r\n        \t\"durationInSecs\":10000\r\n        },\r\n        \"status\": \"UP\"\r\n    }\r\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "EUREKA search-api",
+			"request": {
+				"url": "http://localhost:8761/eureka/apps/search-api",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"instance\": {\r\n    \t\"instanceId\" : \"PARADTRA04.corpme.es:search-api\",\r\n        \"app\": \"search-api\",\r\n        \"hostName\": \"search-api-desarrollo.osrouter.dev.corpme.int\",\r\n        \"ipAddr\": \"http://search-api-desarrollo.osrouter.dev.corpme.int\",\r\n        \"homePageUrl\": \"http://search-api-desarrollo.osrouter.dev.corpme.int\",\r\n\t\t\"statusPageUrl\":\"http://search-api-desarrollo.osrouter.dev.corpme.int/info\",\r\n\t\t\"healthCheckUrl\":\"http://search-api-desarrollo.osrouter.dev.corpme.int/health\",\r\n        \"port\": {\r\n          \"$\":80, \r\n          \"@enabled\": false\r\n        },\r\n        \"leaseInfo\": {\r\n        \t\"renewalIntervalInSecs\":10000,\r\n        \t\"durationInSecs\":10000\r\n        },\r\n        \"vipAddress\": \"search-api\",\r\n        \"dataCenterInfo\": {\r\n          \"@class\":\"com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo\",\r\n          \"name\": \"MyOwn\"\r\n        },\r\n        \"status\": \"UP\"\r\n    }\r\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "EUREKA search-datastore",
+			"request": {
+				"url": "http://localhost:8761/eureka/apps/search-datastore",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"instance\": {\r\n    \t\"instanceId\" : \"PARADTRA04.corpme.es:search-datastore\",\r\n        \"app\": \"search-datastore\",\r\n        \"hostName\": \"search-datastore-desarrollo.osrouter.dev.corpme.int\",\r\n        \"ipAddr\": \"http://search-datastore-desarrollo.osrouter.dev.corpme.int\",\r\n        \"homePageUrl\": \"http://search-datastore-desarrollo.osrouter.dev.corpme.int\",\r\n\t\t\"statusPageUrl\":\"http://search-datastore-desarrollo.osrouter.dev.corpme.int/info\",\r\n\t\t\"healthCheckUrl\":\"http://search-datastore-desarrollo.osrouter.dev.corpme.int/health\",\r\n        \"port\": {\r\n          \"$\":80, \r\n          \"@enabled\": false\r\n        },\r\n        \"leaseInfo\": {\r\n        \t\"renewalIntervalInSecs\":10000,\r\n        \t\"durationInSecs\":10000\r\n        },\r\n        \"vipAddress\": \"search-datastore\",\r\n        \"dataCenterInfo\": {\r\n          \"@class\":\"com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo\",\r\n          \"name\": \"MyOwn\"\r\n        },\r\n        \"status\": \"UP\"\r\n    }\r\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "EUREKA pdf-generator",
+			"request": {
+				"url": "http://localhost:8761/eureka/apps/pdf-generator",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"instance\": {\r\n    \t\"instanceId\" : \"PARADTRA04.corpme.es:pdf-generator\",\r\n        \"app\": \"pdf-generator\",\r\n        \"hostName\": \"pdf-generator-desarrollo.osrouter.dev.corpme.int\",\r\n        \"ipAddr\": \"http://pdf-generator-desarrollo.osrouter.dev.corpme.int\",\r\n        \"homePageUrl\": \"http://pdf-generator-desarrollo.osrouter.dev.corpme.int\",\r\n\t\t\"statusPageUrl\":\"http://pdf-generator-desarrollo.osrouter.dev.corpme.int/info\",\r\n\t\t\"healthCheckUrl\":\"http://pdf-generator-desarrollo.osrouter.dev.corpme.int/health\",\r\n        \"port\": {\r\n          \"$\":80, \r\n          \"@enabled\": false\r\n        },\r\n        \"leaseInfo\": {\r\n        \t\"renewalIntervalInSecs\":10000,\r\n        \t\"durationInSecs\":10000\r\n        },\r\n        \"vipAddress\": \"pdf-generator\",\r\n        \"dataCenterInfo\": {\r\n          \"@class\":\"com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo\",\r\n          \"name\": \"MyOwn\"\r\n        },\r\n        \"status\": \"UP\"\r\n    }\r\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "EUREKA template-store",
+			"request": {
+				"url": "http://localhost:8761/eureka/apps/template-store",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"instance\": {\r\n    \t\"instanceId\" : \"PARADTRA04.corpme.es:template-store\",\r\n        \"app\": \"template-store\",\r\n        \"hostName\": \"template-store-desarrollo.osrouter.dev.corpme.int\",\r\n        \"ipAddr\": \"http://template-store-desarrollo.osrouter.dev.corpme.int\",\r\n        \"homePageUrl\": \"http://template-store-desarrollo.osrouter.dev.corpme.int\",\r\n\t\t\"statusPageUrl\":\"http://template-store-desarrollo.osrouter.dev.corpme.int/info\",\r\n\t\t\"healthCheckUrl\":\"http://template-store-desarrollo.osrouter.dev.corpme.int/health\",\r\n        \"port\": {\r\n          \"$\":80, \r\n          \"@enabled\": false\r\n        },\r\n        \"leaseInfo\": {\r\n        \t\"renewalIntervalInSecs\":10000,\r\n        \t\"durationInSecs\":10000\r\n        },\r\n        \"vipAddress\": \"template-store\",\r\n        \"dataCenterInfo\": {\r\n          \"@class\":\"com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo\",\r\n          \"name\": \"MyOwn\"\r\n        },\r\n        \"status\": \"UP\"\r\n    }\r\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "EUREKA zipkin-server",
+			"request": {
+				"url": "http://localhost:8761/eureka/apps/zipkin-server",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"instance\": {\r\n    \t\"instanceId\" : \"PARADTRA04.corpme.es:zipkin-server\",\r\n        \"app\": \"zipkin-server\",\r\n        \"hostName\": \"zipkin-server-desarrollo.osrouter.dev.corpme.int\",\r\n        \"ipAddr\": \"http://zipkin-server-desarrollo.osrouter.dev.corpme.int\",\r\n        \"homePageUrl\": \"http://zipkin-server-desarrollo.osrouter.dev.corpme.int\",\r\n\t\t\"statusPageUrl\":\"http://zipkin-server-desarrollo.osrouter.dev.corpme.int/info\",\r\n\t\t\"healthCheckUrl\":\"http://zipkin-server-desarrollo.osrouter.dev.corpme.int/health\",\r\n        \"vipAddress\": \"zipkin-server\",\r\n        \"dataCenterInfo\": {\r\n          \"@class\":\"com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo\",\r\n          \"name\": \"MyOwn\"\r\n        },\r\n        \"port\": {\r\n          \"$\":80, \r\n          \"@enabled\": false\r\n        },\r\n        \"leaseInfo\": {\r\n        \t\"renewalIntervalInSecs\":10000,\r\n        \t\"durationInSecs\":10000\r\n        },\r\n        \"status\": \"UP\"\r\n    }\r\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "microservices": [
+    {
+      "name": "eureka",
+      "slug": "infrastructure/eureka",
+      "build-config" : {
+        "skip-tests": true
+      },
+      "run-config" : {
+        "java-opts" : [
+          "-Xmx64m",
+          "-XX:MaxMetaspaceSize=100M"
+        ],
+        "params" : {
+          "spring.zipkin.enabled": false,
+          "spring.profiles.active": "dev,local",
+          "server.port": 8761
+        }
+      },
+      "params": {
+        "register-in-eureka": false
+      }
+    },
+    {
+      "name": "wallet",
+      "slug": "business/wallet",
+      "build-config" : {
+        "skip-tests": false
+      },
+      "run-config" : {
+        "java-opts" : [
+          "-Xmx200m",
+          "-XX:MaxMetaspaceSize=200M"
+        ],
+        "params" : {
+          "spring.zipkin.enabled": false,
+          "spring.cloud.config.uri": "http://localhost:8888/",
+          "spring.cloud.config.label": "develop",
+          "spring.profiles.active": "dev,local",
+          "server.port": 8081
+        }
+      },
+      "params": {
+        "register-in-eureka": true
+      }
+    }
+  ]
+}

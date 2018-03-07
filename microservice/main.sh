@@ -48,13 +48,26 @@ find_microservice_slug_by_name() {
 find_microservice_build_config() {
     local name="$1"
 
-    echo "$(find_microservice_by_name $name)" | jq -r '.build-config'
+    echo "$(find_microservice_by_name $name)" | jq -r '."build-config"'
 }
 
-find_microservice_skip_tests() {
+find_microservice_build_parameters() {
     local name="$1"
 
-    echo "$(find_microservice_build_config $name)" | jq -r '.skip-tests'
+    echo "$(find_microservice_build_config $name)" | jq -r '.params[]'
+}
+
+find_microservice_run_config() {
+    local name="$1"
+
+    echo "$(find_microservice_by_name $name)" | jq -r '."run-config"'
+}
+
+find_microservice_run_parameters() {
+    local name="$1"
+
+    echo "$(find_microservice_run_config $name)" \
+        | jq -r ".params | to_entries | map(\"--\(.key)=\(.value|tostring)\") | .[]"
 }
 
 main() {
@@ -96,13 +109,20 @@ main() {
         exit 1
     fi
 
-    microservice_slug="$(find_microservice_slug_by_name $1)"
+    name="$1"
+    slug="$(find_microservice_slug_by_name $name)"
+    if [ -z "$slug" ]; then
+        printf "Sorry! I can't find a '%s' microservice configuration :(\\n\\n" "$name" 1>&2
+        usage
+        exit 1
+    fi
     shift
 
-    skip_tests="$(find_microservice_skip_tests $1)"
+    build_parameters=($(find_microservice_build_parameters $name))
+    run_parameters=($(find_microservice_run_parameters $name))
 
     if [ -n "$CLEAN" ] || [ -n "$BUILD" ] || [ -n "$RUN" ]; then
-        microservice_lifecycle "$microservice_slug" $CLEAN $BUILD $RUN --parameters "$MICROSERVICE_PARAMETERS" "$@"
+        microservice_lifecycle "$slug" $CLEAN $BUILD "${build_parameters[*]}" $RUN --parameters "${run_parameters[*]}"
     fi
 }
 

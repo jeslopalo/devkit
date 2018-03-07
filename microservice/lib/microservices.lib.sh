@@ -126,6 +126,9 @@ function microservice_lifecycle() {
                 run_phase=1
                 clean_phase=1
             ;;
+            '')
+                # ignore empty arguments
+            ;;
             *)
                 printf "\\nerror: Ouch! Unknown option '%s'. Please try agan!\\n" "$key" 1>&2
                 printf "parameters: %s\\n" "$parameters" 1>&2

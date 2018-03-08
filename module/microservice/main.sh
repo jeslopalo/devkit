@@ -1,13 +1,8 @@
 #!/usr/bin/env bash
 
-[[ -f $PWD/.tdkrc ]] && source $PWD/.tdkrc
-[[ -f $PWD/../.tdkrc ]] && source $PWD/../.tdkrc
-
-source $TDK_HOME/microservice/lib/dependencies.sh
-source $TDK_HOME/microservice/lib/microservices.lib.sh
-
-TDK_CONFIGURATION="$TDK_HOME/config-dev.json"
-microservices=( $(jq -r ".microservices[].name" "$TDK_CONFIGURATION") )
+source $TDK_LIB_DIR/configuration.lib.sh
+source $TDK_MODULE_DIR/microservice/lib/dependencies.lib.sh
+source $TDK_MODULE_DIR/microservice/lib/microservices.lib.sh
 
 usage() {
     printf "usage: ms [-i <microservice>]\\n\\n"
@@ -21,56 +16,9 @@ usage() {
     exit 0
 }
 
-find() {
-    local -r filter="${1:-.}"
-
-    jq -r "$filter" "$TDK_CONFIGURATION"
-}
-
-find_microservice_names() {
-    local -r names=($(find ".microservices[].name"))
-
-    echo $(IFS="," ; echo "${names[*]}")
-}
-
-find_microservice_by_name() {
-    local name="$1"
-
-    find ".microservices[] | select(.name == \"$name\")"
-}
-
-find_microservice_slug_by_name() {
-    local name="$1"
-
-    echo "$(find_microservice_by_name $name)" | jq -r ".slug"
-}
-
-find_microservice_build_config() {
-    local name="$1"
-
-    echo "$(find_microservice_by_name $name)" | jq -r '."build-config"'
-}
-
-find_microservice_build_parameters() {
-    local name="$1"
-
-    echo "$(find_microservice_build_config $name)" | jq -r '.params[]'
-}
-
-find_microservice_run_config() {
-    local name="$1"
-
-    echo "$(find_microservice_by_name $name)" | jq -r '."run-config"'
-}
-
-find_microservice_run_parameters() {
-    local name="$1"
-
-    echo "$(find_microservice_run_config $name)" \
-        | jq -r ".params | to_entries | map(\"--\(.key)=\(.value|tostring)\") | .[]"
-}
-
 main() {
+
+    check_for_dependencies
 
     if [ "$#" = 0 ]; then
         printf "Sorry! I need something more to continue :(\\n\\n" 1>&2

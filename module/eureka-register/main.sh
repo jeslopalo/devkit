@@ -1,14 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-[[ -f $PWD/.tdkrc ]] && source $PWD/.tdkrc
-[[ -f $PWD/../.tdkrc ]] && source $PWD/../.tdkrc
-
-microservices=( $(jq -r ".microservices[]" "$TDK_CONFIGURATION") )
-
-check_for_dependencies() {
-    hash curl 2>/dev/null || { echo >&2 "error: I require curl but it's not installed.  Aborting."; exit 1; }
-    hash jq 2>/dev/null || { echo >&2 "error: I require jq but it's not installed.  Aborting."; exit 1; }
-}
+source $TDK_LIB_DIR/configuration.lib.sh
+source $TDK_MODULE_DIR/eureka-register/lib/dependencies.lib.sh
 
 usage() {
     printf "usage: eureka [-h ][-r <services> [-e <services>]][-u <services>]\\n\\n" 1>&2
@@ -17,7 +10,7 @@ usage() {
     printf "  -u\\t\\t\\tUnregister every service (comma-separated)\\n"
     printf "  -e\\t\\t\\tExclude this services from being registered (comma-separated)\\n"
 
-    printf "\\nAvailable services:\\n %s\\n" "$(IFS=, ; echo "${microservices[*]}")"
+    printf "\\nAvailable services:\\n %s\\n" "$(find_microservice_names)"
     exit 0
 }
 
@@ -106,9 +99,12 @@ unregister_services() {
 }
 
 main() {
+
     local exclusions=()
     local register=()
     local unregister=()
+
+    check_for_dependencies
 
     if [ "$#" = 0 ]; then
         printf "Sorry! I need something more to continue :(\\n\\n" 1>&2
@@ -122,14 +118,14 @@ main() {
             e) IFS=', ' read -r -a exclusions <<< "${OPTARG}";;
             r)
                 if [ "${OPTARG}" = "all" ]; then
-                    register=("${microservices[@]}")
+                    register=( $(find_microservice_names " ") )
                 else
                     IFS=', ' read -r -a register <<< "${OPTARG}"
                 fi
             ;;
             u)
                 if [ "${OPTARG}" = "all" ]; then
-                    unregister=("${microservices[@]}")
+                    unregister=( $(find_microservice_names " ") )
                 else
                     IFS=', ' read -r -a unregister <<< "${OPTARG}"
                 fi
@@ -175,5 +171,4 @@ main() {
     fi
 }
 
-check_for_dependencies
 main "$@"

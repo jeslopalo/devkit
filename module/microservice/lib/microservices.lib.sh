@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source $TDK_LIB_DIR/configuration.lib.sh
+
 function error_project_not_found() {
     printf "error: no existe el proyecto '%s' en el directorio actual [%s]\\n" "$slug" "$PWD" 1>&2
 }
@@ -7,7 +9,8 @@ function error_project_not_found() {
 function go_to_slug() {
     local slug="$1"
 
-    cd "$MICROSERVICES_WORKSPACE"
+    cd $(find_ms_workspace)
+
     if [ ! -d "$slug" ]; then
         error_project_not_found
         exit 1

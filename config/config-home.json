@@ -1,5 +1,12 @@
 {
   "version": 1,
+  "maintenance": {
+    "workspace": "~/Development",
+    "idea-cache-dir": "~/.IntelliJIdea14/system"
+  },
+  "ms": {
+    "workspace": "~/Development/temporal/tradis"
+  },
   "microservices": [
     {
       "name": "eureka",

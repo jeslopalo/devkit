@@ -5,7 +5,7 @@ source $TDK_MODULE_DIR/microservice/lib/dependencies.lib.sh
 source $TDK_MODULE_DIR/microservice/lib/microservices.lib.sh
 
 usage() {
-    printf "usage: ms [-i <microservice>]\\n\\n"
+    printf "usage: ms [-h][-p <run_parameter=value>][-i <microservice>][-cbr] <microservice>\\n\\n"
     printf "  -c\\t\\t\\tClean <microservice>\\n"
     printf "  -b\\t\\t\\tBuild <microservice>\\n"
     printf "  -r\\t\\t\\tRun <microservice>\\n"
@@ -27,12 +27,13 @@ main() {
     fi
 
     # obtiene las opciones de ejecución
-    while getopts ":hcbri:" opt; do
+    while getopts ":hcbri:p:" opt; do
         case "${opt}" in
             i) find_microservice_by_name $OPTARG; exit 0;;
             c) CLEAN="--clean";;
             b) BUILD="--build";;
             r) RUN="--run";;
+            p) RUN_PARAMETERS="$RUN_PARAMETERS $OPTARG";;
             h) usage;;
             \?)
                 printf "invalid option: %s\\n\\n" "$OPTARG" 1>&2
@@ -67,7 +68,7 @@ main() {
     shift
 
     build_parameters=($(find_microservice_build_parameters $name))
-    run_parameters=($(find_microservice_run_parameters $name))
+    run_parameters=($(find_microservice_run_parameters "$name" "$RUN_PARAMETERS"))
 
     if [ -n "$CLEAN" ] || [ -n "$BUILD" ] || [ -n "$RUN" ]; then
         microservice_lifecycle "$slug" $CLEAN $BUILD "${build_parameters[*]}" $RUN --parameters "${run_parameters[*]}"

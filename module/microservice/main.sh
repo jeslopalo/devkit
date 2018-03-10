@@ -5,14 +5,14 @@ source $TDK_MODULE_DIR/microservice/lib/dependencies.lib.sh
 source $TDK_MODULE_DIR/microservice/lib/microservices.lib.sh
 
 usage() {
-    printf "usage: ms [-h][-p <run_parameter=value>][-i <microservice>][-cbr] <microservice>\\n\\n"
-    printf "  -c\\t\\t\\tClean <microservice>\\n"
-    printf "  -b\\t\\t\\tBuild <microservice>\\n"
-    printf "  -r\\t\\t\\tRun <microservice>\\n"
-    printf "  -i\\t\\t\\tPrint microservice info\\n"
-    printf "  -h\\t\\t\\tShow this help message\\n"
+    printf "usage: ms [-h][-i <microservice>][-c][-b][-r [-p <run_parameter=value>]] <microservice>\\n\\n"
+    printf "  -c\\tClean <microservice>\\n"
+    printf "  -b\\tBuild <microservice>\\n"
+    printf "  -r\\tRun <microservice>\\n"
+    printf "  -i\\tPrint microservice info\\n"
+    printf "  -h\\tShow this help message\\n"
 
-    printf "\\nAvailable services:\\n %s\\n" "$(find_microservice_names)"
+    printf "\\nAvailable services:\\n  %s\\n" "$(find_microservice_names)"
     exit 0
 }
 

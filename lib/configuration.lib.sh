@@ -64,17 +64,25 @@ find_microservice_run_config() {
 
 find_microservice_run_parameters() {
     local -r name="$1"
-    local -r cli_parameters=$(jq -sR \
-        'splits(" ") | split("=") as $i | {($i[0]?):($i[1] | sub("^(\\s)+"; ""; "x"))}' <<< $2 | jq -s "add")
     local -r config_parameters=$(echo "$(find_microservice_run_config $name)" | jq -r ".params")
 
-    merge_json_maps "$config_parameters" "$cli_parameters"
+    if [ -n "$2" ]; then
+        local -r cli_parameters=$(jq -sR \
+            'splits(" ") | split("=") as $i | {($i[0]?):($i[1] | sub("^(\\s)+"; ""; "x"))}' <<< $2 | jq -s "add")
+
+        map=$(merge_json_maps "$config_parameters" "$cli_parameters")
+        json_map_to_array_of_parameters "$map"
+    else
+        json_map_to_array_of_parameters "$config_parameters"
+    fi
+}
+merge_json_maps() {
+    local -r json_a="${1:-\{ \}}"
+    local -r json_b="${2:-\{ \}}"
+    jq -n --argjson json_a "$json_a" --argjson json_b "$json_b" '$json_a + $json_b'
 }
 
-merge_json_maps() {
-    local -r json_a="$1"
-    local -r json_b="$2"
-
-    jq -n --argjson json_a "$json_a" --argjson json_b "$json_b" '$json_a + $json_b' \
-        | jq -r ". | to_entries | map(\"--\(.key)=\(.value|tostring)\") | .[]"
+json_map_to_array_of_parameters() {
+    local -r map="${1:-\{ \}}"
+    jq -r ". | to_entries | map(\"--\(.key)=\(.value|tostring)\") | .[]" <<< "$map"
 }

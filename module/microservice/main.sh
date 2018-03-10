@@ -13,7 +13,6 @@ usage() {
     printf "  -h\\tShow this help message\\n"
 
     printf "\\nAvailable services:\\n  %s\\n" "$(find_microservice_names)"
-    exit 0
 }
 
 main() {
@@ -26,7 +25,6 @@ main() {
         exit 1
     fi
 
-    # obtiene las opciones de ejecución
     while getopts ":hcbri:p:" opt; do
         case "${opt}" in
             i) find_microservice_by_name $OPTARG; exit 0;;
@@ -34,18 +32,21 @@ main() {
             b) BUILD="--build";;
             r) RUN="--run";;
             p) RUN_PARAMETERS="$RUN_PARAMETERS $OPTARG";;
-            h) usage;;
+            h) usage; exit 1;;
             \?)
                 printf "invalid option: %s\\n\\n" "$OPTARG" 1>&2
                 usage
+                exit 1
             ;;
             :)
                 printf "invalid option: -%s requires an argument\\n\\n" "$OPTARG" 1>&2
                 usage
+                exit 1
             ;;
             *)
                 printf "invalid option: %s\\n\\n" "${opt}" 1>&2
                 usage
+                exit 1
             ;;
         esac
     done
@@ -70,9 +71,17 @@ main() {
     build_parameters=($(find_microservice_build_parameters $name))
     run_parameters=($(find_microservice_run_parameters "$name" "$RUN_PARAMETERS"))
 
-    if [ -n "$CLEAN" ] || [ -n "$BUILD" ] || [ -n "$RUN" ]; then
-        microservice_lifecycle "$slug" $CLEAN $BUILD "${build_parameters[*]}" $RUN --parameters "${run_parameters[*]}"
+    if [ -z "$CLEAN" ] && [ -z "$BUILD" ] && [ -z "$RUN" ]; then
+	    printf "Sorry! I need you to tell me what to do with <%s> microservice (ie. clean (-c), build (-b), run (-r)) :(\\n\\n" \
+	        "$name" 1>&2
+        usage
+		return 1;
     fi
+
+    [ -n "$CLEAN" ] && clean "$slug"
+    [ -n "$BUILD" ] && build "$slug" "${build_parameters[*]}"
+    [ -n "$RUN" ] && run "$slug" "${run_parameters[*]}"
+
 }
 
 main "$@"

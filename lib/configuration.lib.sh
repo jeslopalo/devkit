@@ -68,7 +68,7 @@ find_microservice_run_parameters() {
 
     if [ -n "$2" ]; then
         local -r cli_parameters=$(jq -sR \
-            'splits(" ") | split("=") as $i | {($i[0]?):($i[1] | sub("^(\\s)+"; ""; "x"))}' <<< $2 | jq -s "add")
+            'splits(" ")|split("=") as $i|{($i[0]?):($i[1]|sub("^(\\s)+";"";"x"))}' <<< $2 | jq -s "add")
 
         map=$(merge_json_maps "$config_parameters" "$cli_parameters")
         json_map_to_array_of_parameters "$map"

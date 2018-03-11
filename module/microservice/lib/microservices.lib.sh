@@ -57,6 +57,7 @@ function build() {
 
     printf "\\nBuilding version '%s'...\\n" "$version"
     [ -z "$parameters" ] || printf "parameters: %s\\n" "$parameters"
+    [ -z "$JAVA_OPTS" ] || printf "java opts: [%s]\\n" "$JAVA_OPTS"
 
     gradle build $parameters
 }
@@ -73,7 +74,7 @@ function run() {
 	local version="$(version $slug)"
 
 	if [ -f "build/libs/$microservice-$version.jar" ]; then
-		printf "\\nEjecutando el microservicio '<%s, %s>'...\\n" "$microservice" "$version"
+		printf "\\nRunning microservice '<%s, %s>'...\\n" "$microservice" "$version"
 		printf "\e[2m"
 		java -version
 		printf "\e[22m"

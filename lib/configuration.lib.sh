@@ -50,6 +50,14 @@ find_microservice_build_config() {
     echo "$(find_microservice_by_name $name)" | jq -r '."build-config"'
 }
 
+find_microservice_build_javaopts() {
+    local -r name="$1"
+    local -r extra_opts="$2"
+    local -r java_opts=$(echo "$(find_microservice_build_config $name)" | jq -r '."java-opts"[]')
+
+    echo "${java_opts[*]} $extra_opts"
+}
+
 find_microservice_build_parameters() {
     local name="$1"
 
@@ -60,6 +68,14 @@ find_microservice_run_config() {
     local name="$1"
 
     echo "$(find_microservice_by_name $name)" | jq -r '."run-config"'
+}
+
+find_microservice_run_javaopts() {
+    local -r name="$1"
+    local -r extra_opts="$2"
+    local -r java_opts=$(echo "$(find_microservice_run_config $name)" | jq -r '."java-opts"[]')
+
+    echo "${java_opts[*]} $extra_opts"
 }
 
 find_microservice_run_parameters() {
@@ -76,6 +92,7 @@ find_microservice_run_parameters() {
         json_map_to_array_of_parameters "$config_parameters"
     fi
 }
+
 merge_json_maps() {
     local -r json_a="${1:-\{ \}}"
     local -r json_b="${2:-\{ \}}"

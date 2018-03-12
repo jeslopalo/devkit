@@ -5,11 +5,10 @@ source $TDK_MODULE_DIR/microservice/lib/dependencies.lib.sh
 source $TDK_MODULE_DIR/microservice/lib/microservices.lib.sh
 
 usage() {
-    printf "usage: ms [-h][-i <microservice>][-c][-b][-r [-p <run_parameter=value>]] <microservice>\\n\\n"
+    printf "usage: ms [-h][-c][-b][-r [-p <run_parameter=value>]] <microservice>\\n\\n"
     printf "  -c\\tClean <microservice>\\n"
     printf "  -b\\tBuild <microservice>\\n"
     printf "  -r\\tRun <microservice>\\n"
-    printf "  -i\\tPrint microservice info\\n"
     printf "  -h\\tShow this help message\\n"
 
     printf "\\nAvailable services:\\n  %s\\n" "$(find_microservice_names)"
@@ -27,7 +26,6 @@ main() {
 
     while getopts ":hcbri:p:" opt; do
         case "${opt}" in
-            i) find_microservice_by_name $OPTARG; exit 0;;
             c) CLEAN="--clean";;
             b) BUILD="--build";;
             r) RUN="--run";;
@@ -60,6 +58,11 @@ main() {
     fi
 
     name="$1"
+    if [ -z "$CLEAN" ] && [ -z "$BUILD" ] && [ -z "$RUN" ]; then
+        find_microservice_by_name "$name"
+        exit 0
+    fi
+
     slug="$(find_microservice_slug_by_name $name)"
     if [ -z "$slug" ] || [ "$slug" = "null" ]; then
         printf "Sorry! I can't find a '%s' microservice configuration :(\\n\\n" "$name" 1>&2
@@ -67,13 +70,6 @@ main() {
         exit 1
     fi
     shift
-
-    if [ -z "$CLEAN" ] && [ -z "$BUILD" ] && [ -z "$RUN" ]; then
-	    printf "Sorry! I need you to tell me what to do with <%s> microservice (ie. clean (-c), build (-b), run (-r)) :(\\n\\n" \
-	        "$name" 1>&2
-        usage
-		return 1;
-    fi
 
     [ -n "$CLEAN" ] && clean "$slug"
     [ -n "$BUILD" ] && {

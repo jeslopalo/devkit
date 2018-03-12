@@ -38,6 +38,11 @@ find_microservice_by_name() {
     find ".microservices[] | select(.name == \"$name\")"
 }
 
+exists_microservice_by_name() {
+    local name="$1"
+    [[ $(find ".microservices[] | select(.name == \"$name\") | [.] | length") = 1 ]]
+}
+
 find_microservice_slug_by_name() {
     local name="$1"
 

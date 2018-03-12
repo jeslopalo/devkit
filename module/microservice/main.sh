@@ -59,8 +59,13 @@ main() {
 
     name="$1"
     if [ -z "$CLEAN" ] && [ -z "$BUILD" ] && [ -z "$RUN" ]; then
-        find_microservice_by_name "$name"
-        exit 0
+        if exists_microservice_by_name "$name"; then
+            find_microservice_by_name "$name"
+            exit 0
+        else
+            printf "Sorry! I can't find a '%s' microservice configuration :(\\n\\n" "$name" 1>&2
+            exit 1
+        fi
     fi
 
     slug="$(find_microservice_slug_by_name $name)"

@@ -56,7 +56,7 @@ function build() {
     local version="$(version $slug)"
 
     printf "\\nBuilding version '%s'...\\n" "$version"
-    [ -z "$parameters" ] || printf "parameters: %s\\n" "$parameters"
+    [ -z "$parameters" ] || printf "parameters: [%s]\\n" "$parameters"
     [ -z "$JAVA_OPTS" ] || printf "java opts: [%s]\\n" "$JAVA_OPTS"
 
     gradle build $parameters

@@ -61,18 +61,12 @@ main() {
 
     name="$1"
     slug="$(find_microservice_slug_by_name $name)"
-    if [ -z "$slug" ]; then
+    if [ -z "$slug" ] || [ "$slug" = "null" ]; then
         printf "Sorry! I can't find a '%s' microservice configuration :(\\n\\n" "$name" 1>&2
         usage
         exit 1
     fi
     shift
-
-    build_parameters=($(find_microservice_build_parameters $name))
-    build_javaopts=($(find_microservice_build_javaopts "$name" "$JAVA_OPTS"))
-
-    run_parameters=($(find_microservice_run_parameters "$name" "$RUN_PARAMETERS"))
-    run_javaopts=($(find_microservice_run_javaopts "$name" "$JAVA_OPTS"))
 
     if [ -z "$CLEAN" ] && [ -z "$BUILD" ] && [ -z "$RUN" ]; then
 	    printf "Sorry! I need you to tell me what to do with <%s> microservice (ie. clean (-c), build (-b), run (-r)) :(\\n\\n" \
@@ -82,9 +76,20 @@ main() {
     fi
 
     [ -n "$CLEAN" ] && clean "$slug"
-    [ -n "$BUILD" ] && { JAVA_OPTS="${build_javaopts[*]}"; build "$slug" "${build_parameters[*]}"; }
-    [ -n "$RUN" ] && { JAVA_OPTS="${run_javaopts[*]}"; run "$slug" "${run_parameters[*]}"; }
+    [ -n "$BUILD" ] && {
+        build_parameters=($(find_microservice_build_parameters $name))
+        build_javaopts=($(find_microservice_build_javaopts "$name" "$JAVA_OPTS"))
 
+        JAVA_OPTS="${build_javaopts[*]}";
+        build "$slug" "${build_parameters[*]}";
+    }
+    [ -n "$RUN" ] && {
+        run_parameters=($(find_microservice_run_parameters "$name" "$RUN_PARAMETERS"))
+        run_javaopts=($(find_microservice_run_javaopts "$name" "$JAVA_OPTS"))
+
+        JAVA_OPTS="${run_javaopts[*]}";
+        run "$slug" "${run_parameters[*]}";
+    }
 }
 
 main "$@"

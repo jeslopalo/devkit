@@ -41,19 +41,19 @@ find_microservice_by_name() {
 find_microservice_slug_by_name() {
     local name="$1"
 
-    echo "$(find_microservice_by_name $name)" | jq -r ".slug"
+    echo "$(find_microservice_by_name $name)" | jq -r ".slug?"
 }
 
 find_microservice_build_config() {
     local name="$1"
 
-    echo "$(find_microservice_by_name $name)" | jq -r '."build-config"'
+    echo "$(find_microservice_by_name $name)" | jq -r '."build-config"?'
 }
 
 find_microservice_build_javaopts() {
     local -r name="$1"
     local -r extra_opts="$2"
-    local -r java_opts=$(echo "$(find_microservice_build_config $name)" | jq -r '."java-opts"[]')
+    local -r java_opts=$(echo "$(find_microservice_build_config $name)" | jq -r '."java-opts"[]?')
 
     echo "${java_opts[*]} $extra_opts"
 }
@@ -61,26 +61,26 @@ find_microservice_build_javaopts() {
 find_microservice_build_parameters() {
     local name="$1"
 
-    echo "$(find_microservice_build_config $name)" | jq -r '.params[]'
+    echo "$(find_microservice_build_config $name)" | jq -r '.params[]?'
 }
 
 find_microservice_run_config() {
     local name="$1"
 
-    echo "$(find_microservice_by_name $name)" | jq -r '."run-config"'
+    echo "$(find_microservice_by_name $name)" | jq -r '."run-config"?'
 }
 
 find_microservice_run_javaopts() {
     local -r name="$1"
     local -r extra_opts="$2"
-    local -r java_opts=$(echo "$(find_microservice_run_config $name)" | jq -r '."java-opts"[]')
+    local -r java_opts=$(echo "$(find_microservice_run_config $name)" | jq -r '."java-opts"[]?')
 
     echo "${java_opts[*]} $extra_opts"
 }
 
 find_microservice_run_parameters() {
     local -r name="$1"
-    local -r config_parameters=$(echo "$(find_microservice_run_config $name)" | jq -r ".params")
+    local -r config_parameters=$(echo "$(find_microservice_run_config $name)" | jq -r ".params?")
 
     if [ -n "$2" ]; then
         local -r cli_parameters=$(jq -sR \
@@ -94,12 +94,22 @@ find_microservice_run_parameters() {
 }
 
 merge_json_maps() {
-    local -r json_a="${1:-\{ \}}"
-    local -r json_b="${2:-\{ \}}"
-    jq -n --argjson json_a "$json_a" --argjson json_b "$json_b" '$json_a + $json_b'
+    local -r json_a="$1"
+    local -r json_b="$2"
+
+    if [ -z "$json_a" ]; then
+        echo $json_b
+    elif [ -z "$json_b" ]; then
+        echo $json_a
+    else
+        jq -n --argjson json_a "$json_a" --argjson json_b "$json_b" '$json_a + $json_b'
+    fi
 }
 
 json_map_to_array_of_parameters() {
-    local -r map="${1:-\{ \}}"
-    jq -r ". | to_entries | map(\"--\(.key)=\(.value|tostring)\") | .[]" <<< "$map"
+    local -r map="$1"
+
+    if [ -n "$map" ] && [ "$map" != null ]; then
+        jq -r ". | to_entries | map(\"--\(.key)=\(.value|tostring)\") | .[]?" <<< "$map"
+    fi
 }

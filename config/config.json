@@ -53,6 +53,60 @@
       "params": {
         "register-in-eureka": true
       }
+    },
+    {
+      "name": "corporate-info"
+    },
+    {
+      "name": "general-info"
+    },
+    {
+      "name": "info-registro"
+    },
+    {
+      "name": "pricing"
+    },
+    {
+      "name": "publicidad"
+    },
+    {
+      "name": "users"
+    },
+    {
+      "name": "search-api"
+    },
+    {
+      "name": "search-api"
+    },
+    {
+      "name": "search-datastore"
+    },
+    {
+      "name": "pdf-generator"
+    },
+    {
+      "name": "template-store"
+    },
+    {
+      "name": "zipkin-server"
+    },
+    {
+      "name": "billing"
+    },
+    {
+      "name": "publicidad-request"
+    },
+    {
+      "name": "payment"
+    },
+    {
+      "name": "publicidad-reply"
+    },
+    {
+      "name": "file-manager"
+    },
+    {
+      "name": "user-notificator"
     }
   ]
 }

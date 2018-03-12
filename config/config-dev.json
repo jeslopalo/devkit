@@ -9,6 +9,37 @@
   },
   "microservices": [
     {
+      "name": "d",
+      "slug": "demo/demo"
+    },
+    {
+      "name": "demo",
+      "slug": "demo/demo",
+      "build-config": {
+        "java-opts": [
+          "-Xmx1g",
+          "-XX:MaxMetaspaceSize=1g"
+        ],
+        "params": [
+          "-x test"
+        ]
+      },
+      "run-config": {
+        "java-opts": [
+          "-Xmx32m",
+          "-XX:MaxMetaspaceSize=64M"
+        ],
+        "params": {
+          "spring.zipkin.enabled": false,
+          "spring.profiles.active": "dev,local",
+          "server.port": 8761
+        }
+      },
+      "params": {
+        "register-in-eureka": false
+      }
+    },
+    {
       "name": "eureka",
       "slug": "infrastructure/eureka",
       "build-config": {
@@ -53,6 +84,61 @@
       "params": {
         "register-in-eureka": true
       }
+    },
+    {
+      "name": "corporate-info",
+      "slug": "business/corporate-info"
+    },
+    {
+      "name": "general-info"
+    },
+    {
+      "name": "info-registro"
+    },
+    {
+      "name": "pricing"
+    },
+    {
+      "name": "publicidad"
+    },
+    {
+      "name": "users"
+    },
+    {
+      "name": "search-api"
+    },
+    {
+      "name": "search-api"
+    },
+    {
+      "name": "search-datastore"
+    },
+    {
+      "name": "pdf-generator"
+    },
+    {
+      "name": "template-store"
+    },
+    {
+      "name": "zipkin-server"
+    },
+    {
+      "name": "billing"
+    },
+    {
+      "name": "publicidad-request"
+    },
+    {
+      "name": "payment"
+    },
+    {
+      "name": "publicidad-reply"
+    },
+    {
+      "name": "file-manager"
+    },
+    {
+      "name": "user-notificator"
     }
   ]
 }

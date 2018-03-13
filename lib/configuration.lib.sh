@@ -25,6 +25,22 @@ find_maintenance_idea_cache_dir() {
     echo "${workspace/#\~/$HOME}"
 }
 
+find_microservice_build_default_params() {
+    find '.ms.defaults."build-config"?.params[]?'
+}
+
+find_microservice_build_default_javaopts() {
+    find '.ms.defaults."build-config"?."java-opts"[]?'
+}
+
+find_microservice_run_default_params() {
+    find '.ms.defaults."run-config"?.params?'
+}
+
+find_microservice_run_default_javaopts() {
+    find '.ms.defaults."run-config"?."java-opts"[]?'
+}
+
 find_microservice_names() {
     local -r separator="${1:-,}"
     local -r names=($(find ".microservices[].name"))
@@ -58,15 +74,21 @@ find_microservice_build_config() {
 find_microservice_build_javaopts() {
     local -r name="$1"
     local -r extra_opts="$2"
+    local -r default_opts=$(find_microservice_build_default_javaopts)
     local -r java_opts=$(echo "$(find_microservice_build_config $name)" | jq -r '."java-opts"[]?')
 
-    echo "${java_opts[*]} $extra_opts"
+    echo "$default_opts ${java_opts[*]} $extra_opts"
 }
 
 find_microservice_build_parameters() {
-    local name="$1"
+    local -r name="$1"
+    local -r default_parameters=($(find_microservice_build_default_params))
+    local -r parameters=($(echo "$(find_microservice_build_config $name)" | jq -r '.params[]?'))
 
-    echo "$(find_microservice_build_config $name)" | jq -r '.params[]?'
+    local combined=( "${default_parameters[@]}" "${parameters[@]}" )
+    combined_and_sorted=($(printf "%s\n" "${combined[@]}" | sort -u))
+
+    echo "${combined_and_sorted[@]}"
 }
 
 find_microservice_run_config() {
@@ -78,24 +100,27 @@ find_microservice_run_config() {
 find_microservice_run_javaopts() {
     local -r name="$1"
     local -r extra_opts="$2"
+    local -r default_opts=$(find_microservice_run_default_javaopts)
     local -r java_opts=$(echo "$(find_microservice_run_config $name)" | jq -r '."java-opts"[]?')
 
-    echo "${java_opts[*]} $extra_opts"
+    echo "$default_opts ${java_opts[*]} $extra_opts"
 }
 
 find_microservice_run_parameters() {
     local -r name="$1"
-    local -r config_parameters=$(echo "$(find_microservice_run_config $name)" | jq -r ".params?")
+    local -r default_parameters=$(find_microservice_run_default_params)
+    local config_parameters=$(echo "$(find_microservice_run_config $name)" | jq -r ".params?")
+
+    config_parameters=$(merge_json_maps "$default_parameters" "$config_parameters")
 
     if [ -n "$2" ]; then
         local -r cli_parameters=$(jq -sR \
             'splits(" ")|split("=") as $i|{($i[0]?):($i[1]|sub("^(\\s)+";"";"x"))}' <<< $2 | jq -s "add")
 
-        map=$(merge_json_maps "$config_parameters" "$cli_parameters")
-        json_map_to_array_of_parameters "$map"
-    else
-        json_map_to_array_of_parameters "$config_parameters"
+        config_parameters=$(merge_json_maps "$config_parameters" "$cli_parameters")
     fi
+
+    json_map_to_array_of_parameters "$config_parameters"
 }
 
 merge_json_maps() {

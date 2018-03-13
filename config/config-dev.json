@@ -5,7 +5,27 @@
     "idea-cache-dir": "~/.IntelliJIdea14/system"
   },
   "ms": {
-    "workspace": "~/Development/temporal/tradis"
+    "workspace": "~/Development/temporal/tradis",
+    "defaults": {
+      "build-config": {
+        "java-opts": [
+          "-Dms-build"
+        ],
+        "params": [
+          "--build-cache",
+          "--stacktrace"
+        ]
+      },
+      "run-config": {
+        "java-opts": [
+          "-Dms-run"
+        ],
+        "params": {
+          "spring.zipkin.enabled": false,
+          "spring.profiles.active": "dev,local"
+        }
+      }
+    }
   },
   "microservices": [
     {
@@ -21,7 +41,7 @@
           "-XX:MaxMetaspaceSize=1g"
         ],
         "params": [
-          "-x test"
+          "-x test", "--info", "--stacktrace"
         ]
       },
       "run-config": {
@@ -30,8 +50,7 @@
           "-XX:MaxMetaspaceSize=64M"
         ],
         "params": {
-          "spring.zipkin.enabled": false,
-          "spring.profiles.active": "dev,local",
+          "spring.zipkin.enabled": true,
           "server.port": 8761
         }
       },

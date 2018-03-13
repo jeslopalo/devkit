@@ -25,6 +25,10 @@ find_maintenance_idea_cache_dir() {
     echo "${workspace/#\~/$HOME}"
 }
 
+find_microservice_build_config_defaults() {
+    find '.ms.defaults."build-config"?.params[]?'
+}
+
 find_microservice_names() {
     local -r separator="${1:-,}"
     local -r names=($(find ".microservices[].name"))
@@ -65,8 +69,13 @@ find_microservice_build_javaopts() {
 
 find_microservice_build_parameters() {
     local name="$1"
+    local default_parameters=($(find_microservice_build_config_defaults))
+    local parameters=($(echo "$(find_microservice_build_config $name)" | jq -r '.params[]?'))
 
-    echo "$(find_microservice_build_config $name)" | jq -r '.params[]?'
+    local combined=( "${default_parameters[@]}" "${parameters[@]}" )
+    combined_and_sorted=($(printf "%s\n" "${combined[@]}" | sort -u))
+
+    echo "${combined_and_sorted[@]}"
 }
 
 find_microservice_run_config() {

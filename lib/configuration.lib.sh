@@ -37,6 +37,10 @@ find_microservice_run_default_params() {
     find '.ms.defaults."run-config"?.params?'
 }
 
+find_microservice_run_default_javaopts() {
+    find '.ms.defaults."run-config"?."java-opts"[]?'
+}
+
 find_microservice_names() {
     local -r separator="${1:-,}"
     local -r names=($(find ".microservices[].name"))
@@ -96,9 +100,10 @@ find_microservice_run_config() {
 find_microservice_run_javaopts() {
     local -r name="$1"
     local -r extra_opts="$2"
+    local -r default_opts=$(find_microservice_run_default_javaopts)
     local -r java_opts=$(echo "$(find_microservice_run_config $name)" | jq -r '."java-opts"[]?')
 
-    echo "${java_opts[*]} $extra_opts"
+    echo "$default_opts ${java_opts[*]} $extra_opts"
 }
 
 find_microservice_run_parameters() {

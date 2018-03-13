@@ -25,11 +25,11 @@ find_maintenance_idea_cache_dir() {
     echo "${workspace/#\~/$HOME}"
 }
 
-find_microservice_build_config_defaults() {
+find_microservice_build_default_params() {
     find '.ms.defaults."build-config"?.params[]?'
 }
 
-find_microservice_run_config_defaults() {
+find_microservice_run_default_params() {
     find '.ms.defaults."run-config"?.params?'
 }
 
@@ -73,7 +73,7 @@ find_microservice_build_javaopts() {
 
 find_microservice_build_parameters() {
     local -r name="$1"
-    local -r default_parameters=($(find_microservice_build_config_defaults))
+    local -r default_parameters=($(find_microservice_build_default_params))
     local -r parameters=($(echo "$(find_microservice_build_config $name)" | jq -r '.params[]?'))
 
     local combined=( "${default_parameters[@]}" "${parameters[@]}" )
@@ -98,7 +98,7 @@ find_microservice_run_javaopts() {
 
 find_microservice_run_parameters() {
     local -r name="$1"
-    local -r default_parameters=$(find_microservice_run_config_defaults)
+    local -r default_parameters=$(find_microservice_run_default_params)
     local config_parameters=$(echo "$(find_microservice_run_config $name)" | jq -r ".params?")
 
     config_parameters=$(merge_json_maps "$default_parameters" "$config_parameters")

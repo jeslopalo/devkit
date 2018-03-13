@@ -35,7 +35,10 @@ function version() {
         version_line=$(gradle properties | grep "^version")
     fi
 
-    echo ${version_line//[ =:\'\"]/} | sed "s/version//g"
+    version=${version_line//[^[:print:]]/}
+    version=${version/version/}
+    version=${version//[ =:\'\"]/}
+    echo $version
 }
 
 function clean() {

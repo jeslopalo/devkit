@@ -77,20 +77,20 @@ main() {
     shift
 
     [ -n "$CLEAN" ] && clean "$slug"
-    [ -n "$BUILD" ] && {
+    [ -n "$BUILD" ] && (
         build_parameters=($(find_microservice_build_parameters $name))
         build_javaopts=($(find_microservice_build_javaopts "$name" "$JAVA_OPTS"))
 
         JAVA_OPTS="${build_javaopts[*]}";
         build "$slug" "${build_parameters[*]}";
-    }
-    [ -n "$RUN" ] && {
+    )
+    [ -n "$RUN" ] && (
         run_parameters=($(find_microservice_run_parameters "$name" "$RUN_PARAMETERS"))
         run_javaopts=($(find_microservice_run_javaopts "$name" "$JAVA_OPTS"))
 
         JAVA_OPTS="${run_javaopts[*]}";
         run "$slug" "${run_parameters[*]}";
-    }
+    )
 }
 
 main "$@"

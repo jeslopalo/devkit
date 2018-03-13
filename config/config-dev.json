@@ -7,8 +7,8 @@
   "ms": {
     "workspace": "~/Development/temporal/tradis",
     "defaults": {
-      "build-config": {
-        "java-opts": [
+      "build": {
+        "javaopts": [
           "-Dms-build"
         ],
         "params": [
@@ -16,8 +16,8 @@
           "--stacktrace"
         ]
       },
-      "run-config": {
-        "java-opts": [
+      "run": {
+        "javaopts": [
           "-Dms-run"
         ],
         "params": {
@@ -35,8 +35,8 @@
     {
       "name": "demo",
       "slug": "demo/demo",
-      "build-config": {
-        "java-opts": [
+      "build": {
+        "javaopts": [
           "-Xmx1g",
           "-XX:MaxMetaspaceSize=1g"
         ],
@@ -44,8 +44,8 @@
           "-x test", "--info", "--stacktrace"
         ]
       },
-      "run-config": {
-        "java-opts": [
+      "run": {
+        "javaopts": [
           "-Xmx32m",
           "-XX:MaxMetaspaceSize=64M"
         ],
@@ -61,13 +61,13 @@
     {
       "name": "eureka",
       "slug": "infrastructure/eureka",
-      "build-config": {
+      "build": {
         "params": [
           "-x test"
         ]
       },
-      "run-config": {
-        "java-opts": [
+      "run": {
+        "javaopts": [
           "-Xmx64m",
           "-XX:MaxMetaspaceSize=100M"
         ],
@@ -84,11 +84,11 @@
     {
       "name": "wallet",
       "slug": "business/wallet",
-      "build-config": {
+      "build": {
         "params": []
       },
-      "run-config": {
-        "java-opts": [
+      "run": {
+        "javaopts": [
           "-Xmx200m",
           "-XX:MaxMetaspaceSize=200M"
         ],

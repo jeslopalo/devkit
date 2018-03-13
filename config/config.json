@@ -11,13 +11,13 @@
     {
       "name": "eureka",
       "slug": "infrastructure/eureka",
-      "build-config": {
+      "build": {
         "params": [
           "--skip-tests"
         ]
       },
-      "run-config": {
-        "java-opts": [
+      "run": {
+        "javaopts": [
           "-Xmx64m",
           "-XX:MaxMetaspaceSize=100M"
         ],
@@ -34,11 +34,11 @@
     {
       "name": "wallet",
       "slug": "business/wallet",
-      "build-config": {
+      "build": {
         "params": []
       },
-      "run-config": {
-        "java-opts": [
+      "run": {
+        "javaopts": [
           "-Xmx200m",
           "-XX:MaxMetaspaceSize=200M"
         ],

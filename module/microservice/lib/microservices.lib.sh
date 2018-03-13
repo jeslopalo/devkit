@@ -81,8 +81,8 @@ function run() {
 		printf "\e[2m"
 		java -version
 		printf "\e[22m"
-		printf "arguments: [%s]\\n" "$args"
-		printf "java opts: [%s]\\n" "$JAVA_OPTS"
+		[ -z "$args" ] || printf "arguments: [%s]\\n" "$args"
+		[ -z "$JAVA_OPTS" ] || printf "java opts: [%s]\\n" "$JAVA_OPTS"
 		java -D$microservice $JAVA_OPTS -jar "build/libs/$microservice-$version.jar" $args
 	else
 		printf "error: no se encontro el jar de la aplicacion en [%s]\\n" "$PWD/build/lib/$microservice-$version.jar" 1>&2

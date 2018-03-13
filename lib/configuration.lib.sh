@@ -25,20 +25,20 @@ find_maintenance_idea_cache_dir() {
     echo "${workspace/#\~/$HOME}"
 }
 
-find_microservice_build_default_params() {
-    find '.ms.defaults."build-config"?.params[]?'
+find_microservice_default_build_params() {
+    find ".ms.defaults.build?.params[]?"
 }
 
-find_microservice_build_default_javaopts() {
-    find '.ms.defaults."build-config"?."java-opts"[]?'
+find_microservice_default_build_javaopts() {
+    find ".ms.defaults.build?.javaopts[]?"
 }
 
-find_microservice_run_default_params() {
-    find '.ms.defaults."run-config"?.params?'
+find_microservice_default_run_params() {
+    find ".ms.defaults.run?.params?"
 }
 
-find_microservice_run_default_javaopts() {
-    find '.ms.defaults."run-config"?."java-opts"[]?'
+find_microservice_default_run_javaopts() {
+    find ".ms.defaults.run?.javaopts[]?"
 }
 
 find_microservice_names() {
@@ -56,6 +56,7 @@ find_microservice_by_name() {
 
 exists_microservice_by_name() {
     local name="$1"
+    
     [[ $(find ".microservices[] | select(.name == \"$name\") | [.] | length") = 1 ]]
 }
 
@@ -68,21 +69,21 @@ find_microservice_slug_by_name() {
 find_microservice_build_config() {
     local name="$1"
 
-    echo "$(find_microservice_by_name $name)" | jq -r '."build-config"?'
+    echo "$(find_microservice_by_name $name)" | jq -r '.build?'
 }
 
 find_microservice_build_javaopts() {
     local -r name="$1"
     local -r extra_opts="$2"
-    local -r default_opts=$(find_microservice_build_default_javaopts)
-    local -r java_opts=$(echo "$(find_microservice_build_config $name)" | jq -r '."java-opts"[]?')
+    local -r default_opts=$(find_microservice_default_build_javaopts)
+    local -r java_opts=$(echo "$(find_microservice_build_config $name)" | jq -r '.javaopts[]?')
 
     echo "$default_opts ${java_opts[*]} $extra_opts"
 }
 
 find_microservice_build_parameters() {
     local -r name="$1"
-    local -r default_parameters=($(find_microservice_build_default_params))
+    local -r default_parameters=($(find_microservice_default_build_params))
     local -r parameters=($(echo "$(find_microservice_build_config $name)" | jq -r '.params[]?'))
 
     local combined=( "${default_parameters[@]}" "${parameters[@]}" )
@@ -94,21 +95,21 @@ find_microservice_build_parameters() {
 find_microservice_run_config() {
     local name="$1"
 
-    echo "$(find_microservice_by_name $name)" | jq -r '."run-config"?'
+    echo "$(find_microservice_by_name $name)" | jq -r '.run?'
 }
 
 find_microservice_run_javaopts() {
     local -r name="$1"
     local -r extra_opts="$2"
-    local -r default_opts=$(find_microservice_run_default_javaopts)
-    local -r java_opts=$(echo "$(find_microservice_run_config $name)" | jq -r '."java-opts"[]?')
+    local -r default_opts=$(find_microservice_default_run_javaopts)
+    local -r java_opts=$(echo "$(find_microservice_run_config $name)" | jq -r '.javaopts[]?')
 
     echo "$default_opts ${java_opts[*]} $extra_opts"
 }
 
 find_microservice_run_parameters() {
     local -r name="$1"
-    local -r default_parameters=$(find_microservice_run_default_params)
+    local -r default_parameters=$(find_microservice_default_run_params)
     local config_parameters=$(echo "$(find_microservice_run_config $name)" | jq -r ".params?")
 
     config_parameters=$(merge_json_maps "$default_parameters" "$config_parameters")

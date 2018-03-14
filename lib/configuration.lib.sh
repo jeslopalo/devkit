@@ -16,43 +16,57 @@ find() {
     [ -f "$file" ] && jq -r "$filter" "$file"
 }
 
-find_ms_workspace() {
-    local -r workspace=$(find ".ms.workspace")
+find_property() {
+    local -r name="$1"
+    local -r default="$2"
+
+    if [ -n "$name" ]; then
+        value=$(find ".properties.\"$name\"")
+        if [ "$value" = null ] && [ -n $default ]; then
+            echo "$default"
+        else
+            echo "$value"
+        fi
+    fi
+}
+
+find_microservice_workspace() {
+    local -r workspace=$(find ".microservices.workspace")
 
     echo "${workspace/#\~/$HOME}"
 }
 
 find_maintenance_workspace() {
-    local -r workspace=$(find ".maintenance.workspace")
+    local -r workspace=$(find_property "workspaces-dir")
 
     echo "${workspace/#\~/$HOME}"
 }
 
 find_maintenance_idea_cache_dir() {
-    local -r workspace=$(find '.maintenance."idea-cache-dir"')
+    local -r cache_dir=$(find_property "idea-cache-dir")
 
-    echo "${workspace/#\~/$HOME}"
+    echo "${cache_dir/#\~/$HOME}"
 }
 
 find_microservice_default_build_params() {
-    find ".ms.defaults.build?.params[]?"
+    find ".microservices.defaults.build?.params[]?"
 }
 
 find_microservice_default_build_javaopts() {
-    find ".ms.defaults.build?.javaopts[]?"
+    find ".microservices.defaults.build?.javaopts[]?"
 }
 
 find_microservice_default_run_params() {
-    find ".ms.defaults.run?.params?"
+    find ".microservices.defaults.run?.params?"
 }
 
 find_microservice_default_run_javaopts() {
-    find ".ms.defaults.run?.javaopts[]?"
+    find ".microservices.defaults.run?.javaopts[]?"
 }
 
 find_microservice_names() {
     local -r separator="${1:-,}"
-    local -r names=($(find ".microservices[].name"))
+    local -r names=($(find ".microservices.data[].name"))
 
     echo $(IFS="$separator" ; echo "${names[*]}")
 }
@@ -60,13 +74,13 @@ find_microservice_names() {
 find_microservice_by_name() {
     local name="$1"
 
-    find ".microservices[] | select(.name == \"$name\")"
+    find ".microservices.data[] | select(.name == \"$name\")"
 }
 
 exists_microservice_by_name() {
     local name="$1"
 
-    [[ $(find ".microservices[] | select(.name == \"$name\") | [.] | length") = 1 ]]
+    [[ $(find ".microservices.data[] | select(.name == \"$name\") | [.] | length") = 1 ]]
 }
 
 find_microservice_slug_by_name() {
@@ -92,10 +106,11 @@ find_microservice_build_javaopts() {
 
 find_microservice_build_parameters() {
     local -r name="$1"
-    local -r default_parameters=($(find_microservice_default_build_params))
-    local -r parameters=($(echo "$(find_microservice_build_config $name)" | jq -r '.params[]?'))
+    local -r default_parameters=$(find_microservice_default_build_params)
+    local -r parameters=$(echo "$(find_microservice_build_config $name)" | jq -r '.params[]?')
 
     local combined=( "${default_parameters[@]}" "${parameters[@]}" )
+
     combined_and_sorted=($(printf "%s\n" "${combined[@]}" | sort -u))
 
     echo "${combined_and_sorted[@]}"

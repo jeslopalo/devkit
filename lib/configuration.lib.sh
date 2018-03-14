@@ -69,8 +69,8 @@ find_microservice_default_build_javaopts() {
     find ".microservices.defaults.build?.javaopts[]?"
 }
 
-find_microservice_default_run_params() {
-    find ".microservices.defaults.run?.params?"
+find_microservice_default_run_arguments() {
+    find ".microservices.defaults.run?.arguments?"
 }
 
 find_microservice_default_run_javaopts() {
@@ -144,21 +144,21 @@ find_microservice_run_javaopts() {
     echo "$default_opts ${java_opts[*]} $extra_opts"
 }
 
-find_microservice_run_parameters() {
+find_microservice_run_arguments() {
     local -r name="$1"
-    local -r default_parameters=$(find_microservice_default_run_params)
-    local config_parameters=$(echo "$(find_microservice_run_config $name)" | jq -r ".params?")
+    local -r defaults=$(find_microservice_default_run_arguments)
+    local arguments=$(echo "$(find_microservice_run_config $name)" | jq -r ".arguments?")
 
-    config_parameters=$(merge_json_maps "$default_parameters" "$config_parameters")
+    arguments=$(merge_json_maps "$defaults" "$arguments")
 
     if [ -n "$2" ]; then
-        local -r cli_parameters=$(jq -sR \
+        local -r cli_arguments=$(jq -sR \
             'splits(" ")|split("=") as $i|{($i[0]?):($i[1]|sub("^(\\s)+";"";"x"))}' <<< $2 | jq -s "add")
 
-        config_parameters=$(merge_json_maps "$config_parameters" "$cli_parameters")
+        arguments=$(merge_json_maps "$arguments" "$cli_arguments")
     fi
 
-    json_map_to_array_of_parameters "$config_parameters"
+    json_map_to_array_of_arguments "$arguments"
 }
 
 merge_json_maps() {
@@ -174,7 +174,7 @@ merge_json_maps() {
     fi
 }
 
-json_map_to_array_of_parameters() {
+json_map_to_array_of_arguments() {
     local -r map="$1"
 
     if [ -n "$map" ] && [ "$map" != null ]; then

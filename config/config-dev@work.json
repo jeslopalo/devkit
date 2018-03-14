@@ -20,7 +20,7 @@
         "javaopts": [
           "-Dms-run"
         ],
-        "params": {
+        "arguments": {
           "spring.zipkin.enabled": false,
           "spring.profiles.active": "dev,local"
         }
@@ -50,7 +50,7 @@
             "-Xmx32m",
             "-XX:MaxMetaspaceSize=64M"
           ],
-          "params": {
+          "arguments": {
             "spring.zipkin.enabled": true,
             "server.port": 8761
           }
@@ -70,7 +70,7 @@
             "-Xmx64m",
             "-XX:MaxMetaspaceSize=100M"
           ],
-          "params": {
+          "arguments": {
             "spring.zipkin.enabled": false,
             "spring.profiles.active": "dev,local",
             "server.port": 8761
@@ -88,7 +88,7 @@
             "-Xmx200m",
             "-XX:MaxMetaspaceSize=200M"
           ],
-          "params": {
+          "arguments": {
             "spring.zipkin.enabled": false,
             "spring.cloud.config.uri": "http://localhost:8888/",
             "spring.cloud.config.label": "develop",

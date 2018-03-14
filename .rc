@@ -14,5 +14,5 @@ export TDK_LIB_DIR="${TDK_HOME}/lib"
 export TDK_MODULE_DIR="${TDK_HOME}/module"
 export TDK_CONFIG_DIR="$TDK_HOME/config"
 
-[ -f "$TDK_HOME/.environment" ] && source "$TDK_HOME/.environment"
+[ -f "$TDK_HOME/.environment" ] && environment=$(<$TDK_HOME/.environment)
 export TDK_CONFIGURATION="$TDK_CONFIG_DIR/config${environment:+-$environment}.json"

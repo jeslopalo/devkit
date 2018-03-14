@@ -1,10 +1,19 @@
 #!/usr/bin/env bash
 
+declare -i CONFIGURATION_FILE_VERSION=1
+
 assert_configuration_file_exists() {
     local -r file="${1:-$TDK_CONFIGURATION}"
 
     if [ ! -f "$file" ]; then
         printf "error: I can read configuration file [%s] :(\\n\\n" "$file" 1>&2
+        exit 1
+    fi
+
+    version=$(find_version "$file")
+    if [[ $version != $CONFIGURATION_FILE_VERSION ]]; then
+        printf "bad config: [%s] declares wrong version: %s (expected %s)\\n\\n" \
+         "$file" "$version" "$CONFIGURATION_FILE_VERSION" 1>&2
         exit 1
     fi
 }
@@ -28,6 +37,10 @@ find_property() {
             echo "$value"
         fi
     fi
+}
+
+find_version() {
+    find ".version" "$@"
 }
 
 find_microservice_workspace() {

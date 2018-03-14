@@ -3,13 +3,13 @@
 source $TDK_LIB_DIR/configuration.lib.sh
 
 function error_project_not_found() {
-    printf "error: '%s' workspace could not be found in current directory [%s]\\n" "$slug" "$(find_ms_workspace)" 1>&2
+    printf "error: '%s' workspace could not be found in current directory [%s]\\n" "$slug" "$(find_microservice_workspace)" 1>&2
     exit 1
 }
 
 function go_to_slug() {
     local -r slug="$1"
-    local -r ms_workspace="$(find_ms_workspace)"
+    local -r ms_workspace="$(find_microservice_workspace)"
 
     [ -d "$ms_workspace/$slug" ] || error_project_not_found
     cd "$ms_workspace/$slug"
@@ -81,8 +81,8 @@ function run() {
 		printf "\e[2m"
 		java -version
 		printf "\e[22m"
-		printf "arguments: [%s]\\n" "$args"
-		printf "java opts: [%s]\\n" "$JAVA_OPTS"
+		[ -z "$args" ] || printf "arguments: [%s]\\n" "$args"
+		[ -z "$JAVA_OPTS" ] || printf "java opts: [%s]\\n" "$JAVA_OPTS"
 		java -D$microservice $JAVA_OPTS -jar "build/libs/$microservice-$version.jar" $args
 	else
 		printf "error: no se encontro el jar de la aplicacion en [%s]\\n" "$PWD/build/lib/$microservice-$version.jar" 1>&2

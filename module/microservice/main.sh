@@ -5,10 +5,11 @@ source $TDK_MODULE_DIR/microservice/lib/dependencies.lib.sh
 source $TDK_MODULE_DIR/microservice/lib/microservices.lib.sh
 
 usage() {
-    printf "usage: ms [-h][-c][-b][-r [-p <run_parameter=value>]] <microservice>\\n\\n"
+    printf "usage: ms [-h][-c][-b][-r [-a <run_argument=value>]] <microservice>\\n\\n"
     printf "  -c\\tClean <microservice>\\n"
     printf "  -b\\tBuild <microservice>\\n"
     printf "  -r\\tRun <microservice>\\n"
+    printf "  -a\\tArgument (key=value) to execute microservice (it will be converted to --key=value)\\n"
     printf "  -h\\tShow this help message\\n"
 
     printf "\\nAvailable services:\\n  %s\\n" "$(find_microservice_names)"
@@ -17,6 +18,7 @@ usage() {
 main() {
 
     check_for_dependencies
+    assert_configuration_file_exists
 
     if [ "$#" = 0 ]; then
         printf "Sorry! I need something more to continue :(\\n\\n" 1>&2
@@ -24,13 +26,13 @@ main() {
         exit 1
     fi
 
-    while getopts ":hcbri:p:" opt; do
+    while getopts ":hcbra:" opt; do
         case "${opt}" in
+            h) usage; exit 1;;
             c) CLEAN="--clean";;
             b) BUILD="--build";;
             r) RUN="--run";;
-            p) RUN_PARAMETERS="$RUN_PARAMETERS $OPTARG";;
-            h) usage; exit 1;;
+            a) RUN_ARGUMENTS="$RUN_ARGUMENTS $OPTARG";;
             \?)
                 printf "invalid option: %s\\n\\n" "$OPTARG" 1>&2
                 usage
@@ -77,20 +79,20 @@ main() {
     shift
 
     [ -n "$CLEAN" ] && clean "$slug"
-    [ -n "$BUILD" ] && {
+    [ -n "$BUILD" ] && (
         build_parameters=($(find_microservice_build_parameters $name))
         build_javaopts=($(find_microservice_build_javaopts "$name" "$JAVA_OPTS"))
 
         JAVA_OPTS="${build_javaopts[*]}";
         build "$slug" "${build_parameters[*]}";
-    }
-    [ -n "$RUN" ] && {
-        run_parameters=($(find_microservice_run_parameters "$name" "$RUN_PARAMETERS"))
+    )
+    [ -n "$RUN" ] && (
+        run_arguments=($(find_microservice_run_arguments "$name" "$RUN_ARGUMENTS"))
         run_javaopts=($(find_microservice_run_javaopts "$name" "$JAVA_OPTS"))
 
         JAVA_OPTS="${run_javaopts[*]}";
-        run "$slug" "${run_parameters[*]}";
-    }
+        run "$slug" "${run_arguments[*]}";
+    )
 }
 
 main "$@"

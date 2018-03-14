@@ -24,9 +24,6 @@
           "spring.zipkin.enabled": false,
           "spring.profiles.active": "dev,local"
         }
-      },
-      "eureka": {
-        "register": true
       }
     },
     "data": [
@@ -57,9 +54,6 @@
             "spring.zipkin.enabled": true,
             "server.port": 8761
           }
-        },
-        "params": {
-          "register-in-eureka": false
         }
       },
       {
@@ -81,9 +75,6 @@
             "spring.profiles.active": "dev,local",
             "server.port": 8761
           }
-        },
-        "params": {
-          "register-in-eureka": false
         }
       },
       {
@@ -104,9 +95,6 @@
             "spring.profiles.active": "dev,local",
             "server.port": 8081
           }
-        },
-        "params": {
-          "register-in-eureka": true
         }
       },
       {

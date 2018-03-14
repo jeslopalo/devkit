@@ -17,6 +17,7 @@ usage() {
 main() {
 
     check_for_dependencies
+    assert_configuration_file_exists
 
     if [ "$#" = 0 ]; then
         printf "Sorry! I need something more to continue :(\\n\\n" 1>&2

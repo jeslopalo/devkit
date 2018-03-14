@@ -1,10 +1,19 @@
 #!/usr/bin/env bash
 
+assert_configuration_file_exists() {
+    local -r file="${1:-$TDK_CONFIGURATION}"
+
+    if [ ! -f "$file" ]; then
+        printf "error: I can read configuration file [%s] :(\\n\\n" "$file" 1>&2
+        exit 1
+    fi
+}
+
 find() {
     local -r filter="${1:-.}"
     local -r file="${2:-$TDK_CONFIGURATION}"
 
-    jq -r "$filter" "$file"
+    [ -f "$file" ] && jq -r "$filter" "$file"
 }
 
 find_ms_workspace() {
@@ -56,7 +65,7 @@ find_microservice_by_name() {
 
 exists_microservice_by_name() {
     local name="$1"
-    
+
     [[ $(find ".microservices[] | select(.name == \"$name\") | [.] | length") = 1 ]]
 }
 

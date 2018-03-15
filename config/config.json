@@ -45,11 +45,28 @@
         }
       },
       {
+        "name": "config-server",
+        "slug": "infrastructure/config-server",
+        "run": {
+          "javaopts": [
+            "-Xmx32m",
+            "-XX:MaxMetaspaceSize=64M"
+          ],
+          "arguments": {
+            "server.port": 8888,
+            "eureka.client.enabled": true,
+            "eureka.client.serviceUrl.defaultZone": "http://localhost:8761/eureka/",
+            "spring.cloud.config.failFast": true,
+            "spring.cloud.config.server.git.uri": "file:///home/jesus/development/tradis/infrastructure/config-repo"
+          }
+        }
+      },
+      {
         "name": "registry-site",
         "slug": "business/registry-site",
         "run": {
           "javaopts": [
-            "-Xmx200m",
+            "-Xmx100m",
             "-XX:MaxMetaspaceSize=200M",
             "-Djavax.net.ssl.trustStore=~/development/tradis/business/registry-site/src/main/resources/keystore/desa/almacen.ks",
             "-Dtruststore.path=~/development/tradis/business/registry-site/src/main/resources/keystore/desa/almacen.ks",
@@ -67,7 +84,7 @@
         "slug": "business/wallet",
         "run": {
           "javaopts": [
-            "-Xmx200m",
+            "-Xmx100m",
             "-XX:MaxMetaspaceSize=200M"
           ],
           "arguments": {
@@ -87,7 +104,7 @@
             "-XX:MaxMetaspaceSize=100M"
           ],
           "arguments": {
-            "server.port": 8080
+            "server.port": 8082
           }
         }
       },
@@ -105,11 +122,11 @@
         "slug": "business/users",
         "run": {
           "javaopts": [
-            "-Xmx200m",
+            "-Xmx100m",
             "-XX:MaxMetaspaceSize=200M"
           ],
           "arguments": {
-            "server.port": 8089
+            "server.port": 8083
           }
         }
       },
@@ -118,11 +135,11 @@
         "slug": "indices/search-api",
         "run": {
           "javaopts": [
-            "-Xmx200m",
+            "-Xmx100m",
             "-XX:MaxMetaspaceSize=200M"
           ],
           "arguments": {
-            "server.port": 8097
+            "server.port": 8084
           }
         }
       },
@@ -143,7 +160,7 @@
             "-Djavax.net.ssl.trustStorePassword=edocalmacen"
           ],
           "arguments": {
-            "server.port": 8012
+            "server.port": 8085
           }
         }
       },
@@ -156,7 +173,7 @@
             "-XX:MaxMetaspaceSize=100M"
           ],
           "arguments": {
-            "server.port": 8080
+            "server.port": 8086
           }
         }
       },
@@ -164,7 +181,17 @@
         "name": "zipkin-server"
       },
       {
-        "name": "billing"
+        "name": "billing",
+        "slug": "business/billing",
+        "run": {
+          "javaopts": [
+            "-Xmx100m",
+            "-XX:MaxMetaspaceSize=200M"
+          ],
+          "arguments": {
+            "server.port": 8087
+          }
+        }
       },
       {
         "name": "publicidad-request"
@@ -174,11 +201,11 @@
         "slug": "business/payment",
         "run": {
           "javaopts": [
-            "-Xmx200m",
+            "-Xmx100m",
             "-XX:MaxMetaspaceSize=200M"
           ],
           "arguments": {
-            "server.port": 8095
+            "server.port": 8088
           }
         }
       },
@@ -197,7 +224,7 @@
             "-XX:MaxMetaspaceSize=100M"
           ],
           "arguments": {
-            "server.port": 8082
+            "server.port": 8089
           }
         }
       },
@@ -210,7 +237,7 @@
             "-XX:MaxMetaspaceSize=100M"
           ],
           "arguments": {
-            "server.port": 8085
+            "server.port": 8090
           }
         }
       }

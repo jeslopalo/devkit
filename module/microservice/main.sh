@@ -67,19 +67,23 @@ main() {
                 exit 0
             ;;
             info)
+                printf "\\n"
                 printf "config file name:\\t%s\\n" "$TDK_CONFIGURATION"
                 printf "config file version:\\t%d\\n" "$(find_version)"
                 exit 0
             ;;
             names)
+                printf "\\n"
                 find_microservice_names_in_columns
                 exit 0
             ;;
             ports)
+                printf "\\n"
                 find_microservice_ports_in_use
                 exit 0
             ;;
             *)
+                printf "\\n"
                 find_with_colors "$QUERY" | less -FRX
                 exit 0
             ;;

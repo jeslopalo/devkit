@@ -51,7 +51,7 @@ find_version() {
 }
 
 find_microservice_ports_in_use() {
-    find '.microservices.data[].run.arguments."server.port"' | grep -v null | sort | xargs
+    find '[.microservices.data[]|select(.run.arguments."server.port" != null)|{ key: .name, value: .run.arguments."server.port"}]|sort_by(.value)|map("  \(.value):\t\(.key)")|.[]'
 }
 
 find_microservice_workspace() {

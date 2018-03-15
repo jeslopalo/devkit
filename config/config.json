@@ -18,91 +18,95 @@
       },
       "run": {
         "javaopts": [
-          "-Dms-run"
+          "-Dms-run",
+          "-Xmx100m",
+          "-XX:MaxMetaspaceSize=200M"
         ],
         "arguments": {
-          "spring.zipkin.enabled": false,
-          "spring.profiles.active": "dev,local"
+          "spring.cloud.config.uri": "http://localhost:8888/",
+          "spring.cloud.config.label": "develop",
+          "spring.profiles.active": "dev,local",
+          "spring.zipkin.enabled": false
         }
       }
     },
     "data": [
       {
-        "name": "d",
-        "slug": "demo/demo"
-      },
-      {
-        "name": "demo",
-        "slug": "demo/demo",
-        "build": {
-          "javaopts": [
-            "-Xmx1g",
-            "-XX:MaxMetaspaceSize=1g"
-          ],
-          "params": [
-            "-x test",
-            "--info",
-            "--stacktrace"
-          ]
-        },
-        "run": {
-          "javaopts": [
-            "-Xmx32m",
-            "-XX:MaxMetaspaceSize=64M"
-          ],
-          "arguments": {
-            "spring.zipkin.enabled": true,
-            "server.port": 8761
-          }
-        }
-      },
-      {
         "name": "eureka",
         "slug": "infrastructure/eureka",
-        "build": {
-          "params": [
-            "-x test",
-            "--stacktrace"
-          ]
-        },
         "run": {
           "javaopts": [
             "-Xmx64m",
             "-XX:MaxMetaspaceSize=100M"
           ],
           "arguments": {
-            "spring.zipkin.enabled": false,
-            "spring.profiles.active": "dev,local",
             "server.port": 8761
+          }
+        }
+      },
+      {
+        "name": "config-server",
+        "slug": "infrastructure/config-server",
+        "run": {
+          "javaopts": [
+            "-Xmx32m",
+            "-XX:MaxMetaspaceSize=64M"
+          ],
+          "arguments": {
+            "server.port": 8888,
+            "eureka.client.enabled": true,
+            "eureka.client.serviceUrl.defaultZone": "http://localhost:8761/eureka/",
+            "spring.cloud.config.failFast": true,
+            "spring.cloud.config.server.git.uri": "file:///home/jesus/development/tradis/infrastructure/config-repo"
+          }
+        }
+      },
+      {
+        "name": "registry-site",
+        "slug": "business/registry-site",
+        "run": {
+          "javaopts": [
+            "-Xmx100m",
+            "-XX:MaxMetaspaceSize=200M",
+            "-Djavax.net.ssl.trustStore=~/development/tradis/business/registry-site/src/main/resources/keystore/desa/almacen.ks",
+            "-Dtruststore.path=~/development/tradis/business/registry-site/src/main/resources/keystore/desa/almacen.ks",
+            "-Djavax.net.ssl.trustStorePassword=edocalmacen",
+            "-Dtruststore.pass=edocalmacen"
+          ],
+          "arguments": {
+            "spring.redis.sentinel.master": "redis-cluster",
+            "spring.redis.sentinel.nodes": "10.100.251.48:26379,10.100.251.49:26379"
           }
         }
       },
       {
         "name": "wallet",
         "slug": "business/wallet",
-        "build": {
-          "params": []
-        },
         "run": {
           "javaopts": [
-            "-Xmx200m",
+            "-Xmx100m",
             "-XX:MaxMetaspaceSize=200M"
           ],
           "arguments": {
-            "spring.zipkin.enabled": false,
-            "spring.cloud.config.uri": "http://localhost:8888/",
-            "spring.cloud.config.label": "develop",
-            "spring.profiles.active": "dev,local",
             "server.port": 8081
           }
         }
       },
       {
-        "name": "corporate-info",
-        "slug": "business/corporate-info"
+        "name": "corporate-info"
       },
       {
-        "name": "general-info"
+        "name": "general-info",
+        "slug": "business/general-info",
+        "run": {
+          "javaopts": [
+            "-Xmx64m",
+            "-XX:MaxMetaspaceSize=100M"
+          ],
+          "arguments": {
+            "server.port": 8082
+          }
+        }
       },
       {
         "name": "info-registro"
@@ -114,10 +118,30 @@
         "name": "publicidad"
       },
       {
-        "name": "users"
+        "name": "users",
+        "slug": "business/users",
+        "run": {
+          "javaopts": [
+            "-Xmx100m",
+            "-XX:MaxMetaspaceSize=200M"
+          ],
+          "arguments": {
+            "server.port": 8083
+          }
+        }
       },
       {
-        "name": "search-api"
+        "name": "search-api",
+        "slug": "indices/search-api",
+        "run": {
+          "javaopts": [
+            "-Xmx100m",
+            "-XX:MaxMetaspaceSize=200M"
+          ],
+          "arguments": {
+            "server.port": 8084
+          }
+        }
       },
       {
         "name": "search-api"
@@ -126,22 +150,64 @@
         "name": "search-datastore"
       },
       {
-        "name": "pdf-generator"
+        "name": "pdf-generator",
+        "slug": "file/pdf-generator",
+        "run": {
+          "javaopts": [
+            "-Xmx100m",
+            "-XX:MaxMetaspaceSize=100M",
+            "-Djavax.net.ssl.trustStore=~/development/tradis/file/pdf-generator/build/resources/main/keystore/desa/almacen.ks",
+            "-Djavax.net.ssl.trustStorePassword=edocalmacen"
+          ],
+          "arguments": {
+            "server.port": 8085
+          }
+        }
       },
       {
-        "name": "template-store"
+        "name": "template-store",
+        "slug": "business/template-store",
+        "run": {
+          "javaopts": [
+            "-Xmx100m",
+            "-XX:MaxMetaspaceSize=100M"
+          ],
+          "arguments": {
+            "server.port": 8086
+          }
+        }
       },
       {
         "name": "zipkin-server"
       },
       {
-        "name": "billing"
+        "name": "billing",
+        "slug": "business/billing",
+        "run": {
+          "javaopts": [
+            "-Xmx100m",
+            "-XX:MaxMetaspaceSize=200M"
+          ],
+          "arguments": {
+            "server.port": 8087
+          }
+        }
       },
       {
         "name": "publicidad-request"
       },
       {
-        "name": "payment"
+        "name": "payment",
+        "slug": "business/payment",
+        "run": {
+          "javaopts": [
+            "-Xmx100m",
+            "-XX:MaxMetaspaceSize=200M"
+          ],
+          "arguments": {
+            "server.port": 8088
+          }
+        }
       },
       {
         "name": "publicidad-reply"
@@ -150,7 +216,30 @@
         "name": "file-manager"
       },
       {
-        "name": "user-notificator"
+        "name": "user-notificator",
+        "slug": "business/user-notificator",
+        "run": {
+          "javaopts": [
+            "-Xmx100m",
+            "-XX:MaxMetaspaceSize=100M"
+          ],
+          "arguments": {
+            "server.port": 8089
+          }
+        }
+      },
+      {
+        "name": "email-sender",
+        "slug": "business/email-sender",
+        "run": {
+          "javaopts": [
+            "-Xmx100m",
+            "-XX:MaxMetaspaceSize=100M"
+          ],
+          "arguments": {
+            "server.port": 8090
+          }
+        }
       }
     ]
   }

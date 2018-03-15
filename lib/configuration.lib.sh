@@ -18,6 +18,13 @@ assert_configuration_file_exists() {
     fi
 }
 
+find_with_colors() {
+    local -r filter="${1:-.}"
+    local -r file="${2:-$TDK_CONFIGURATION}"
+
+    [ -f "$file" ] && jq -Cr "$filter" "$file"
+}
+
 find() {
     local -r filter="${1:-.}"
     local -r file="${2:-$TDK_CONFIGURATION}"
@@ -41,6 +48,10 @@ find_property() {
 
 find_version() {
     find ".version" "$@"
+}
+
+find_microservice_ports_in_use() {
+    find '.microservices.data[].run.arguments."server.port"' | grep -v null | sort | xargs
 }
 
 find_microservice_workspace() {
@@ -79,9 +90,15 @@ find_microservice_default_run_javaopts() {
 
 find_microservice_names() {
     local -r separator="${1:-,}"
-    local -r names=($(find ".microservices.data[].name"))
+    local -r names=($(find ".microservices.data[].name" | sort))
 
     echo $(IFS="$separator" ; echo "${names[*]}")
+}
+
+find_microservice_names_in_columns() {
+    for value in $(find_microservice_names " "); do
+        printf "%-8s\n" "${value}"
+    done | column -x
 }
 
 find_microservice_by_name() {

@@ -5,14 +5,20 @@ source $TDK_MODULE_DIR/microservice/lib/dependencies.lib.sh
 source $TDK_MODULE_DIR/microservice/lib/microservices.lib.sh
 
 usage() {
-    printf "usage: ms [-h][-c][-b][-r [-a <run_argument=value>]] <microservice>\\n\\n"
+    printf "Usage:\\n"
+    printf "\\tms [-c] [-b] [-r [-a <run_argument=value>]] <microservice>\\n"
+    printf "\\tms [-q all | info | names | ports]\\n"
+    printf "\\tms [-h]\\n"
+    printf "\\nOptions:\\n\\n"
+    printf "  -q\\tQuery configuration files by name: all,info,names,ports\\n"
     printf "  -c\\tClean <microservice>\\n"
     printf "  -b\\tBuild <microservice>\\n"
     printf "  -r\\tRun <microservice>\\n"
     printf "  -a\\tArgument (key=value) to execute microservice (it will be converted to --key=value)\\n"
     printf "  -h\\tShow this help message\\n"
 
-    printf "\\nAvailable services:\\n  %s\\n" "$(find_microservice_names)"
+    printf "\\nAvailable services:\\n\\n"
+    find_microservice_names_in_columns
 }
 
 main() {
@@ -26,13 +32,14 @@ main() {
         exit 1
     fi
 
-    while getopts ":hcbra:" opt; do
+    while getopts ":hcbra:q:" opt; do
         case "${opt}" in
             h) usage; exit 1;;
             c) CLEAN="--clean";;
             b) BUILD="--build";;
             r) RUN="--run";;
             a) RUN_ARGUMENTS="$RUN_ARGUMENTS $OPTARG";;
+            q) QUERY="$OPTARG";;
             \?)
                 printf "invalid option: %s\\n\\n" "$OPTARG" 1>&2
                 usage
@@ -52,6 +59,36 @@ main() {
     done
 
     shift $((OPTIND-1))
+
+    if [ -n "$QUERY" ]; then
+        case "${QUERY}" in
+            all)
+                find_with_colors "." | less -FRX
+                exit 0
+            ;;
+            info)
+                printf "\\n"
+                printf "config file name:\\t%s\\n" "$TDK_CONFIGURATION"
+                printf "config file version:\\t%d\\n" "$(find_version)"
+                exit 0
+            ;;
+            names)
+                printf "\\n"
+                find_microservice_names_in_columns
+                exit 0
+            ;;
+            ports)
+                printf "\\n"
+                find_microservice_ports_in_use
+                exit 0
+            ;;
+            *)
+                printf "\\n"
+                find_with_colors "$QUERY" | less -FRX
+                exit 0
+            ;;
+        esac
+    fi
 
     if [ "$#" != 1 ]; then
         printf "Sorry! I need a microservice name to continue :(\\n\\n" 1>&2

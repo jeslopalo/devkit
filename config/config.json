@@ -144,9 +144,6 @@
         }
       },
       {
-        "name": "search-api"
-      },
-      {
         "name": "search-datastore"
       },
       {

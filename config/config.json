@@ -79,7 +79,7 @@
           }
         }
       },
-     {
+      {
         "name": "management-site",
         "slug": "business/management-site",
         "run": {

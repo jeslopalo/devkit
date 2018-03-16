@@ -8,6 +8,7 @@ usage() {
     printf "Usage:\\n"
     printf "\\tms [-c] [-b] [-r [-a <run_argument=value>]] <microservice>\\n"
     printf "\\tms [-q all | info | names | ports]\\n"
+    printf "\\tms [-e]\\n"
     printf "\\tms [-h]\\n"
     printf "\\nOptions:\\n\\n"
     printf "  -q\\tQuery configuration files by name: all,info,names,ports\\n"
@@ -15,6 +16,7 @@ usage() {
     printf "  -b\\tBuild <microservice>\\n"
     printf "  -r\\tRun <microservice>\\n"
     printf "  -a\\tArgument (key=value) to execute microservice (it will be converted to --key=value)\\n"
+    printf "  -e\\tOpen config file for editing\\n"
     printf "  -h\\tShow this help message\\n"
 
     printf "\\nAvailable services:\\n\\n"
@@ -32,12 +34,13 @@ main() {
         exit 1
     fi
 
-    while getopts ":hcbra:q:" opt; do
+    while getopts ":hcbrea:q:" opt; do
         case "${opt}" in
             h) usage; exit 1;;
             c) CLEAN="--clean";;
             b) BUILD="--build";;
             r) RUN="--run";;
+            e) ${FCEDIT:-${VISUAL:-${EDITOR:-vi}}} "$TDK_CONFIGURATION"; exit $?;;
             a) RUN_ARGUMENTS="$RUN_ARGUMENTS $OPTARG";;
             q) QUERY="$OPTARG";;
             \?)

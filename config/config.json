@@ -5,7 +5,7 @@
     "idea-cache-dir": "~/.IntelliJIdea14/system"
   },
   "microservices": {
-    "workspace": "~/development",
+    "workspace": "~/development/tradis",
     "defaults": {
       "build": {
         "javaopts": [
@@ -77,6 +77,16 @@
             "spring.redis.sentinel.master": "redis-cluster",
             "spring.redis.sentinel.nodes": "10.100.251.48:26379,10.100.251.49:26379"
           }
+        }
+      },
+     {
+        "name": "management-site",
+        "slug": "business/management-site",
+        "run": {
+          "javaopts": [
+            "-Xmx100m",
+            "-XX:MaxMetaspaceSize=200M"
+          ]
         }
       },
       {

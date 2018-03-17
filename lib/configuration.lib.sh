@@ -50,6 +50,14 @@ find_version() {
     find ".version" "$@"
 }
 
+find_eureka_register_url_pattern() {
+    find '.eureka."register-url"'
+}
+
+find_eureka_unregister_url_pattern() {
+    find '.eureka."unregister-url"'
+}
+
 find_microservice_ports_in_use() {
     find '[.microservices.data[]|select(.run.arguments."server.port" != null)|{ key: .name, value: .run.arguments."server.port"}]|sort_by(.value)|map("  \(.value):\t\(.key)")|.[]'
 }

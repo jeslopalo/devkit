@@ -32,7 +32,8 @@
           "spring.profiles.active": "dev,local",
           "spring.zipkin.enabled": false
         }
-      }
+      },
+      "eureka-registerable": true
     },
     "data": [
       {
@@ -46,7 +47,8 @@
           "arguments": {
             "server.port": 8761
           }
-        }
+        },
+        "eureka-registerable": false
       },
       {
         "name": "config-server",
@@ -63,7 +65,8 @@
             "spring.cloud.config.failFast": true,
             "spring.cloud.config.server.git.uri": "file:///home/jesus/development/tradis/infrastructure/config-repo"
           }
-        }
+        },
+        "eureka-registerable": false
       },
       {
         "name": "registry-site",
@@ -81,7 +84,8 @@
             "spring.redis.sentinel.master": "redis-cluster",
             "spring.redis.sentinel.nodes": "10.100.251.48:26379,10.100.251.49:26379"
           }
-        }
+        },
+        "eureka-registerable": false
       },
       {
         "name": "management-site",
@@ -91,7 +95,8 @@
             "-Xmx100m",
             "-XX:MaxMetaspaceSize=200M"
           ]
-        }
+        },
+        "eureka-registerable": false
       },
       {
         "name": "wallet",

@@ -12,7 +12,7 @@ usage() {
     printf "  -e\\tExclude this services from being registered (comma-separated)\\n"
 
     printf "\\nAvailable services:\\n\\n"
-    find_microservice_names_in_columns
+    find_eureka_registerable_microservices_in_columns
     exit 0
 }
 
@@ -36,14 +36,14 @@ main() {
             e) IFS=', ' read -r -a exclusions <<< "${OPTARG}";;
             r)
                 if [ "${OPTARG}" = "all" ]; then
-                    register=( $(find_microservice_names " ") )
+                    register=( $(find_eureka_registerable_microservices) )
                 else
                     IFS=', ' read -r -a register <<< "${OPTARG}"
                 fi
             ;;
             u)
                 if [ "${OPTARG}" = "all" ]; then
-                    unregister=( $(find_microservice_names " ") )
+                    unregister=( $(find_eureka_registerable_microservices) )
                 else
                     IFS=', ' read -r -a unregister <<< "${OPTARG}"
                 fi

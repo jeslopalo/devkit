@@ -50,6 +50,31 @@ find_version() {
     find ".version" "$@"
 }
 
+find_eureka_register_url_pattern() {
+    find '.eureka."register-url"'
+}
+
+find_eureka_unregister_url_pattern() {
+    find '.eureka."unregister-url"'
+}
+
+find_eureka_registerable_microservices() {
+    find '.microservices.defaults."eureka-registerable" as $default|.microservices.data[]|{name:.name,registerable:(if ."eureka-registerable" == null then $default else ."eureka-registerable" end)}|select(.registerable==true)|.name' | sort
+}
+
+find_eureka_registerable_microservices_in_columns() {
+    for value in $(find_eureka_registerable_microservices); do
+        printf "%-8s\n" "${value}"
+    done | column -x
+}
+
+is_microservice_registerable_in_eureka() {
+    local -r name="$1"
+
+    registerable=$(find '.microservices.defaults."eureka-registerable" as $default|.microservices.data[]|select(.name == "'$name'")|{name:.name,registerable:(if ."eureka-registerable" == null then $default else ."eureka-registerable" end)}|.registerable')
+    [[ $registerable == "true" ]]
+}
+
 find_microservice_ports_in_use() {
     find '[.microservices.data[]|select(.run.arguments."server.port" != null)|{ key: .name, value: .run.arguments."server.port"}]|sort_by(.value)|map("  \(.value):\t\(.key)")|.[]'
 }

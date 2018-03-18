@@ -11,4 +11,4 @@ DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 source $DIR/../.rc
 
 # execute module microservice
-exec $TDK_HOME/module/eureka-register/main.sh "$@"
+exec $TDK_HOME/module/eureka/main.sh "$@"

@@ -68,6 +68,13 @@ find_eureka_registerable_microservices_in_columns() {
     done | column -x
 }
 
+is_microservice_registerable_in_eureka() {
+    local -r name="$1"
+
+    registerable=$(find '.microservices.defaults."eureka-registerable" as $default|.microservices.data[]|select(.name == "'$name'")|{name:.name,registerable:(if ."eureka-registerable" == null then $default else ."eureka-registerable" end)}|.registerable')
+    [[ $registerable == "true" ]]
+}
+
 find_microservice_ports_in_use() {
     find '[.microservices.data[]|select(.run.arguments."server.port" != null)|{ key: .name, value: .run.arguments."server.port"}]|sort_by(.value)|map("  \(.value):\t\(.key)")|.[]'
 }

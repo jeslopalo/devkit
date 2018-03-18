@@ -129,6 +129,11 @@ main() {
     [ -n "$RUN" ] && (
         run_arguments=($(find_microservice_run_arguments "$name" "$RUN_ARGUMENTS"))
         run_javaopts=($(find_microservice_run_javaopts "$name" "$JAVA_OPTS"))
+        registerable=$(is_microservice_registerable_in_eureka)
+
+        if is_microservice_registerable_in_eureka "$name"; then
+            eureka -u "$name"
+        fi
 
         JAVA_OPTS="${run_javaopts[*]}";
         run "$slug" "${run_arguments[*]}";

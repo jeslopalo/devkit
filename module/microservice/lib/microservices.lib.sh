@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 source $TDK_LIB_DIR/configuration.lib.sh
 

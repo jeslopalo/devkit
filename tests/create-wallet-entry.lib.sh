@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 source ./environment.lib.sh
 wallet_host_url="${WALLET_HOST_URL}"

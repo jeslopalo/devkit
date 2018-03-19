@@ -15,7 +15,7 @@
       "renewalIntervalInSecs": 10000,
       "durationInSecs": 10000
     },
-    "vipAddress": "'${service_name}'",
+    "vipAddress": "${service_name}",
     "dataCenterInfo": {
       "@class": "com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo",
       "name": "MyOwn"

@@ -2,9 +2,9 @@
 
 # export vars
 export TDK_HOME=$(sourcedir "$BASH_SOURCE")
-export TDK_LIB_DIR="${TDK_HOME}/lib"
-export TDK_MODULE_DIR="${TDK_HOME}/module"
-export TDK_CONFIG_DIR="$TDK_HOME/config"
+export TDK_LIB="${TDK_HOME}/lib"
+export TDK_MODULE="${TDK_HOME}/module"
+export TDK_CONFIG="$TDK_HOME/config"
 
 [ -f "$TDK_HOME/.environment" ] && environment=$(<$TDK_HOME/.environment)
-export TDK_CONFIGURATION="$TDK_CONFIG_DIR/config${environment:+-$environment}.json"
+export TDK_CONFIG_FILE="$TDK_CONFIG/config${environment:+-$environment}.json"

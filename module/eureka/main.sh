@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-source $TDK_LIB_DIR/configuration.lib.sh
-source $TDK_MODULE_DIR/eureka/lib/dependencies.lib.sh
-source $TDK_MODULE_DIR/eureka/lib/eureka.lib.sh
+source $TDK_LIB/configuration.lib.sh
+source $TDK_MODULE/eureka/lib/dependencies.lib.sh
+source $TDK_MODULE/eureka/lib/eureka.lib.sh
 
 usage() {
     printf "usage: eureka [-h ][-r <services> [-e <services>]][-u <services>]\\n\\n" 1>&2

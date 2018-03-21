@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-source $TDK_LIB_DIR/template.lib.sh
+source $TDK_LIB/template.lib.sh
 
 declare -i CONFIGURATION_FILE_VERSION=1
 
 assert_configuration_file_exists() {
-    local -r file="${1:-$TDK_CONFIGURATION}"
+    local -r file="${1:-$TDK_CONFIG_FILE}"
 
     if [ ! -f "$file" ]; then
         printf "error: I can read configuration file [%s] :(\\n\\n" "$file" 1>&2
@@ -22,14 +22,14 @@ assert_configuration_file_exists() {
 
 find_with_colors() {
     local -r filter="${1:-.}"
-    local -r file="${2:-$TDK_CONFIGURATION}"
+    local -r file="${2:-$TDK_CONFIG_FILE}"
 
     [ -f "$file" ] && jq -Cr "$filter" "$file"
 }
 
 find() {
     local -r filter="${1:-.}"
-    local -r file="${2:-$TDK_CONFIGURATION}"
+    local -r file="${2:-$TDK_CONFIG_FILE}"
 
     [ -f "$file" ] && jq -r "$filter" "$file"
 }

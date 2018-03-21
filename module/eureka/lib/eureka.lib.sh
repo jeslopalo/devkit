@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-source $TDK_LIB_DIR/configuration.lib.sh
-source $TDK_LIB_DIR/template.lib.sh
+source $TDK_LIB/configuration.lib.sh
+source $TDK_LIB/template.lib.sh
 
-declare EUREKA_REGISTER_DOCUMENT_FILE="$TDK_MODULE_DIR/eureka/resources/eureka-register-app.json"
+declare EUREKA_REGISTER_DOCUMENT_FILE="$TDK_MODULE/eureka/resources/eureka-register-app.json"
 
 register_service() {
     declare service_name="$1"

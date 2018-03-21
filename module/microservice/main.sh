@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-source $TDK_LIB_DIR/configuration.lib.sh
-source $TDK_MODULE_DIR/microservice/lib/dependencies.lib.sh
-source $TDK_MODULE_DIR/microservice/lib/microservices.lib.sh
+source $TDK_LIB/configuration.lib.sh
+source $TDK_MODULE/microservice/lib/dependencies.lib.sh
+source $TDK_MODULE/microservice/lib/microservices.lib.sh
 
 usage() {
     printf "Usage:\\n"
@@ -40,7 +40,7 @@ main() {
             c) CLEAN="--clean";;
             b) BUILD="--build";;
             r) RUN="--run";;
-            e) ${FCEDIT:-${VISUAL:-${EDITOR:-vi}}} "$TDK_CONFIGURATION"; exit $?;;
+            e) ${FCEDIT:-${VISUAL:-${EDITOR:-vi}}} "$TDK_CONFIG_FILE"; exit $?;;
             a) RUN_ARGUMENTS="$RUN_ARGUMENTS $OPTARG";;
             q) QUERY="$OPTARG";;
             \?)
@@ -71,7 +71,7 @@ main() {
             ;;
             info)
                 printf "\\n"
-                printf "config file name:\\t%s\\n" "$TDK_CONFIGURATION"
+                printf "config file name:\\t%s\\n" "$TDK_CONFIG_FILE"
                 printf "config file version:\\t%d\\n" "$(find_version)"
                 exit 0
             ;;

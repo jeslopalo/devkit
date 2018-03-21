@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source $TDK_LIB_DIR/configuration.lib.sh
+source $TDK_LIB/configuration.lib.sh
 
 function error_project_not_found() {
     printf "error: '%s' workspace could not be found in current directory [%s]\\n" "$slug" "$(find_microservice_workspace)" 1>&2

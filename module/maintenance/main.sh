@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source $TDK_LIB_DIR/configuration.lib.sh
+source $TDK_LIB/configuration.lib.sh
 
 IDEA_CACHE_HOME=$(find_maintenance_idea_cache_dir)
 DEVELOPMENT_HOME=$(find_maintenance_workspace)

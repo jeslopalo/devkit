@@ -10,6 +10,12 @@
   },
   "microservices": {
     "workspace": "~/development/tradis",
+    "url": {
+      "local": "http://localhost:${port}",
+      "dev": "http://${name}-desarrollo.osrouter.dev.corpme.int",
+      "test": "http://${name}-test.osrouter.dev.corpme.int",
+      "qa": "http://${name}-qa.osrouter.dev.corpme.int"
+    },
     "defaults": {
       "build": {
         "javaopts": [

@@ -1,15 +1,7 @@
 #!/usr/bin/env bash
 
-SOURCE="${BASH_SOURCE[0]}"
-while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
-  DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
-  SOURCE="$(readlink "$SOURCE")"
-  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
-done
-DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
-
-# exports vars
-export TDK_HOME=$DIR
+# export vars
+export TDK_HOME=$(sourcedir "$BASH_SOURCE")
 export TDK_LIB_DIR="${TDK_HOME}/lib"
 export TDK_MODULE_DIR="${TDK_HOME}/module"
 export TDK_CONFIG_DIR="$TDK_HOME/config"

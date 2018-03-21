@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+source $TDK_LIB_DIR/template.lib.sh
+
 declare -i CONFIGURATION_FILE_VERSION=1
 
 assert_configuration_file_exists() {
@@ -79,6 +81,13 @@ find_microservice_ports_in_use() {
     find '[.microservices.data[]|select(.run.arguments."server.port" != null)|{ key: .name, value: .run.arguments."server.port"}]|sort_by(.value)|map("  \(.value):\t\(.key)")|.[]'
 }
 
+find_microservice_port () {
+    local -r name="$1"
+    local port=$(find_microservice_run_arguments "$name" | grep "server.port")
+
+    echo "${port##*=}"
+}
+
 find_microservice_workspace() {
     local -r workspace=$(find ".microservices.workspace")
 
@@ -148,6 +157,18 @@ find_microservice_build_config() {
     local name="$1"
 
     echo "$(find_microservice_by_name $name)" | jq -r '.build?'
+}
+
+find_microservice_endpoint_url() {
+    local name="$1"
+    local environment="${2:-local}"
+
+    port=$(find_microservice_port "$name")
+
+    endpoint_url=$(find ".microservices.url.$environment")
+    endpoint_url=$(replace_var "$endpoint_url" "name")
+    endpoint_url=$(replace_var "$endpoint_url" "port")
+    echo "$endpoint_url"
 }
 
 find_microservice_build_javaopts() {

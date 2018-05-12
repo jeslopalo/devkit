@@ -2,7 +2,7 @@
 
 source $TDK_LIB/template.lib.sh
 
-declare -i CONFIGURATION_FILE_VERSION=1
+declare -i CONFIGURATION_FILE_VERSION=1;
 
 assert_configuration_file_exists() {
     local -r file="${1:-$TDK_CONFIG_FILE}"
@@ -24,14 +24,14 @@ find_with_colors() {
     local -r filter="${1:-.}"
     local -r file="${2:-$TDK_CONFIG_FILE}"
 
-    [ -f "$file" ] && jq -Cr "$filter" "$file"
+    jq -Cr "$filter" "$file"
 }
 
 find() {
     local -r filter="${1:-.}"
     local -r file="${2:-$TDK_CONFIG_FILE}"
 
-    [ -f "$file" ] && jq -r "$filter" "$file"
+    jq -r "$filter" "$file"
 }
 
 find_property() {
@@ -65,13 +65,15 @@ find_eureka_registerable_microservices() {
 }
 
 find_eureka_registerable_microservices_in_columns() {
-    for value in $(find_eureka_registerable_microservices); do
+    local registerable_microservices=$(find_eureka_registerable_microservices)
+
+    for value in $registerable_microservices; do
         printf "%-8s\n" "${value}"
     done | column -x
 }
 
 is_microservice_registerable_in_eureka() {
-    local -r name="$1"
+    local -r name="${1:-}"
 
     registerable=$(find '.microservices.defaults."eureka-registerable" as $default|.microservices.data[]|select(.name == "'$name'")|{name:.name,registerable:(if ."eureka-registerable" == null then $default else ."eureka-registerable" end)}|.registerable')
     [[ $registerable == "true" ]]
@@ -83,9 +85,14 @@ find_microservice_ports_in_use() {
 
 find_microservice_port () {
     local -r name="$1"
-    local port=$(find_microservice_run_arguments "$name" | grep "server.port")
+    local arguments=$(find_microservice_run_arguments "$name")
 
-    echo "${port##*=}"
+    for argument in ${arguments[@]}; do
+        if [[ $argument =~ "server.port"* ]]; then
+            echo "${argument##*=}"
+            return
+        fi
+    done
 }
 
 find_microservice_workspace() {
@@ -124,14 +131,17 @@ find_microservice_default_run_javaopts() {
 
 find_microservice_names() {
     local -r separator="${1:-,}"
-    local -r names=($(find ".microservices.data[].name" | sort))
+    local -r names=$(find ".microservices.data[].name")
+    local -r sorted=$(sort <<< "${names[*]}")
 
-    echo $(IFS="$separator" ; echo "${names[*]}")
+    echo $(IFS="$separator"; echo "${sorted[*]}")
 }
 
 find_microservice_names_in_columns() {
-    for value in $(find_microservice_names " "); do
-        printf "%-8s\n" "${value}"
+    local -r names=$(find_microservice_names " ")
+
+    for value in ${names[@]}; do
+        printf "%-8s\n" "$value"
     done | column -x
 }
 
@@ -150,7 +160,8 @@ exists_microservice_by_name() {
 find_microservice_slug_by_name() {
     local name="$1"
 
-    echo "$(find_microservice_by_name $name)" | jq -r ".slug?"
+    local configuration=$(find_microservice_by_name $name)
+    echo "$configuration" | jq -r ".slug?"
 }
 
 find_microservice_build_config() {

@@ -24,7 +24,8 @@
           "spring.zipkin.enabled": false,
           "spring.profiles.active": "dev,local"
         }
-      }
+      },
+      "eureka-registerable": true
     },
     "data": [
       {

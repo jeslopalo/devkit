@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+source $TDK_LIB/error.lib.sh
+
+# configure exception traps
+enable_traps --path-prefix=$TDK_HOME
+
 source $TDK_LIB/configuration.lib.sh
 source $TDK_MODULE/eureka/lib/dependencies.lib.sh
 source $TDK_MODULE/eureka/lib/eureka.lib.sh
@@ -73,9 +78,13 @@ main() {
     fi
 
     # elimina los servicios excluidos de los servicios a registrar
-    for exclusion in "${exclusions[@]}"; do
-        printf "Excluding service from being registered in eureka: %s\\n" "${exclusion}"
-        register=( ${register[@]/$exclusion/} )
+    for exclusion in "${exclusions[@]:-}"; do
+        if [[ -n ${exclusion:-} ]]; then
+            printf "Excluding service from being registered in eureka: %s\\n" "${exclusion}"
+
+            # TODO: That removes prefixes matching $exclusion from the elements, not necessarily whole elements.
+            register=( ${register[@]/$exclusion/} )
+        fi
     done
 
     # la lista de servicios registrables no puede estar vacia

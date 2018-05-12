@@ -1,10 +1,17 @@
 #!/usr/bin/env bash
 
+source $TDK_LIB/error.lib.sh
+
+# configure exception traps
+enable_traps --path-prefix=$TDK_HOME
+
 source $TDK_LIB/configuration.lib.sh
 source $TDK_MODULE/microservice/lib/dependencies.lib.sh
 source $TDK_MODULE/microservice/lib/microservices.lib.sh
 
 usage() {
+    local -r exit_code=${1:-0}
+
     printf "Usage:\\n"
     printf "\\tms [-c] [-b] [-r [-a <run_argument=value>]] <microservice>\\n"
     printf "\\tms [-q all | info | names | ports]\\n"
@@ -21,6 +28,8 @@ usage() {
 
     printf "\\nAvailable services:\\n\\n"
     find_microservice_names_in_columns
+
+    exit ${exit_code}
 }
 
 main() {
@@ -30,13 +39,19 @@ main() {
 
     if [ "$#" = 0 ]; then
         printf "Sorry! I need something more to continue :(\\n\\n" 1>&2
-        usage
-        exit 1
+        usage 1
     fi
+
+    local QUERY
+    local CLEAN
+    local BUILD
+    local RUN
+    local JAVA_OPTS
+    local RUN_ARGUMENTS
 
     while getopts ":hcbrea:q:" opt; do
         case "${opt}" in
-            h) usage; exit 1;;
+            h) usage 0;;
             c) CLEAN="--clean";;
             b) BUILD="--build";;
             r) RUN="--run";;
@@ -45,25 +60,22 @@ main() {
             q) QUERY="$OPTARG";;
             \?)
                 printf "invalid option: %s\\n\\n" "$OPTARG" 1>&2
-                usage
-                exit 1
+                usage 1
             ;;
             :)
                 printf "invalid option: -%s requires an argument\\n\\n" "$OPTARG" 1>&2
-                usage
-                exit 1
+                usage 1
             ;;
             *)
                 printf "invalid option: %s\\n\\n" "${opt}" 1>&2
-                usage
-                exit 1
+                usage 1
             ;;
         esac
     done
 
     shift $((OPTIND-1))
 
-    if [ -n "$QUERY" ]; then
+    if [ -n "${QUERY}" ]; then
         case "${QUERY}" in
             all)
                 find_with_colors "." | less -FRX
@@ -95,8 +107,7 @@ main() {
 
     if [ "$#" != 1 ]; then
         printf "Sorry! I need a microservice name to continue :(\\n\\n" 1>&2
-        usage
-        exit 1
+        usage 1
     fi
 
     name="$1"
@@ -113,31 +124,35 @@ main() {
     slug="$(find_microservice_slug_by_name $name)"
     if [ -z "$slug" ] || [ "$slug" = "null" ]; then
         printf "Sorry! I can't find a '%s' microservice configuration :(\\n\\n" "$name" 1>&2
-        usage
-        exit 1
+        usage 1
     fi
     shift
 
-    [ -n "$CLEAN" ] && clean "$slug"
-    [ -n "$BUILD" ] && (
+    [ -n "$CLEAN" ] && {
+        clean "$slug"
+    }
+
+    [ -n "$BUILD" ] && {
         build_parameters=($(find_microservice_build_parameters $name))
         build_javaopts=($(find_microservice_build_javaopts "$name" "$JAVA_OPTS"))
 
         JAVA_OPTS="${build_javaopts[*]}";
-        build "$slug" "${build_parameters[*]}";
-    )
-    [ -n "$RUN" ] && (
+
+        build "$slug" "${build_parameters[*]}"
+    }
+    [ -n "$RUN" ] && {
         run_arguments=($(find_microservice_run_arguments "$name" "$RUN_ARGUMENTS"))
         run_javaopts=($(find_microservice_run_javaopts "$name" "$JAVA_OPTS"))
-        registerable=$(is_microservice_registerable_in_eureka)
 
         if is_microservice_registerable_in_eureka "$name"; then
             eureka -u "$name"
         fi
 
         JAVA_OPTS="${run_javaopts[*]}";
-        run "$slug" "${run_arguments[*]}";
-    )
+        run "$slug" "${run_arguments[*]}"
+    }
+
+    exit "$?"
 }
 
 main "$@"

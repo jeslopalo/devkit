@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+source $TDK_LIB/error.lib.sh
+
+# configure exception traps
+enable_traps --path-prefix=$TDK_HOME
+
 source $TDK_LIB/configuration.lib.sh
 
 IDEA_CACHE_HOME=$(find_maintenance_idea_cache_dir)

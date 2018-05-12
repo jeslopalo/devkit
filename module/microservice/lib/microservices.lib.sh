@@ -17,8 +17,9 @@ function go_to_slug() {
 
 function version() {
 	local slug="$1"
+    local version_line
 
-    go_to_slug "$slug" || exit 1
+    go_to_slug "$slug"
 
     # strategy 1: version is placed in a properties file
 	if [ -f "gradle.properties" ]; then
@@ -38,13 +39,13 @@ function version() {
     version=${version_line//[^[:print:]]/}
     version=${version/version/}
     version=${version//[ =:\'\"]/}
-    echo $version
+    echo "$version"
 }
 
 function clean() {
     local slug="$1"
 
-    go_to_slug "$slug" || exit 1
+    go_to_slug "$slug"
 
     printf "\\nClean '%s' workspace...\\n" "$slug"
     gradle clean
@@ -54,7 +55,7 @@ function build() {
     local -r slug="$1"
     local -r parameters="${2:-}"
 
-    go_to_slug "$slug" || exit 1
+    go_to_slug "$slug"
 
     local version="$(version $slug)"
 
@@ -76,16 +77,19 @@ function run() {
 
 	local version="$(version $slug)"
 
+    printf "\\nRunning microservice '<%s, %s>'...\\n" "$microservice" "$version"
 	if [ -f "build/libs/$microservice-$version.jar" ]; then
-		printf "\\nRunning microservice '<%s, %s>'...\\n" "$microservice" "$version"
 		printf "\e[2m"
 		java -version
 		printf "\e[22m"
+
 		[ -z "$args" ] || printf "arguments: [%s]\\n" "$args"
 		[ -z "$JAVA_OPTS" ] || printf "java opts: [%s]\\n" "$JAVA_OPTS"
 		java -D$microservice $JAVA_OPTS -jar "build/libs/$microservice-$version.jar" $args
+
+		return $?
 	else
 		printf "error: no se encontro el jar de la aplicacion en [%s]\\n" "$PWD/build/lib/$microservice-$version.jar" 1>&2
-		exit 1
+		return 1
 	fi
 }

@@ -2,7 +2,9 @@
 
 # export vars
 export TDK_HOME=$(sourcedir "$BASH_SOURCE")
+export TDK_BIN="${TDK_HOME}/bin"
 export TDK_LIB="${TDK_HOME}/lib"
+export TDK_THIRDPARTY="${TDK_HOME}/third_party"
 export TDK_MODULE="${TDK_HOME}/module"
 export TDK_CONFIG="$TDK_HOME/config"
 

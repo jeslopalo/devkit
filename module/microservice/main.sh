@@ -75,7 +75,7 @@ main() {
 
     shift $((OPTIND-1))
 
-    if [ -n "${QUERY}" ]; then
+    if [ -n "${QUERY:-}" ]; then
         case "${QUERY}" in
             all)
                 find_with_colors "." | less -FRX

@@ -8,8 +8,9 @@
 #+|
 #+| OPTIONS
 #+|   -v          Print out devkit version
-#+|   -e          Open config file in editor
-#+|   -l          Print out a list of available commands
+#+|   -e          Edit config file
+#+|   -c          Set config file location
+#+|   -l          Print a list of available commands
 #+|   -h          Print this help message
 #=|
 #-| AUTHORING
@@ -32,17 +33,32 @@ version() {
 
     printf "/* (%d) Devkit v%s */\\n\\n" "$(date +%Y)" "$DEVKIT_VERSION"
 
-    printf "// author:\\t\\t@jeslopalo\\n"
-    printf "// config file:\\t\\t%s\\n" "$DEVKIT_CONFIG_FILE"
     printf "// config version:\\tv%d\\n" "$(find_version)"
+    printf "// config file:\\t\\t%s\\n" "$DEVKIT_CONFIG_FILE"
+    printf "// author:\\t\\t@jeslopalo\\n"
 
     return 0
 }
 
 edit_config() {
-    ${FCEDIT:-${VISUAL:-${EDITOR:-vi}}} "$DEVKIT_CONFIG_FILE";
+    printf "Open '%s' config file in editor...\\n" "$DEVKIT_CONFIG_FILE"
 
+    ${FCEDIT:-${VISUAL:-${EDITOR:-vi}}} "$DEVKIT_CONFIG_FILE";
     return $?;
+}
+
+set_config_file() {
+    local -r config_file="${1:-$DEVKIT_CONFIG}"
+
+    if [[ -r $config_file ]]; then
+        echo "$config_file" > "$DEVKIT_CUSTOM_CONFIG_DESCRIPTOR"
+        export DEVKIT_CONFIG_FILE="$config_file"
+        printf "Set '%s' as devkit configuration file\\n" "$config_file"
+        return 0
+    else
+        printf "error: '%s' cannot be opened or it does not exist\\n" "$config_file"
+        return 1
+    fi
 }
 
 list_commands() {
@@ -63,30 +79,48 @@ list_commands() {
 main() {
     check_for_dependencies
 
-    while getopts ":velh" opt; do
+    while getopts ":velhc:" opt; do
         case "${opt}" in
             v)
                 version
-                exit 0
+                exit $?
+            ;;
+            c)
+                set_config_file "$OPTARG"
+                exit $?
             ;;
             e)
                 edit_config
-                exit 0
+                exit $?
             ;;
             l)
                 list_commands
-                exit 0
+                exit $?
             ;;
             h)
                 usage
-                exit 0
+                exit $?
+            ;;
+            \?)
+                printf "invalid option: %s\\n\\n" "$OPTARG" 1>&2
+                usage
+                exit 1
+            ;;
+            :)
+                printf "invalid option: -%s requires an argument\\n\\n" "$OPTARG" 1>&2
+                usage
+                exit 1
+            ;;
+            *)
+                printf "invalid option: %s\\n\\n" "${opt}" 1>&2
+                usage
+                exit 1
             ;;
         esac
     done
 
     usage
-
-    exit 0
+    exit $?
 }
 
 main "$@"

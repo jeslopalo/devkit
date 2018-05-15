@@ -1,18 +1,27 @@
 Devkit
 ======
-## Instalación
+## Instalation
 
-Download from github
-```
+### Manual
+
+If you want to test ```devkit```, download from github and source it.
+```sh
 $ git clone https://github.com/jeslopalo/devkit.git
+...
+$ cd devkit
+$ source ./install.sh
+```
+If you want to install permanently then add ```$DEVKIT_HOME/bin``` to your ```$PATH```
+
+### Zplug
+Add to your ```packages.zsh```:
+
+```sh
+zplug jeslopalo/devkit, from:github, use:"*", as:command
 ```
 
-## Development mode (manual)
-
-1. Create a ```.environment``` file with an environment name (it will be a configuration file suffix)
-2. Create a configuration file with the appropiate suffix (ie. if ```.environment``` file contains *dev*, then ```$DEVKIT_HOME/config/config-dev.json```
-
-## Development mode (command)
-
-* Activation: execute ```bin/devmode <environment_name>``` to activate development mode, loading ```$DEVKIT_HOME/config/config-<environment_name>.json```
-* Deactivation: execute ```bin/devmode``` to deactivte development mode, loading ```$DEVKIT_HOME/config/config.json```
+## Configuring
+If you need to set a custom config file, then you can use ```devkit -c``` command.
+```sh
+$ devkit -c ~/path/to/file/config.json
+```

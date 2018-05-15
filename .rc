@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
 # export vars
-export TDK_HOME=$(sourcedir "$BASH_SOURCE")
-export TDK_BIN="${TDK_HOME}/bin"
-export TDK_LIB="${TDK_HOME}/lib"
-export TDK_THIRDPARTY="${TDK_HOME}/third_party"
-export TDK_MODULE="${TDK_HOME}/module"
-export TDK_CONFIG="$TDK_HOME/config"
+export DEVKIT_HOME=$(sourcedir "$BASH_SOURCE")
+export DEVKIT_BIN="${DEVKIT_HOME}/bin"
+export DEVKIT_LIB="${DEVKIT_HOME}/lib"
+export DEVKIT_THIRDPARTY="${DEVKIT_HOME}/third_party"
+export DEVKIT_MODULE="${DEVKIT_HOME}/module"
+export DEVKIT_CONFIG="$DEVKIT_HOME/config"
 
-[ -f "$TDK_HOME/.environment" ] && environment=$(<$TDK_HOME/.environment)
-export TDK_CONFIG_FILE="$TDK_CONFIG/config${environment:+-$environment}.json"
+[ -f "$DEVKIT_HOME/.environment" ] && environment=$(<$DEVKIT_HOME/.environment)
+export DEVKIT_CONFIG_FILE="$DEVKIT_CONFIG/config${environment:+-$environment}.json"

@@ -22,7 +22,7 @@
 #=|
 source $(dirname $(sourcedir "$BASH_SOURCE"))/.rc
 
-source $TDK_LIB/usage.lib.sh
+source $DEVKIT_LIB/usage.lib.sh
 
 if [[ ${1:-} = "-h" ]]; then
     usage
@@ -30,15 +30,15 @@ if [[ ${1:-} = "-h" ]]; then
 fi
 
 if [ "$#" = 0 ]; then
-    printf "Removing .environment file ([$TDK_HOME/config/config.json] will be used)...\\n"
-    [ -f "$TDK_HOME/.environment" ] && rm "$TDK_HOME/.environment"
+    printf "Removing .environment file ([$DEVKIT_HOME/config/config.json] will be used)...\\n"
+    [ -f "$DEVKIT_HOME/.environment" ] && rm "$DEVKIT_HOME/.environment"
     exit 0
 fi
 
 if [ "$#" = 1 ]; then
-    printf "Creating .environment file with '%s' name ([$TDK_HOME/config/config-%s.json] will be used)...\\n" "$1" "$1"
-    [ -f "$TDK_HOME/.environment" ] && rm "$TDK_HOME/.environment"
-    echo "$1" > "$TDK_HOME/.environment"
+    printf "Creating .environment file with '%s' name ([$DEVKIT_HOME/config/config-%s.json] will be used)...\\n" "$1" "$1"
+    [ -f "$DEVKIT_HOME/.environment" ] && rm "$DEVKIT_HOME/.environment"
+    echo "$1" > "$DEVKIT_HOME/.environment"
     exit 0
 fi
 

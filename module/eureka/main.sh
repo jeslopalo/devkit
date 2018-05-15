@@ -24,15 +24,15 @@
 #-|   author          @jeslopalo <Jesús López Alonso>
 #-|   year            2018
 #=|
-source $TDK_LIB/error.lib.sh
+source $DEVKIT_LIB/error.lib.sh
 
 # configure exception traps
-enable_traps --path-prefix=$TDK_HOME
+enable_traps --path-prefix=$DEVKIT_HOME
 
-source $TDK_LIB/usage.lib.sh
-source $TDK_LIB/configuration.lib.sh
-source $TDK_MODULE/eureka/lib/dependencies.lib.sh
-source $TDK_MODULE/eureka/lib/eureka.lib.sh
+source $DEVKIT_LIB/usage.lib.sh
+source $DEVKIT_LIB/configuration.lib.sh
+source $DEVKIT_MODULE/eureka/lib/dependencies.lib.sh
+source $DEVKIT_MODULE/eureka/lib/eureka.lib.sh
 
 eureka_usage() {
     usage

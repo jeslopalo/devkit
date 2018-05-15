@@ -7,13 +7,13 @@
 #-|   author          @jeslopalo <Jesús López Alonso>
 #-|   year            2018
 #=|
-source $TDK_LIB/error.lib.sh
+source $DEVKIT_LIB/error.lib.sh
 
 # configure exception traps
-enable_traps --path-prefix=$TDK_HOME
+enable_traps --path-prefix=$DEVKIT_HOME
 
-source $TDK_LIB/usage.lib.sh
-source $TDK_LIB/configuration.lib.sh
+source $DEVKIT_LIB/usage.lib.sh
+source $DEVKIT_LIB/configuration.lib.sh
 
 IDEA_CACHE_HOME=$(find_maintenance_idea_cache_dir)
 DEVELOPMENT_HOME=$(find_maintenance_workspace)

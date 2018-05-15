@@ -14,4 +14,7 @@ source_dir() {
     echo "$DIR"
 }
 
+#
+# Add 'source_dir' invocation when it is not sourced
+#
 [[ $_ != $0 ]] || source_dir "$@"

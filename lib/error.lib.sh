@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-source $TDK_BIN/sourcedir
-source $TDK_THIRDPARTY/github.com/mercuriev/bash_colors/bash_colors.sh
+source $DEVKIT_BIN/sourcedir
+source $DEVKIT_THIRDPARTY/github.com/mercuriev/bash_colors/bash_colors.sh
 
 # minimal information: invocation, file & lineno
 declare -r error_info_min_elements=3

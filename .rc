@@ -6,7 +6,12 @@ export DEVKIT_BIN="${DEVKIT_HOME}/bin"
 export DEVKIT_LIB="${DEVKIT_HOME}/lib"
 export DEVKIT_THIRDPARTY="${DEVKIT_HOME}/third_party"
 export DEVKIT_MODULE="${DEVKIT_HOME}/module"
-export DEVKIT_CONFIG="$DEVKIT_HOME/config"
+export DEVKIT_CUSTOM_CONFIG_DESCRIPTOR="${DEVKIT_HOME}/.environment"
 
-[ -f "$DEVKIT_HOME/.environment" ] && environment=$(<$DEVKIT_HOME/.environment)
-export DEVKIT_CONFIG_FILE="$DEVKIT_CONFIG/config${environment:+-$environment}.json"
+# set config file if it's not set before
+if [[ -z $DEVKIT_CONFIG_FILE ]]; then
+
+    [[ -f $DEVKIT_CUSTOM_CONFIG_DESCRIPTOR ]] && custom_config_file=$(<$DEVKIT_CUSTOM_CONFIG_DESCRIPTOR)
+    [[ -f $custom_config_file ]] && export DEVKIT_CONFIG_FILE="$custom_config_file"
+    [[ -z $DEVKIT_CONFIG_FILE ]] && export DEVKIT_CONFIG_FILE="$DEVKIT_HOME/config/config.json"
+fi

@@ -1,6 +1,33 @@
 #!/usr/bin/env bash
-
+#=|
+#=| DESCRIPTION
+#%|   Utility to configure development mode
+#=|
+#+| USAGE
+#+|   devmode [-h] [identifier]
+#+|
+#+| ARGUMENTS
+#+|   identifier    (Optional) Configuration file identifier
+#+|
+#+| OPTIONS
+#+|   -h            Print this help message
+#+|
+#+| EXAMPLES
+#+|   devmode               // removes .environment file
+#+|   devmode dev@home      // set .environment file value
+#=|
+#-| AUTHORING
+#-|   author          @jeslopalo <Jesús López Alonso>
+#-|   year            2018
+#=|
 source $(dirname $(sourcedir "$BASH_SOURCE"))/.rc
+
+source $TDK_LIB/usage.lib.sh
+
+if [[ ${1:-} = "-h" ]]; then
+    usage
+    exit 0
+fi
 
 if [ "$#" = 0 ]; then
     printf "Removing .environment file ([$TDK_HOME/config/config.json] will be used)...\\n"

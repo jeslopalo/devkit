@@ -2,7 +2,7 @@
 
 source $TDK_LIB/template.lib.sh
 
-declare -i CONFIGURATION_FILE_VERSION=1;
+declare -i DEVKIT_VERSION=1;
 
 assert_configuration_file_exists() {
     local -r file="${1:-$TDK_CONFIG_FILE}"
@@ -13,9 +13,9 @@ assert_configuration_file_exists() {
     fi
 
     version=$(find_version "$file")
-    if [[ $version != $CONFIGURATION_FILE_VERSION ]]; then
+    if [[ $version != $DEVKIT_VERSION ]]; then
         printf "bad config: [%s] declares wrong version: %s (expected %s)\\n\\n" \
-         "$file" "$version" "$CONFIGURATION_FILE_VERSION" 1>&2
+         "$file" "$version" "$DEVKIT_VERSION" 1>&2
         exit 1
     fi
 }

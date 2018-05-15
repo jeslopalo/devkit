@@ -1,22 +1,42 @@
 #!/usr/bin/env bash
-
+#=|
+#=| DESCRIPTION
+#%|   Utility to register services in eureka server
+#=|
+#+| USAGE
+#+|   eureka [-h] [-r <services> [-e <services>]] [-u <services>]
+#+|
+#+| OPTIONS
+#+|   -r all | <service1 [,service2]>       Register every service (comma-separated names or all)
+#+|   -e <service1 [,service2]>             Exclude this services from being registered (comma-separated)
+#+|   -u all | <service1 [,service2]>       Unregister every service (comma-separated names or all)
+#+|   -h                                    Print this help message
+#+|
+#+| EXAMPLES
+#+|   eureka -r all
+#+|   eureka -r all -e service1
+#+|   eureka -r service1,service2
+#+|   eureka -u all
+#+|   eureka -u service1,service2
+#+|   eureka -r service1 -u service2
+#=|
+#-| AUTHORING
+#-|   author          @jeslopalo <Jesús López Alonso>
+#-|   year            2018
+#=|
 source $TDK_LIB/error.lib.sh
 
 # configure exception traps
 enable_traps --path-prefix=$TDK_HOME
 
+source $TDK_LIB/usage.lib.sh
 source $TDK_LIB/configuration.lib.sh
 source $TDK_MODULE/eureka/lib/dependencies.lib.sh
 source $TDK_MODULE/eureka/lib/eureka.lib.sh
 
-usage() {
-    printf "usage: eureka [-h ][-r <services> [-e <services>]][-u <services>]\\n\\n" 1>&2
-    printf "  -h\\tShow this help message\\n"
-    printf "  -r\\tRegister every service (comma-separated)\\n"
-    printf "  -u\\tUnregister every service (comma-separated)\\n"
-    printf "  -e\\tExclude this services from being registered (comma-separated)\\n"
-
-    printf "\\nAvailable services:\\n\\n"
+eureka_usage() {
+    usage
+    printf "\\nAVAILABLE SERVICES\\n"
     find_eureka_registerable_microservices_in_columns
     exit 0
 }
@@ -31,7 +51,7 @@ main() {
 
     if [ "$#" = 0 ]; then
         printf "Sorry! I need something more to continue :(\\n\\n" 1>&2
-        usage
+        eureka_usage
         exit 1
     fi
 
@@ -53,18 +73,18 @@ main() {
                     IFS=', ' read -r -a unregister <<< "${OPTARG}"
                 fi
             ;;
-            h) usage;;
+            h) eureka_usage;;
             \?)
                 printf "invalid option: %s\\n\\n" "$OPTARG" 1>&2
-                usage
+                eureka_usage
             ;;
             :)
                 printf "invalid option: -%s requires an argument\\n\\n" "$OPTARG" 1>&2
-                usage
+                eureka_usage
             ;;
             *)
                 printf "invalid option: %s\\n\\n" "${opt}" 1>&2
-                usage
+                eureka_usage
             ;;
         esac
     done
@@ -74,7 +94,7 @@ main() {
     # obtiene el resto de parametros como nombres de servicios registrables
     if [ "$#" -gt 0 ]; then
         printf "invalid option: %s\\n\\n" "$*" 1>&2
-        usage
+        eureka_usage
     fi
 
     # elimina los servicios excluidos de los servicios a registrar

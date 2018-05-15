@@ -1,10 +1,18 @@
 #!/usr/bin/env bash
-
+#=|
+#=| DESCRIPTION
+#%|   Clean IntelliJ (ie. metadata & cache folder) and execute clean (maven, gradle, ant) in every workspace project
+#-|
+#-| AUTHORING
+#-|   author          @jeslopalo <Jesús López Alonso>
+#-|   year            2018
+#=|
 source $TDK_LIB/error.lib.sh
 
 # configure exception traps
 enable_traps --path-prefix=$TDK_HOME
 
+source $TDK_LIB/usage.lib.sh
 source $TDK_LIB/configuration.lib.sh
 
 IDEA_CACHE_HOME=$(find_maintenance_idea_cache_dir)

@@ -1,32 +1,51 @@
 #!/usr/bin/env bash
-
+#=|
+#=| DESCRIPTION
+#%|   Utility to work with micrservices (now: git+gradle+springboot+eureka)
+#=|
+#+| USAGE
+#+|    ms [-c] [-b] [-r [-a <run_argument=value>]] <microservice>
+#+|    ms [-q <query-name|query> ]
+#+|    ms [-h]
+#+|
+#+| OPTIONS
+#+|   -c <microservice>         Clean microservice's previous build (ie. gradle clean)
+#+|   -b <microservice>         Build microservice
+#+|   -r <microservice>         Run microservice
+#+|   -a <key=value>            Run argument (it will be converted to --key=value)
+#+|   -q <query-name>|<query>   Query configuration by query-name or by jq's query
+#+|   -h                        Print this help message
+#+|
+#+| QUERY NAMES
+#+|   all           Print microservices configuration in use
+#+|   names         Print every configured microservice's name
+#+|   ports         Print every configured microservice's port
+#+|
+#+| EXAMPLES
+#+|   ms -cbr microservice1
+#+|   ms -r -a log=debug microservice1
+#+|   ms -q ports
+#+|   ms -q ".microservices.workspace"
+#=|
+#-| AUTHORING
+#-|   author          @jeslopalo <Jesús López Alonso>
+#-|   year            2018
+#=|
 source $TDK_LIB/error.lib.sh
 
 # configure exception traps
 enable_traps --path-prefix=$TDK_HOME
 
+source $TDK_LIB/usage.lib.sh
 source $TDK_LIB/configuration.lib.sh
 source $TDK_MODULE/microservice/lib/dependencies.lib.sh
 source $TDK_MODULE/microservice/lib/microservices.lib.sh
 
-usage() {
+microservice_usage() {
     local -r exit_code=${1:-0}
+    usage
 
-    printf "Usage:\\n"
-    printf "\\tms [-c] [-b] [-r [-a <run_argument=value>]] <microservice>\\n"
-    printf "\\tms [-q all | info | names | ports]\\n"
-    printf "\\tms [-e]\\n"
-    printf "\\tms [-h]\\n"
-    printf "\\nOptions:\\n\\n"
-    printf "  -q\\tQuery configuration files by name: all,info,names,ports\\n"
-    printf "  -c\\tClean <microservice>\\n"
-    printf "  -b\\tBuild <microservice>\\n"
-    printf "  -r\\tRun <microservice>\\n"
-    printf "  -a\\tArgument (key=value) to execute microservice (it will be converted to --key=value)\\n"
-    printf "  -e\\tOpen config file for editing\\n"
-    printf "  -h\\tShow this help message\\n"
-
-    printf "\\nAvailable services:\\n\\n"
+    printf "\\nAVAILABLE SERVICES:\\n"
     find_microservice_names_in_columns
 
     exit ${exit_code}
@@ -39,7 +58,7 @@ main() {
 
     if [ "$#" = 0 ]; then
         printf "Sorry! I need something more to continue :(\\n\\n" 1>&2
-        usage 1
+        microservice_usage 1
     fi
 
     local QUERY
@@ -49,26 +68,25 @@ main() {
     local JAVA_OPTS
     local RUN_ARGUMENTS
 
-    while getopts ":hcbrea:q:" opt; do
+    while getopts ":hcbra:q:" opt; do
         case "${opt}" in
-            h) usage 0;;
+            h) microservice_usage 0;;
             c) CLEAN="--clean";;
             b) BUILD="--build";;
             r) RUN="--run";;
-            e) ${FCEDIT:-${VISUAL:-${EDITOR:-vi}}} "$TDK_CONFIG_FILE"; exit $?;;
             a) RUN_ARGUMENTS="$RUN_ARGUMENTS $OPTARG";;
             q) QUERY="$OPTARG";;
             \?)
                 printf "invalid option: %s\\n\\n" "$OPTARG" 1>&2
-                usage 1
+                microservice_usage 1
             ;;
             :)
                 printf "invalid option: -%s requires an argument\\n\\n" "$OPTARG" 1>&2
-                usage 1
+                microservice_usage 1
             ;;
             *)
                 printf "invalid option: %s\\n\\n" "${opt}" 1>&2
-                usage 1
+                microservice_usage 1
             ;;
         esac
     done
@@ -78,36 +96,30 @@ main() {
     if [ -n "${QUERY:-}" ]; then
         case "${QUERY}" in
             all)
-                find_with_colors "." | less -FRX
-                exit 0
-            ;;
-            info)
-                printf "\\n"
-                printf "config file name:\\t%s\\n" "$TDK_CONFIG_FILE"
-                printf "config file version:\\t%d\\n" "$(find_version)"
-                exit 0
+                find_with_colors ".microservices" | less -FRX
+                exit $?
             ;;
             names)
                 printf "\\n"
                 find_microservice_names_in_columns
-                exit 0
+                exit $?
             ;;
             ports)
                 printf "\\n"
                 find_microservice_ports_in_use
-                exit 0
+                exit $?
             ;;
             *)
                 printf "\\n"
                 find_with_colors "$QUERY" | less -FRX
-                exit 0
+                exit $?
             ;;
         esac
     fi
 
     if [ "$#" != 1 ]; then
         printf "Sorry! I need a microservice name to continue :(\\n\\n" 1>&2
-        usage 1
+        microservice_usage 1
     fi
 
     name="$1"
@@ -124,7 +136,7 @@ main() {
     slug="$(find_microservice_slug_by_name $name)"
     if [ -z "$slug" ] || [ "$slug" = "null" ]; then
         printf "Sorry! I can't find a '%s' microservice configuration :(\\n\\n" "$name" 1>&2
-        usage 1
+        microservice_usage 1
     fi
     shift
 

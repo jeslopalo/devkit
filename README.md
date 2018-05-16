@@ -17,7 +17,7 @@ If you want to install permanently then add ```$DEVKIT_HOME/bin``` to your ```$P
 Add to your ```packages.zsh```:
 
 ```sh
-zplug jeslopalo/devkit, from:github, use:"*", as:command
+zplug jeslopalo/devkit, from:github, use:"bin/*", as:command
 ```
 
 ## Configuring

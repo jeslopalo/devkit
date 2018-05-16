@@ -140,21 +140,21 @@ main() {
     fi
     shift
 
-    [ -n "$CLEAN" ] && {
+    [[ -n ${CLEAN:-} ]] && {
         clean "$slug"
     }
 
-    [ -n "$BUILD" ] && {
+    [[ -n ${BUILD:-} ]] && {
         build_parameters=($(find_microservice_build_parameters $name))
-        build_javaopts=($(find_microservice_build_javaopts "$name" "$JAVA_OPTS"))
+        build_javaopts=($(find_microservice_build_javaopts "$name" "${JAVA_OPTS:-}"))
 
         JAVA_OPTS="${build_javaopts[*]}";
 
         build "$slug" "${build_parameters[*]}"
     }
-    [ -n "$RUN" ] && {
+    [[ -n ${RUN:-} ]] && {
         run_arguments=($(find_microservice_run_arguments "$name" "$RUN_ARGUMENTS"))
-        run_javaopts=($(find_microservice_run_javaopts "$name" "$JAVA_OPTS"))
+        run_javaopts=($(find_microservice_run_javaopts "$name" "${JAVA_OPTS:-}"))
 
         if is_microservice_registerable_in_eureka "$name"; then
             eureka -u "$name"
@@ -164,7 +164,7 @@ main() {
         run "$slug" "${run_arguments[*]}"
     }
 
-    exit 0
+    exit "$?"
 }
 
 main "$@"

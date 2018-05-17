@@ -65,7 +65,7 @@ list_commands() {
     local exclusions=( "sourcedir" )
 
     printf "Hi, how can I help you today? These are the available commands:\\n\\n"
-    for command in $DEVKIT_BIN/*; do
+    for command in $DEVKIT_BIN/[^_]*; do
         command_name=$(basename $command)
 
         if [[ ! ${exclusions[*]} =~ $command_name ]]; then

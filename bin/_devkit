@@ -1,0 +1,15 @@
+#compdef _devkit devkit
+#@IgnoreInspection BashAddShebang
+
+_devkit() {
+
+    _arguments -C : \
+         '-v[Print out devkit version]' \
+         '-e[Edit config file]' \
+         '-c[Set config file location]:filename:_files' \
+         '-l[Print a list of available commands]' \
+         '-h[Print help message]' \
+         '*: :'
+}
+
+_devkit "$@"

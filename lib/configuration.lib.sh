@@ -36,7 +36,7 @@ find() {
 
 find_property() {
     local -r name="$1"
-    local -r default="$2"
+    local -r default="${2:-}"
 
     if [ -n "$name" ]; then
         value=$(find ".properties.\"$name\"")

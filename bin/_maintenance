@@ -1,0 +1,8 @@
+#compdef _maintenance maintenance
+#@IgnoreInspection BashAddShebang
+
+_maintenance() {
+    _arguments -C ''
+}
+
+_maintenance "$@"

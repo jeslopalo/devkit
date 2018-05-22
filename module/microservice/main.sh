@@ -13,13 +13,14 @@
 #+|   -b <microservice>         Build microservice
 #+|   -r <microservice>         Run microservice
 #+|   -a <key=value>            Run argument (it will be converted to --key=value)
-#+|   -q <query-name>|<query>   Query configuration by query-name or by jq's query
+#+|   -q <named-query>|<query>  Query configuration by named-query or by jq's query
 #+|   -h                        Print this help message
 #+|
-#+| QUERY NAMES
-#+|   all           Print microservices configuration in use
-#+|   names         Print every configured microservice's name
-#+|   ports         Print every configured microservice's port
+#+| NAMED QUERIES
+#+|   all               Print microservices configuration in use
+#+|   names             Print every configured microservice's name
+#+|   registerables     Print every configured microservice's name that is registerable in eureka server
+#+|   ports             Print every configured microservice's port
 #+|
 #+| EXAMPLES
 #+|   ms -cbr microservice1

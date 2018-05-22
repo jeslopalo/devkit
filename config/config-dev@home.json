@@ -76,7 +76,8 @@
             "spring.profiles.active": "dev,local",
             "server.port": 8761
           }
-        }
+        },
+	"eureka-registerable": false
       },
       {
         "name": "wallet",

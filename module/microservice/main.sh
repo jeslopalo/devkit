@@ -154,7 +154,7 @@ main() {
         build "$slug" "${build_parameters[*]}"
     }
     [[ -n ${RUN:-} ]] && {
-        run_arguments=($(find_microservice_run_arguments "$name" "$RUN_ARGUMENTS"))
+        run_arguments=($(find_microservice_run_arguments "$name" "${RUN_ARGUMENTS:-}"))
         run_javaopts=($(find_microservice_run_javaopts "$name" "${JAVA_OPTS:-}"))
 
         if is_microservice_registerable_in_eureka "$name"; then

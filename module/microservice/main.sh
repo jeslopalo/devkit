@@ -105,6 +105,11 @@ main() {
                 find_microservice_names_in_columns
                 exit $?
             ;;
+            registerables)
+                printf "\\n"
+                find_eureka_registerable_microservices_in_columns
+                exit $?
+            ;;
             ports)
                 printf "\\n"
                 find_microservice_ports_in_use

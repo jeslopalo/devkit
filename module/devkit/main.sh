@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 #=|
+#=| SYNOPSIS
+#>|   devkit [-h] [-v | -e | -c | -l]
+#=|
 #=| DESCRIPTION
 #%|   Devkit configuration tool
-#=|
+#+|
 #+| USAGE
 #+|   devkit [-velh]
 #+|
@@ -12,7 +15,7 @@
 #+|   -c          Set config file location
 #+|   -l          Print a list of available commands
 #+|   -h          Print this help message
-#=|
+#-|
 #-| AUTHORING
 #-|   author          @jeslopalo <Jesús López Alonso>
 #-|   year            2018
@@ -70,7 +73,7 @@ list_commands() {
         command_name=$(basename $command)
 
         if [[ ! ${exclusions[*]} =~ $command_name ]]; then
-            printf " ⭑ %-17s:  %s\\n" "$command_name" "$($command_name --usage-describe)"
+            printf " ⭑ %-17s:  %s\\n" "$command_name" "$($command_name --purpose)"
         fi
     done
 
@@ -79,6 +82,11 @@ list_commands() {
 
 main() {
     check_for_dependencies
+
+    if [[ "$#" -lt 1 ]]; then
+        printf "Sorry! I need something more to continue :(\\n\\nusage:%s\\n" "$(devkit --synopsis)" 1>&2
+        exit 1
+    fi
 
     while getopts ":velhc:" opt; do
         case "${opt}" in
@@ -99,28 +107,24 @@ main() {
                 exit $?
             ;;
             h)
-                usage
+                devkit --help
                 exit $?
             ;;
             \?)
-                printf "invalid option: %s\\n\\n" "$OPTARG" 1>&2
-                usage
+                printf "invalid option: %s\\n\\nusage:%s\\n" "$OPTARG" "$(devkit --synopsis)" 1>&2
                 exit 1
             ;;
             :)
-                printf "invalid option: -%s requires an argument\\n\\n" "$OPTARG" 1>&2
-                usage
+                printf "invalid option: -%s requires an argument\\n\\nusage:%s\\n" "$OPTARG" "$(devkit --synopsis)" 1>&2
                 exit 1
             ;;
             *)
-                printf "invalid option: %s\\n\\n" "${opt}" 1>&2
-                usage
+                printf "invalid option: %s\\n\\nusage:%s\\n" "${opt}" "$(devkit --synopsis)" 1>&2
                 exit 1
             ;;
         esac
     done
 
-    usage
     exit $?
 }
 

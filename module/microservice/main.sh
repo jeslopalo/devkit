@@ -1,13 +1,16 @@
 #!/usr/bin/env bash
 #=|
+#=| SYNOPSIS
+#>|   ms [-h] [-q <query|named-query>] [[-cbr [-a <arg=value>]] <service>]
+#=|
 #=| DESCRIPTION
 #%|   Utility to work with micrservices (now: git+gradle+springboot+eureka)
-#=|
+#+|
 #+| USAGE
-#+|    ms [-c] [-b] [-r [-a <run_argument=value>]] <microservice>
-#+|    ms [-q <query-name|query> ]
-#+|    ms [-h]
-#+|    ms <microservice>
+#+|   ms [-c] [-b] [-r [-a <run_argument=value>]] <microservice>
+#+|   ms [-q <named-query|query> ]
+#+|   ms [-h]
+#+|   ms <microservice>
 #+|
 #+| OPTIONS
 #+|   -c <microservice>         Clean microservice's previous build (ie. gradle clean)
@@ -29,7 +32,7 @@
 #+|   ms -r -a log=debug microservice1
 #+|   ms -q ports
 #+|   ms -q ".workspace"
-#=|
+#-|
 #-| AUTHORING
 #-|   author          @jeslopalo <Jesús López Alonso>
 #-|   year            2018
@@ -46,7 +49,7 @@ source $DEVKIT_MODULE/microservice/lib/microservices.lib.sh
 
 microservice_usage() {
     local -r exit_code=${1:-0}
-    usage
+    ms --help
 
     printf "\\nAVAILABLE SERVICES:\\n"
     find_microservice_names_in_columns
@@ -60,8 +63,8 @@ main() {
     assert_configuration_file_exists
 
     if [ "$#" = 0 ]; then
-        printf "Sorry! I need something more to continue :(\\n\\n" 1>&2
-        microservice_usage 1
+        printf "Sorry! I need something more to continue :(\\n\\nusage:%s\\n" "$(ms --synopsis)" 1>&2
+        exit 1
     fi
 
     local QUERY
@@ -73,23 +76,26 @@ main() {
 
     while getopts ":hcbra:q:" opt; do
         case "${opt}" in
-            h) microservice_usage 0;;
             c) CLEAN="--clean";;
             b) BUILD="--build";;
             r) RUN="--run";;
             a) RUN_ARGUMENTS="$RUN_ARGUMENTS $OPTARG";;
             q) QUERY="$OPTARG";;
+            h)
+                microservice_usage
+                exit $?
+            ;;
             \?)
-                printf "invalid option: %s\\n\\n" "$OPTARG" 1>&2
-                microservice_usage 1
+                printf "invalid option: %s\\n\\nusage:%s\\n" "$OPTARG" "$(ms --synopsis)" 1>&2
+                exit 1
             ;;
             :)
-                printf "invalid option: -%s requires an argument\\n\\n" "$OPTARG" 1>&2
-                microservice_usage 1
+                printf "invalid option: -%s requires an argument\\n\\nusage:%s\\n" "$OPTARG" "$(ms --synopsis)" 1>&2
+                exit 1
             ;;
             *)
-                printf "invalid option: %s\\n\\n" "${opt}" 1>&2
-                microservice_usage 1
+                printf "invalid option: %s\\n\\nusage:%s\\n" "${opt}" "$(ms --synopsis)" 1>&2
+                exit 1
             ;;
         esac
     done
@@ -121,19 +127,19 @@ main() {
         esac
     fi
 
-    if [ "$#" != 1 ]; then
-        printf "Sorry! I need a microservice name to continue :(\\n\\n" 1>&2
-        microservice_usage 1
+    if [[ "$#" != 1 ]]; then
+        printf "Sorry! I need a microservice name to continue :(\\n\\nusage:%s\\n" "$(ms --synopsis)" 1>&2
+        exit 1
     fi
 
     name="$1"
     if [[ -z $CLEAN ]] && [[ -z $BUILD ]] && [[ -z $RUN ]]; then
-    
+
         if exists_microservice_by_name "$name"; then
             find_microservice_by_name "$name"
             exit 0
         else
-            printf "Sorry! I can't find a '%s' microservice configuration :(\\n\\n" "$name" 1>&2
+            printf "Sorry! I can't find a '%s' microservice configuration :(\\n\\nusage:%s\\n" "$name" "$(ms --synopsis)" 1>&2
             exit 1
         fi
     fi
@@ -141,8 +147,8 @@ main() {
     slug="$(find_microservice_slug_by_name $name)"
     if [[ -z $slug ]] || [[ $slug = "null" ]]; then
 
-        printf "Sorry! I can't find a '%s' microservice configuration :(\\n\\n" "$name" 1>&2
-        microservice_usage 1
+        printf "Sorry! I can't find a '%s' microservice configuration :(\\n\\nusage:%s\\n" "$name" "$(ms --synopsis)" 1>&2
+        exit 1
     fi
     shift
 

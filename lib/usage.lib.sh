@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 
-#+|         mark 'usage' lines
-#%|         mark 'purpose' line
-#-|         mark 'authorship' line
-#[%+-=]|    mark 'man' lines
+#>|          mark 'synopsis' line
+#+|          mark 'usage' lines
+#%|          mark 'purpose' line
+#-|          mark 'authorship' line
+#[%+-=>]|    mark 'man' lines
 
 # inspired by https://stackoverflow.com/a/29579226
 extract_from_header() {
@@ -13,9 +14,12 @@ extract_from_header() {
     grep -e "$pattern" ${source_file} | sed -e "s/$pattern//g" -e "s/^ //" ;
 }
 
-usage() {
-    printf "\\n"
+help() {
     extract_from_header "^#+|" "${1:-${BASH_SOURCE[1]}}"
+}
+
+synopsis() {
+    extract_from_header "^#>|" "${1:-${BASH_SOURCE[1]}}"
 }
 
 purpose() {
@@ -27,17 +31,35 @@ authorship() {
 }
 
 manual() {
-    extract_from_header "^#[%+-=]|" "${1:-${BASH_SOURCE[1]}}"
+    extract_from_header "^#[%+-=>]|" "${1:-${BASH_SOURCE[1]}}"
 }
 
 #
-# Add --usage-describe option when it is sourced
+# Add usage options when it is sourced
 #
 if [[ $_ != $0 ]]; then
     for option in "$@"; do
-        if [[ ${option:-} = "--usage-describe" ]]; then
-                purpose "${BASH_SOURCE[1]}"
+        case ${option:-} in
+        (--manual)
+            manual "${BASH_SOURCE[1]}"
             exit 0
-        fi
+        ;;
+        (--purpose)
+            purpose "${BASH_SOURCE[1]}"
+            exit 0
+        ;;
+        (--synopsis)
+            synopsis "${BASH_SOURCE[1]}"
+            exit 0
+        ;;
+        (--authorship)
+            authorship "${BASH_SOURCE[1]}"
+            exit 0
+        ;;
+        (--help)
+            help "${BASH_SOURCE[1]}"
+            exit 0
+        ;;
+        esac
     done
 fi

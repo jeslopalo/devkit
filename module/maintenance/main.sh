@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 #=|
+#=| SYNOPSIS
+#>|   maintenance
+#=|
 #=| DESCRIPTION
 #%|   Clean IntelliJ (ie. metadata & cache folder) and execute clean (maven, gradle, ant) in every workspace project
 #-|

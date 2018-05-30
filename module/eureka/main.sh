@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 #=|
+#=| SYNOPSIS
+#>|   eureka [-h] [-r <services> [-e <services>]] [-u <services>]
+#=|
 #=| DESCRIPTION
 #%|   Utility to register services in eureka server
-#=|
+#+|
 #+| USAGE
 #+|   eureka [-h] [-r <services> [-e <services>]] [-u <services>]
 #+|
@@ -19,7 +22,7 @@
 #+|   eureka -u all
 #+|   eureka -u service1,service2
 #+|   eureka -r service1 -u service2
-#=|
+#-|
 #-| AUTHORING
 #-|   author          @jeslopalo <Jesús López Alonso>
 #-|   year            2018
@@ -35,7 +38,7 @@ source $DEVKIT_MODULE/eureka/lib/dependencies.lib.sh
 source $DEVKIT_MODULE/eureka/lib/eureka.lib.sh
 
 eureka_usage() {
-    usage
+    eureka --help
     printf "\\nAVAILABLE SERVICES\\n"
     find_eureka_registerable_microservices_in_columns
     exit 0
@@ -50,8 +53,7 @@ main() {
     check_for_dependencies
 
     if [ "$#" = 0 ]; then
-        printf "Sorry! I need something more to continue :(\\n\\n" 1>&2
-        eureka_usage
+        printf "Sorry! I need something more to continue :(\\n\\nusage:%s\\n" "$(eureka --synopsis)" 1>&2
         exit 1
     fi
 
@@ -73,18 +75,21 @@ main() {
                     IFS=', ' read -r -a unregister <<< "${OPTARG}"
                 fi
             ;;
-            h) eureka_usage;;
-            \?)
-                printf "invalid option: %s\\n\\n" "$OPTARG" 1>&2
+            h)
                 eureka_usage
+                exit $?
+            ;;
+            \?)
+                printf "invalid option: %s\\n\\nusage:%s\\n" "$OPTARG" "$(eureka --synopsis)" 1>&2
+                exit 1
             ;;
             :)
-                printf "invalid option: -%s requires an argument\\n\\n" "$OPTARG" 1>&2
-                eureka_usage
+                printf "invalid option: -%s requires an argument\\n\\nusage:%s\\n" "$OPTARG" "$(eureka --synopsis)" 1>&2
+                exit 1
             ;;
             *)
-                printf "invalid option: %s\\n\\n" "${opt}" 1>&2
-                eureka_usage
+                printf "invalid option: %s\\n\\nusage:%s\\n" "${opt}" "$(eureka --synopsis)" 1>&2
+                exit 1
             ;;
         esac
     done
@@ -93,8 +98,8 @@ main() {
 
     # obtiene el resto de parametros como nombres de servicios registrables
     if [ "$#" -gt 0 ]; then
-        printf "invalid option: %s\\n\\n" "$*" 1>&2
-        eureka_usage
+        printf "invalid option: %s\\n\\nusage:%s\\n" "$*" "$(eureka --synopsis)" 1>&2
+        exit 1
     fi
 
     # elimina los servicios excluidos de los servicios a registrar

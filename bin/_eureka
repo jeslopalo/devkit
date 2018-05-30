@@ -16,10 +16,13 @@ _eureka() {
         local commands=(
             "-r:Register services (comma-separated service names or all)"
             "-u:Unregister services (comma-separated service names or all)"
+        )
+        local options=(
             "-h:Show help message"
         )
 
         _describe -t commands 'select a command' commands && ret=0
+        _describe -t options 'option' options && ret=0
     ;;
     (service_lists)
         case $line[1] in

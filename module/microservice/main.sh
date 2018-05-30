@@ -172,7 +172,7 @@ main() {
         run "$slug" "${run_arguments[*]}"
     }
 
-    exit "$?"
+    exit 0
 }
 
 main "$@"

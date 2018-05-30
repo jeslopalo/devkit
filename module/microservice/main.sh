@@ -96,7 +96,7 @@ main() {
 
     shift $((OPTIND-1))
 
-    if [ -n "${QUERY:-}" ]; then
+    if [[ -n ${QUERY:-} ]]; then
         case "${QUERY}" in
             all)
                 find_with_colors ".microservices" | less -FRX
@@ -127,7 +127,8 @@ main() {
     fi
 
     name="$1"
-    if [ -z "$CLEAN" ] && [ -z "$BUILD" ] && [ -z "$RUN" ]; then
+    if [[ -z $CLEAN ]] && [[ -z $BUILD ]] && [[ -z $RUN ]]; then
+    
         if exists_microservice_by_name "$name"; then
             find_microservice_by_name "$name"
             exit 0
@@ -138,7 +139,8 @@ main() {
     fi
 
     slug="$(find_microservice_slug_by_name $name)"
-    if [ -z "$slug" ] || [ "$slug" = "null" ]; then
+    if [[ -z $slug ]] || [[ $slug = "null" ]]; then
+
         printf "Sorry! I can't find a '%s' microservice configuration :(\\n\\n" "$name" 1>&2
         microservice_usage 1
     fi
@@ -156,6 +158,7 @@ main() {
 
         build "$slug" "${build_parameters[*]}"
     }
+
     [[ -n ${RUN:-} ]] && {
         run_arguments=($(find_microservice_run_arguments "$name" "${RUN_ARGUMENTS:-}"))
         run_javaopts=($(find_microservice_run_javaopts "$name" "${JAVA_OPTS:-}"))

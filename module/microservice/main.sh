@@ -115,7 +115,7 @@ main() {
                 exit $?
             ;;
             *)
-                find_with_colors "$QUERY" | less -FRX
+                find_with_colors ".microservices$QUERY" | less -FRX
                 exit $?
             ;;
         esac

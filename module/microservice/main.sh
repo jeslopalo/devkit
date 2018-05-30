@@ -164,7 +164,9 @@ main() {
         run_javaopts=($(find_microservice_run_javaopts "$name" "${JAVA_OPTS:-}"))
 
         if is_microservice_registerable_in_eureka "$name"; then
-            eureka -u "$name"
+            if ! eureka -u "$name"; then
+                printf "\\nWARN: eureka server is not reachable and '%s' can't be unregistered!\\n" "$name"
+            fi
         fi
 
         JAVA_OPTS="${run_javaopts[*]}";

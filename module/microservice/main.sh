@@ -7,6 +7,7 @@
 #+|    ms [-c] [-b] [-r [-a <run_argument=value>]] <microservice>
 #+|    ms [-q <query-name|query> ]
 #+|    ms [-h]
+#+|    ms <microservice>
 #+|
 #+| OPTIONS
 #+|   -c <microservice>         Clean microservice's previous build (ie. gradle clean)
@@ -23,10 +24,11 @@
 #+|   ports             Print every configured microservice's port
 #+|
 #+| EXAMPLES
+#+|   ms microservice1
 #+|   ms -cbr microservice1
 #+|   ms -r -a log=debug microservice1
 #+|   ms -q ports
-#+|   ms -q ".microservices.workspace"
+#+|   ms -q ".workspace"
 #=|
 #-| AUTHORING
 #-|   author          @jeslopalo <Jesús López Alonso>

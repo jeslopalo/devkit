@@ -64,7 +64,8 @@ set_config_file() {
 list_commands() {
     local exclusions=( "sourcedir" )
 
-    printf "Hi, how can I help you today? These are the available commands:\\n\\n"
+    clr_blue clr_bold "$(cat $DEVKIT_MODULE/devkit/assets/me.txt)"
+    printf "\\nHi, how can I help you today? These are the available commands:\\n\\n"
     for command in $DEVKIT_BIN/[^_]*; do
         command_name=$(basename $command)
 

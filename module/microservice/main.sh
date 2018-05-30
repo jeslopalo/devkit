@@ -7,6 +7,7 @@
 #+|    ms [-c] [-b] [-r [-a <run_argument=value>]] <microservice>
 #+|    ms [-q <query-name|query> ]
 #+|    ms [-h]
+#+|    ms <microservice>
 #+|
 #+| OPTIONS
 #+|   -c <microservice>         Clean microservice's previous build (ie. gradle clean)
@@ -23,10 +24,11 @@
 #+|   ports             Print every configured microservice's port
 #+|
 #+| EXAMPLES
+#+|   ms microservice1
 #+|   ms -cbr microservice1
 #+|   ms -r -a log=debug microservice1
 #+|   ms -q ports
-#+|   ms -q ".microservices.workspace"
+#+|   ms -q ".workspace"
 #=|
 #-| AUTHORING
 #-|   author          @jeslopalo <Jesús López Alonso>
@@ -101,23 +103,19 @@ main() {
                 exit $?
             ;;
             names)
-                printf "\\n"
                 find_microservice_names_in_columns
                 exit $?
             ;;
             registerables)
-                printf "\\n"
                 find_eureka_registerable_microservices_in_columns
                 exit $?
             ;;
             ports)
-                printf "\\n"
                 find_microservice_ports_in_use
                 exit $?
             ;;
             *)
-                printf "\\n"
-                find_with_colors "$QUERY" | less -FRX
+                find_with_colors ".microservices$QUERY" | less -FRX
                 exit $?
             ;;
         esac
@@ -170,7 +168,7 @@ main() {
         run "$slug" "${run_arguments[*]}"
     }
 
-    exit "$?"
+    exit 0
 }
 
 main "$@"

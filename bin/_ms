@@ -1,0 +1,90 @@
+#compdef _ms ms
+#@IgnoreInspection BashAddShebang
+
+trace() {
+    local message="${@:--}"
+    local funcname="${funcstack[2]:-}"
+    printf "[%-20s]: w[1]=[%s] w[c-1]=[%s] w[c]=[%s] st=[%s] cur=[%s] curcontext=[%s]: %s\\n" \
+        "$funcname" "${words[1]}" "${words[CURRENT-1]}" "${words[CURRENT]}" "$state" "$cur" "$curcontext" "$message" \
+        >> ~/temporal/completion.log
+}
+
+_ms() {
+    local curcontext="$curcontext" state line _opts ret=1
+
+    _arguments -C \
+      '1: :->cmds' \
+      '*:: :->args' && ret=0
+
+    case $state in
+    cmds)
+        _values 'service commands' \
+            "-c[Clean service workspace]" \
+            "-b[Build service]" \
+            "-r[Run service]" \
+            "(-cb -bc)"{-cb,-bc}"[Clean & Build service]" \
+            "(-br -rb)"{-br,-rb}"[Build & Run service]" \
+            "(-cbr -crb -bcr -brc -rbc -rcb)"{-cbr,-crb,-bcr,-brc,-rbc,-rcb}"[Clean, Build & Run service]" && ret=0
+
+        _values 'other options' \
+            "-h[Show help message]" \
+            "-q[Query services configuration file]" && ret=0
+
+        __services && ret=0
+    ;;
+    args)
+        case $line[1] in
+            -h) ret=0 ;;
+            -q)
+                if [[ $line[1] = $words[CURRENT-1] ]]; then
+                    _alternative \
+                        'named-query:named queries:(all names registerables ports)' \
+                        'query:: :' && ret=0
+                fi
+            ;;
+            -*r*) __ms_run_arguments && ret=0 ;;
+            -*)
+                if [[ $line[1] = $words[CURRENT-1] ]]; then
+                    __services && ret=0
+                fi
+            ;;
+            *) ret=0 ;;
+        esac
+    ;;
+    esac
+
+    return $ret
+}
+
+__ms_run_arguments() {
+    local curcontext="$curcontext" state line
+    local -i ret=1
+    typeset -A opt_args
+
+    # if -a option is not there
+    if [[ ${words[(Ie)-a]} -gt ${#words} ]]; then
+        _alternative \
+            'argument:Run arguments:(-a)' \
+            'service:select service:__services' && ret=0
+    # if -a is the n-2 option (ie. there is a previous argument option with value)
+    elif [[ ${words[(Ie)-a]} -eq $((${#words} - 2)) ]]; then
+        _alternative \
+            'argument:Run arguments:(-a)' \
+            'service:select service:__services' && ret=0
+    else
+        ret=0
+    fi
+
+    return $ret
+}
+
+__services() {
+    local expl
+    declare -a services
+
+    services=( $(ms -q names) )
+
+    _wanted services expl 'services' compadd $* - $services
+}
+
+_ms "@"

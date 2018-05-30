@@ -1,0 +1,85 @@
+#compdef _eureka eureka
+#@IgnoreInspection BashAddShebang
+
+_eureka() {
+    local curcontext="$curcontext" state line
+    integer ret=1
+    typeset -A opt_args
+
+    _arguments -C \
+      '1:cmd:->cmds' \
+      '2:services:->service_lists' \
+      '*:: :->args' && ret=0
+
+    case "$state" in
+    (cmds)
+        local commands=(
+            "-r:Register services (comma-separated service names or all)"
+            "-u:Unregister services (comma-separated service names or all)"
+        )
+        local options=(
+            "-h:Show help message"
+        )
+
+        _describe -t commands 'select a command' commands && ret=0
+        _describe -t options 'option' options && ret=0
+    ;;
+    (service_lists)
+        case $line[1] in
+        (-r|-u)
+            __eureka_services && ret=0
+        ;;
+        esac
+    ;;
+    (*)
+        # if -r option is present
+        if [[ ${line[(ie)-r]} -le ${#line} ]]; then
+
+            # if -e option is not there
+            if [[ ${line[(ie)-e]} -gt ${#line} ]]; then
+                _describe -t register-options 'select an option' \
+                    "( '-e:Exclude services from being registered (comma-separated service names or all)' )" && ret=0;
+
+            #if -e is the current option
+            elif [[ ${line[(ie)-e]} -eq $((${#line} - 1)) ]]; then
+                __eureka_exclusions && ret=0
+            fi
+        fi
+    ;;
+    esac
+
+    return 1
+}
+
+trace() {
+    local message="${@:--}"
+    local funcname="${funcstack[2]:-}"
+    printf "[%-20s]: w[1]=[%s] w[c-1]=[%s] w[c]=[%s] st=[%s] cur=[%s] curcontext=[%s]: %s\\n" \
+        "$funcname" "${words[1]}" "${words[CURRENT-1]}" "${words[CURRENT]}" "$state" "$cur" "$curcontext" "$message" \
+        >> ~/temporal/completion.log
+}
+
+__eureka_services() {
+    local curcontext="$curcontext"
+    integer ret=1
+
+    _alternative \
+        'all: :(all)' \
+        'service:select services: __registerable_services' && ret=0
+
+    return $ret
+}
+
+__eureka_exclusions() {
+    local curcontext="$curcontext"
+    integer ret=1
+
+    _alternative \
+        'service:select services to be excluded: __registerable_services' && ret=0
+
+    return $ret
+}
+
+__registerable_services() {
+    _values -s , 'services' $(ms -q registerables)
+}

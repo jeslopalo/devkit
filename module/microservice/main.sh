@@ -133,7 +133,7 @@ main() {
     fi
 
     name="$1"
-    if [[ -z $CLEAN ]] && [[ -z $BUILD ]] && [[ -z $RUN ]]; then
+    if [[ -z ${CLEAN:-} ]] && [[ -z ${BUILD:-} ]] && [[ -z ${RUN:-} ]]; then
 
         if exists_microservice_by_name "$name"; then
             find_microservice_by_name "$name"

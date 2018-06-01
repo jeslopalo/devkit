@@ -26,25 +26,25 @@ source $DEVKIT_LIB/error.lib.sh
 enable_traps --path-prefix=$DEVKIT_HOME
 
 source $DEVKIT_LIB/usage.lib.sh
+source $DEVKIT_LIB/color.lib.sh
+source $DEVKIT_LIB/log.lib.sh
 source $DEVKIT_LIB/configuration.lib.sh
 source $DEVKIT_MODULE/devkit/lib/dependencies.lib.sh
-source $DEVKIT_THIRDPARTY/github.com/mercuriev/bash_colors/bash_colors.sh
+
 
 version() {
-    clr_bold clr_blue "$(cat $DEVKIT_MODULE/devkit/assets/banner.txt)" -n
-    clr_reset " "
 
-    printf "/* (%d) Devkit v%s */\\n\\n" "$(date +%Y)" "$DEVKIT_VERSION"
-
-    printf "// config version:\\tv%d\\n" "$(find_version)"
-    printf "// config file:\\t\\t%s\\n" "$DEVKIT_CONFIG_FILE"
-    printf "// author:\\t\\t@jeslopalo\\n"
+    printf "$bold%s$reset\\n" "$(cat $DEVKIT_MODULE/devkit/assets/banner.txt)"
+    printf "$white/* (%d) Devkit v%s */$reset\\n\\n" "$(date +%Y)" "$DEVKIT_VERSION"
+    printf "$white// config version:$reset\\t${cyan}v%d$reset\\n" "$(find_version)"
+    printf "$white// config file:$reset\\t\\t${cyan}%s$reset\\n" "$DEVKIT_CONFIG_FILE"
+    printf "$white// author:$reset\\t\\t$cyan@jeslopalo$reset\\n"
 
     return 0
 }
 
 edit_config() {
-    printf "Open '%s' config file in editor...\\n" "$DEVKIT_CONFIG_FILE"
+    log::info "Open '$DEVKIT_CONFIG_FILE' config file in editor..."
 
     ${FCEDIT:-${VISUAL:-${EDITOR:-vi}}} "$DEVKIT_CONFIG_FILE";
     return $?;
@@ -56,10 +56,10 @@ set_config_file() {
     if [[ -r $config_file ]]; then
         echo "$config_file" > "$DEVKIT_CUSTOM_CONFIG_DESCRIPTOR"
         export DEVKIT_CONFIG_FILE="$config_file"
-        printf "Set '%s' as devkit configuration file\\n" "$config_file"
+        log::info "Set '$config_file' as devkit configuration file"
         return 0
     else
-        printf "error: '%s' cannot be opened or it does not exist\\n" "$config_file"
+        log::error "'$config_file' cannot be opened or it does not exist"
         return 1
     fi
 }
@@ -67,13 +67,13 @@ set_config_file() {
 list_commands() {
     local exclusions=( "sourcedir" )
 
-    clr_blue clr_bold "$(cat $DEVKIT_MODULE/devkit/assets/me.txt)"
+    printf "$bblue$bold%s$reset\\n" "$(cat $DEVKIT_MODULE/devkit/assets/me.txt)"
     printf "\\nHi, how can I help you today? These are the available commands:\\n\\n"
     for command in $DEVKIT_BIN/[^_]*; do
         command_name=$(basename $command)
 
         if [[ ! ${exclusions[*]} =~ $command_name ]]; then
-            printf " ⭑ %-17s:  %s\\n" "$command_name" "$($command_name --purpose)"
+            printf " ➜ %-17s:  %s\\n" "$command_name" "$($command_name --purpose)"
         fi
     done
 
@@ -84,7 +84,8 @@ main() {
     check_for_dependencies
 
     if [[ "$#" -lt 1 ]]; then
-        printf "Sorry! I need something more to continue :(\\n\\nusage:%s\\n" "$(devkit --synopsis)" 1>&2
+        log::warn "Sorry! I need something more to continue :("
+        log::usage "$(devkit --synopsis)"
         exit 1
     fi
 
@@ -110,16 +111,14 @@ main() {
                 devkit --help
                 exit $?
             ;;
-            \?)
-                printf "invalid option: %s\\n\\nusage:%s\\n" "$OPTARG" "$(devkit --synopsis)" 1>&2
-                exit 1
-            ;;
             :)
-                printf "invalid option: -%s requires an argument\\n\\nusage:%s\\n" "$OPTARG" "$(devkit --synopsis)" 1>&2
+                log::error "invalid option: -$OPTARG requires an argument"
+                log::usage "$(devkit --synopsis)"
                 exit 1
             ;;
-            *)
-                printf "invalid option: %s\\n\\nusage:%s\\n" "${opt}" "$(devkit --synopsis)" 1>&2
+            \?|*)
+                log::error "invalid option: $OPTARG"
+                log::usage "$(devkit --synopsis)"
                 exit 1
             ;;
         esac

@@ -24,5 +24,5 @@ log::error() {
 
 log::warn() {
     local -r message="${1:-}"
-    [[ -n $message ]] && printf "${warn_color}%s$reset\\n" "$(__trim $message)"
+    [[ -n $message ]] && printf "${warn_color}%s$reset\\n" "$(__trim $message)"  1>&2
 }

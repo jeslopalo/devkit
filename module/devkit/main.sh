@@ -109,7 +109,7 @@ main() {
             ;;
             h)
                 devkit --help
-                exit $?
+                exit 0
             ;;
             :)
                 log::error "invalid option: -$OPTARG requires an argument"

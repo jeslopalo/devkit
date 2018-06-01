@@ -43,7 +43,6 @@ eureka_usage() {
     eureka --help
     printf "\\nAVAILABLE SERVICES\\n"
     find_eureka_registerable_microservices_in_columns
-    exit 0
 }
 
 main() {

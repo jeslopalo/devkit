@@ -43,18 +43,16 @@ source $DEVKIT_LIB/error.lib.sh
 enable_traps --path-prefix=$DEVKIT_HOME
 
 source $DEVKIT_LIB/usage.lib.sh
+source $DEVKIT_LIB/color.lib.sh
+source $DEVKIT_LIB/log.lib.sh
 source $DEVKIT_LIB/configuration.lib.sh
 source $DEVKIT_MODULE/microservice/lib/dependencies.lib.sh
 source $DEVKIT_MODULE/microservice/lib/microservices.lib.sh
 
 microservice_usage() {
-    local -r exit_code=${1:-0}
     ms --help
-
     printf "\\nAVAILABLE SERVICES:\\n"
     find_microservice_names_in_columns
-
-    exit ${exit_code}
 }
 
 main() {

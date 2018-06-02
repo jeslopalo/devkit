@@ -43,18 +43,16 @@ source $DEVKIT_LIB/error.lib.sh
 enable_traps --path-prefix=$DEVKIT_HOME
 
 source $DEVKIT_LIB/usage.lib.sh
+source $DEVKIT_LIB/color.lib.sh
+source $DEVKIT_LIB/log.lib.sh
 source $DEVKIT_LIB/configuration.lib.sh
 source $DEVKIT_MODULE/microservice/lib/dependencies.lib.sh
 source $DEVKIT_MODULE/microservice/lib/microservices.lib.sh
 
 microservice_usage() {
-    local -r exit_code=${1:-0}
     ms --help
-
     printf "\\nAVAILABLE SERVICES:\\n"
     find_microservice_names_in_columns
-
-    exit ${exit_code}
 }
 
 main() {
@@ -63,7 +61,8 @@ main() {
     assert_configuration_file_exists
 
     if [ "$#" = 0 ]; then
-        printf "Sorry! I need something more to continue :(\\n\\nusage:%s\\n" "$(ms --synopsis)" 1>&2
+        log::warn "Sorry! I need something more to continue :("
+        log::usage "$(ms --synopsis)"
         exit 1
     fi
 
@@ -83,18 +82,16 @@ main() {
             q) QUERY="$OPTARG";;
             h)
                 microservice_usage
-                exit $?
-            ;;
-            \?)
-                printf "invalid option: %s\\n\\nusage:%s\\n" "$OPTARG" "$(ms --synopsis)" 1>&2
-                exit 1
+                exit 0
             ;;
             :)
-                printf "invalid option: -%s requires an argument\\n\\nusage:%s\\n" "$OPTARG" "$(ms --synopsis)" 1>&2
+                log::error "invalid option: -$OPTARG requires an argument"
+                log::usage "$(ms --synopsis)"
                 exit 1
             ;;
-            *)
-                printf "invalid option: %s\\n\\nusage:%s\\n" "${opt}" "$(ms --synopsis)" 1>&2
+            \?|*)
+                log::error "invalid option: $OPTARG"
+                log::usage "$(ms --synopsis)"
                 exit 1
             ;;
         esac
@@ -128,7 +125,8 @@ main() {
     fi
 
     if [[ "$#" != 1 ]]; then
-        printf "Sorry! I need a microservice name to continue :(\\n\\nusage:%s\\n" "$(ms --synopsis)" 1>&2
+        log::warn "Sorry! I need a microservice name to continue :("
+        log::usage "$(ms --synopsis)"
         exit 1
     fi
 
@@ -139,7 +137,7 @@ main() {
             find_microservice_by_name "$name"
             exit 0
         else
-            printf "Sorry! I can't find a '%s' microservice configuration :(\\n\\nusage:%s\\n" "$name" "$(ms --synopsis)" 1>&2
+            log::error "Sorry! I can't find a '$name' microservice configuration :("
             exit 1
         fi
     fi
@@ -147,7 +145,7 @@ main() {
     slug="$(find_microservice_slug_by_name $name)"
     if [[ -z $slug ]] || [[ $slug = "null" ]]; then
 
-        printf "Sorry! I can't find a '%s' microservice configuration :(\\n\\nusage:%s\\n" "$name" "$(ms --synopsis)" 1>&2
+        log::error "Sorry! I can't find a '$name' slug in microservice configuration :("
         exit 1
     fi
     shift
@@ -171,7 +169,9 @@ main() {
 
         if is_microservice_registerable_in_eureka "$name"; then
             if ! eureka -u "$name"; then
-                printf "\\nWARN: eureka server is not reachable and '%s' can't be unregistered!\\n" "$name"
+                #TODO include in log::warn messsage
+                printf "\\n"
+                log::warn "${yellow}WARN:$reset eureka server is not reachable and '$name' can't be unregistered!"
             fi
         fi
 

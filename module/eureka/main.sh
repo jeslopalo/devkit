@@ -33,6 +33,8 @@ source $DEVKIT_LIB/error.lib.sh
 enable_traps --path-prefix=$DEVKIT_HOME
 
 source $DEVKIT_LIB/usage.lib.sh
+source $DEVKIT_LIB/color.lib.sh
+source $DEVKIT_LIB/log.lib.sh
 source $DEVKIT_LIB/configuration.lib.sh
 source $DEVKIT_MODULE/eureka/lib/dependencies.lib.sh
 source $DEVKIT_MODULE/eureka/lib/eureka.lib.sh
@@ -41,7 +43,6 @@ eureka_usage() {
     eureka --help
     printf "\\nAVAILABLE SERVICES\\n"
     find_eureka_registerable_microservices_in_columns
-    exit 0
 }
 
 main() {
@@ -53,11 +54,11 @@ main() {
     check_for_dependencies
 
     if [ "$#" = 0 ]; then
-        printf "Sorry! I need something more to continue :(\\n\\nusage:%s\\n" "$(eureka --synopsis)" 1>&2
+        log::warn "Sorry! I need something more to continue :("
+        log::usage "$(eureka --synopsis)"
         exit 1
     fi
 
-    # obtiene las opciones de ejecución
     while getopts ":he:r:u:" opt; do
         case "${opt}" in
             e) IFS=', ' read -r -a exclusions <<< "${OPTARG}";;
@@ -77,18 +78,16 @@ main() {
             ;;
             h)
                 eureka_usage
-                exit $?
-            ;;
-            \?)
-                printf "invalid option: %s\\n\\nusage:%s\\n" "$OPTARG" "$(eureka --synopsis)" 1>&2
-                exit 1
+                exit 0
             ;;
             :)
-                printf "invalid option: -%s requires an argument\\n\\nusage:%s\\n" "$OPTARG" "$(eureka --synopsis)" 1>&2
+                log::error "invalid option: -$OPTARG requires an argument"
+                log::usage "$(eureka --synopsis)"
                 exit 1
             ;;
-            *)
-                printf "invalid option: %s\\n\\nusage:%s\\n" "${opt}" "$(eureka --synopsis)" 1>&2
+            \?|*)
+                log::error "invalid option: $OPTARG"
+                log::usage "$(eureka --synopsis)"
                 exit 1
             ;;
         esac
@@ -96,28 +95,29 @@ main() {
 
     shift $((OPTIND-1))
 
-    # obtiene el resto de parametros como nombres de servicios registrables
+    # It's an error if there are more parameters
     if [ "$#" -gt 0 ]; then
-        printf "invalid option: %s\\n\\nusage:%s\\n" "$*" "$(eureka --synopsis)" 1>&2
+        log::error "invalid option: $*"
+        log::usage "$(eureka --synopsis)"
         exit 1
     fi
 
-    # elimina los servicios excluidos de los servicios a registrar
+    # exclude services to be registered
     for exclusion in "${exclusions[@]:-}"; do
         if [[ -n ${exclusion:-} ]]; then
-            printf "Excluding service from being registered in eureka: %s\\n" "${exclusion}"
+            log::info "Excluding service from being registered in eureka: ${exclusion}"
 
             # TODO: That removes prefixes matching $exclusion from the elements, not necessarily whole elements.
             register=( ${register[@]/$exclusion/} )
         fi
     done
 
-    # la lista de servicios registrables no puede estar vacia
+    # the list of services to be registered must not be empty
     if [ "${#register[@]}" != 0 ]; then
         register_services ${register[*]}
     fi
 
-    # la lista de servicios desregistrables no puede estar vacia
+    # the list of services to be unregistered must not be empty
     if [ "${#unregister[@]}" != 0 ]; then
         unregister_services ${unregister[*]}
     fi

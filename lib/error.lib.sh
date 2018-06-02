@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 source $DEVKIT_BIN/sourcedir
-source $DEVKIT_THIRDPARTY/github.com/mercuriev/bash_colors/bash_colors.sh
+source $DEVKIT_LIB/color.lib.sh
 
 # minimal information: invocation, file & lineno
 declare -r error_info_min_elements=3
@@ -38,7 +38,6 @@ exit_code() {
 }
 
 trap_handler() {
-
     local -r last_error="${1:-13}"
     local -r last_command="${2:-$BASH_COMMAND}"
 
@@ -46,15 +45,10 @@ trap_handler() {
 
     (( ${last_error} <= 1 )) && exit $last_error;
 
-    clr_red clr_reverse clr_bold "\n $(exit_code $last_error) " -n
-    clr_reset " (code: $last_error) " -n
-
+    printf "\\n$red$reverse$bold %s $reset$bwhite (code: %s) " "$(exit_code $last_error)" "$last_error"
     if [[ $last_command != ^exit\ [0-9]+$ ]]; then
-        clr_reset ": while trying to run " -n
-        clr_brown "$last_command" -n
-        clr_reset "!" -n
+        printf ": while trying to run $yellow%s$reset!\\n" "$last_command"
     fi
-    printf "\\n\\n"
 
     local frame=0
     local argv_offset=0
@@ -107,15 +101,11 @@ print_line(){
             file=${file#$path_prefix/}
         fi
 
-        clr_reset "  at " -n
-        clr_bold  "$invocation()" -n
+        printf "${reset}  at $bold%s()$reset" "$invocation"
         if [[ ${separator} = '--' ]] && [[ ${command} != "trap_handler" ]]; then
-            clr_reset " invoking " -n
-            clr_brown " $command(${arguments[@]})" -n
+            printf "$reset invoking $yellow%s(%s)$reset" "$command" "${arguments[@]}"
         fi
-        clr_reset " [" -n
-        clr_underscore "$file:$lineno" -n
-        clr_reset "]"
+        printf "$reset $white[$underline%s:%s$remove_underline]$reset\\n" "$file" "$lineno"
     fi
 }
 

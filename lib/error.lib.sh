@@ -6,6 +6,14 @@ source $DEVKIT_LIB/color.lib.sh
 # minimal information: invocation, file & lineno
 declare -r error_info_min_elements=3
 
+# colors
+declare -r clr_exit_code=$bred$reverse$bold
+declare -r clr_text=$bwhite
+declare -r clr_code=$bblue
+declare -r clr_code_args=$blue
+declare -r clr_function=
+declare -r clr_line=$white
+
 exit_code() {
   local sig_name code="$1"
 
@@ -18,7 +26,6 @@ exit_code() {
     126) sig_name=CANNOT_INVOKE ;;
     # command not found (ex : source script_not_existing)
     127) sig_name=COMMAND_NOT_FOUND ;;
-
     # Fatal error signal "n" (128 + n)
     129) sig_name=HUP ;;
     130) sig_name=INT ;; # Script terminated by Control-C
@@ -45,9 +52,9 @@ trap_handler() {
 
     (( ${last_error} <= 1 )) && exit $last_error;
 
-    printf "\\n$red$reverse$bold %s $reset$bwhite (code: %s) " "$(exit_code $last_error)" "$last_error"
+    printf "\\n$clr_exit_code %s $reset$clr_text (code: %s)" "$(exit_code $last_error)" "$last_error"
     if [[ $last_command != ^exit\ [0-9]+$ ]]; then
-        printf ": while trying to run $yellow%s$reset!\\n" "$last_command"
+        printf ": while trying to run $clr_code%s$reset!\\n" "$last_command"
     fi
 
     local frame=0
@@ -101,11 +108,11 @@ print_line(){
             file=${file#$path_prefix/}
         fi
 
-        printf "${reset}  at $bold%s()$reset" "$invocation"
+        printf "${reset}  at $bold$clr_function%s()$reset" "$invocation"
         if [[ ${separator} = '--' ]] && [[ ${command} != "trap_handler" ]]; then
-            printf "$reset invoking $yellow%s(%s)$reset" "$command" "${arguments[@]}"
+            printf "$reset invoking $clr_code%s($clr_code_args%s$reset$clr_code)$reset" "$command" "${arguments[@]}"
         fi
-        printf "$reset $white[$underline%s:%s$remove_underline]$reset\\n" "$file" "$lineno"
+        printf "$reset $clr_line[$underline%s:%s$remove_underline]$reset\\n" "$file" "$lineno"
     fi
 }
 

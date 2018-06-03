@@ -124,7 +124,9 @@ main() {
         esac
     done
 
-    exit $?
+    log::warn "Sorry! I need something more to continue :("
+    log::usage "$(devkit --synopsis)"
+    exit 1
 }
 
 main "$@"

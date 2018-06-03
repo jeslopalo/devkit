@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #=|
 #=| SYNOPSIS
-#>|   devkit [-h] [-v | -e | -c | -l]
+#>|   devkit [-h] [-v | -e | -c | -l | -t]
 #=|
 #=| DESCRIPTION
 #%|   Devkit configuration tool
@@ -14,6 +14,7 @@
 #+|   -e          Edit config file
 #+|   -c          Set config file location
 #+|   -l          Print a list of available commands
+#+|   -t          Print a color test
 #+|   -h          Print this help message
 #-|
 #-| AUTHORING
@@ -80,6 +81,25 @@ list_commands() {
     return 0
 }
 
+test_colors() {
+    echo "$bg_bgreen$black colors everywhere! $reset"
+
+    black black-
+    red red-
+    green green-
+    yellow yellow-
+    blue blue-
+    purple purple-
+    cyan cyan-
+    white "white\\n"
+
+    color::test
+#    color::test "regular"
+#    color::test "background"
+
+    return 0
+}
+
 main() {
     check_for_dependencies
 
@@ -89,7 +109,7 @@ main() {
         exit 1
     fi
 
-    while getopts ":velhc:" opt; do
+    while getopts ":velhtc:" opt; do
         case "${opt}" in
             v)
                 version
@@ -105,6 +125,10 @@ main() {
             ;;
             l)
                 list_commands
+                exit $?
+            ;;
+            t)
+                test_colors
                 exit $?
             ;;
             h)

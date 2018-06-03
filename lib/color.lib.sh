@@ -1,149 +1,140 @@
 #!/usr/bin/env bash
 
-# Use colors, but only if connected to a terminal, and that terminal supports them.
-tput=$(which tput)
-if [[ -n "$tput" ]]; then
-    ncolors=$(tput colors)
-fi
+declare tput=$(which tput)
+declare -i terminal=$(test -t 1)
+declare -i with_colors
 
-if [[ -t 1 ]] && [[ -n "$ncolors" ]] && [[ "$ncolors" -ge 8 ]]; then
+color::tput() {
+    local -r args="${@:-sgr0}"
+    local -i ncolors=0
 
-    #Regular
-    black="$(tput setaf 0)"
-    red="$(tput setaf 1)"
-    green="$(tput setaf 2)"
-    yellow="$(tput setaf 3)"
-    blue="$(tput setaf 4)"
-    purple="$(tput setaf 5)"
-    cyan="$(tput setaf 6)"
-    white="$(tput setaf 7)"
+    # Use colors, but only if connected to a terminal, and that terminal supports them.
+    if [[ -z $with_colors ]]; then
+        if [[ -n "$tput" ]]; then
+            ncolors=$(tput colors)
+        fi
 
-    #Bright
-    bblack="$(tput setaf 8)"
-    bred="$(tput setaf 9)"
-    bgreen="$(tput setaf 10)"
-    byellow="$(tput setaf 11)"
-    bblue="$(tput setaf 12)"
-    bpurple="$(tput setaf 13)"
-    bcyan="$(tput setaf 14)"
-    bwhite="$(tput setaf 15)"
+        [[ $terminal ]] && [[ -n ${ncolors:-} ]] && [[ $ncolors -ge 8 ]] && with_colors=1 || with_colors=0
+    fi
 
-    #Background
-    bg_black="$(tput setab 0)"
-    bg_red="$(tput setab 1)"
-    bg_green="$(tput setab 2)"
-    bg_yellow="$(tput setab 3)"
-    bg_blue="$(tput setab 4)"
-    bg_purple="$(tput setab 5)"
-    bg_cyan="$(tput setab 6)"
-    bg_white="$(tput setab 7)"
+    if [[ $with_colors = 1 ]]; then $tput ${args[@]}; fi
+}
 
-    #Brightackground
-    bg_bblack="$(tput setab 8)"
-    bg_bred="$(tput setab 9)"
-    bg_bgreen="$(tput setab 10)"
-    bg_byellow="$(tput setab 11)"
-    bg_bblue="$(tput setab 12)"
-    bg_bpurple="$(tput setab 13)"
-    bg_bcyan="$(tput setab 14)"
-    bg_bwhite="$(tput setab 15)"
+color::test() {
+    local -ri ncolors=$(color::tput colors)
 
-    reset="$(tput sgr0)"
-    bold="$(tput bold)"
-    underline="$(tput smul)"
-    remove_underline="$(tput rmul)"
-    blink="$(tput blink)"
-    reverse="$(tput rev)"
-else
+    printf "Printing %d colors...\\n" "$ncolors"
 
-    #Regular
-    black=""
-    red=""
-    green=""
-    yellow=""
-    blue=""
-    purple=""
-    cyan=""
-    white=""
+    for((c=0; c < $ncolors; c++)); do
+        printf "%s %-3d $reset%s %-3d $reset" "$(color::regular $c)" "$c" "$(color::background $c)" "$c"
 
-    #Bright
-    bblack=""
-    bred=""
-    bgreen=""
-    byellow=""
-    bblue=""
-    bpurple=""
-    bcyan=""
-    bwhite=""
+        if (( c == 7 )); then
+            printf "$reset\\n"
+        fi
 
-    #Background
-    bg_black=""
-    bg_red=""
-    bg_green=""
-    bg_yellow=""
-    bg_blue=""
-    bg_purple=""
-    bg_cyan=""
-    bg_white=""
+        if (( c == 15 )) || (( c > 15 )) && (( (c-15) % 6 == 0 )); then
+            printf "$reset\\n"
+        fi
+    done
+    printf "$reset\\n"
+}
 
-    #Brightackground
-    bg_bblack=""
-    bg_bred=""
-    bg_bgreen=""
-    bg_byellow=""
-    bg_bblue=""
-    bg_bpurple=""
-    bg_bcyan=""
-    bg_bwhite=""
+color::test2() {
+    local -r type="${1:-regular}"
+    local -ri ncolors=$(color::tput colors)
 
-    reset=""
-    bold=""
-    underline=""
-    remove_underline=""
-    blink=""
-    reverse=""
-fi
+    printf "Printing %d colors...\\n" "$ncolors"
+    for((c=0; c < $ncolors; c++)); do
+        printf "%s %-3d $reset" "$(color::$type $c)" "$c"
 
-error_color="$bwhite$bold"
-warn_color="$white$bold"
+        if (( c == 7 )); then
+            printf "$reset\\n"
+        fi
+
+        if (( c == 15 )) || (( c > 15 )) && (( (c-15) % 6 == 0 )); then
+            printf "$reset\\n"
+        fi
+    done
+    printf "$reset\\n"
+}
+
+color::regular() { color::tput setaf "${1:-7}"; }
+color::background() { color::tput setab "${1:-7}"; }
+color::reset() { color::tput sgr0; }
+color::bold() { color::tput bold; }
+color::underline() { color::tput smul; }
+color::nounderline() { color::tput rmul; }
+color::reverse() { color::tput rev; }
 
 color::println() {
-printf "$@"
     local -r color="${1:-}"
     shift
     local -r message="$@"
-
-    printf "$color%s$reset\\n" "$message"
-}
-
-red() {
-    color::println $red "$@"
-}
-
-green() {
-    color::println $green "$@"
-}
-
-blue() {
-    color::println $blue "$@"
-}
-
-yellow() {
-    color::println $yellow "$@"
-}
-
-purple() {
-    color::println $purple "$@"
-}
-
-cyan() {
-    color::println $cyan "$@"
-}
-
-white() {
-    color::println $white "$@"
+    printf "${color}${message}${reset}"
 }
 
 strip_color_codes() {
     perl -pe 's/\e\[?.*?[\@-~]//g' $content
 }
+
+## COLORS
+
+black()  { color::println $black  "$@"; }
+grey()   { color::println $bblack "$@"; }
+red()    { color::println $red    "$@"; }
+green()  { color::println $green  "$@"; }
+blue()   { color::println $blue   "$@"; }
+yellow() { color::println $yellow "$@"; }
+purple() { color::println $purple "$@"; }
+cyan()   { color::println $cyan   "$@"; }
+white()  { color::println $white  "$@"; }
+
+#Regular
+black="$(color::regular 0)"
+red="$(color::regular 1)"
+green="$(color::regular 2)"
+yellow="$(color::regular 3)"
+blue="$(color::regular 4)"
+purple="$(color::regular 5)"
+cyan="$(color::regular 6)"
+white="$(color::regular 7)"
+
+#Bright
+bblack="$(color::regular 8)"
+bred="$(color::regular 9)"
+bgreen="$(color::regular 10)"
+byellow="$(color::regular 11)"
+bblue="$(color::regular 12)"
+bpurple="$(color::regular 13)"
+bcyan="$(color::regular 14)"
+bwhite="$(color::regular 15)"
+
+#Background
+bg_black="$(color::background 0)"
+bg_red="$(color::background 1)"
+bg_green="$(color::background 2)"
+bg_yellow="$(color::background 3)"
+bg_blue="$(color::background 4)"
+bg_purple="$(color::background 5)"
+bg_cyan="$(color::background 6)"
+bg_white="$(color::background 7)"
+
+#Brightackground
+bg_bblack="$(color::background 8)"
+bg_bred="$(color::background 9)"
+bg_bgreen="$(color::background 10)"
+bg_byellow="$(color::background 11)"
+bg_bblue="$(color::background 12)"
+bg_bpurple="$(color::background 13)"
+bg_bcyan="$(color::background 14)"
+bg_bwhite="$(color::background 15)"
+
+reset="$(color::reset)"
+bold="$(color::bold)"
+underline="$(color::underline)"
+remove_underline="$(color::nounderline)"
+#blink="$(tput blink)"
+reverse="$(color::reverse)"
+
+error_color="$bwhite$bold"
+warn_color="$white$bold"

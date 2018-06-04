@@ -9,7 +9,7 @@ color::tput() {
     local -i ncolors=0
 
     # Use colors, but only if connected to a terminal, and that terminal supports them.
-    if [[ -z $with_colors ]]; then
+    if [[ -z ${with_colors:-} ]]; then
         if [[ -n "$tput" ]]; then
             ncolors=$(tput colors)
         fi

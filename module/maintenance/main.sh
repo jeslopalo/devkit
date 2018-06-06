@@ -10,13 +10,13 @@
 #-|   author          @jeslopalo <Jesús López Alonso>
 #-|   year            2018
 #=|
-source $DEVKIT_LIB/error.lib.sh
+import lib::error
 
 # configure exception traps
 enable_traps --path-prefix=$DEVKIT_HOME
 
-source $DEVKIT_LIB/usage.lib.sh
-source $DEVKIT_LIB/configuration.lib.sh
+include lib::usage "$@"
+import lib::configuration
 
 IDEA_CACHE_HOME=$(find_maintenance_idea_cache_dir)
 DEVELOPMENT_HOME=$(find_maintenance_workspace)

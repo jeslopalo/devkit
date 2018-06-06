@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+# colors
+clr_usage="${bblue:-}"
+clr_error="${bwhite:-}${bold:-}"
+clr_debugr="${bpurple:-}"
+clr_warn="${white:-}${bold:-}"
+
+
 __trim() {
     local message="${@:-}"
     local nospaces=${message## }
@@ -9,7 +16,7 @@ __trim() {
 
 log::usage() {
     local -r message="${1:-}"
-    [[ -n $message ]] && printf "${white}usage: %s$reset\\n" "$(__trim $message)" 1>&2
+    [[ -n $message ]] && printf "${clr_usage}usage: %s$reset\\n" "$(__trim $message)" 1>&2
 }
 
 log::info() {
@@ -19,10 +26,17 @@ log::info() {
 
 log::error() {
     local -r message="${1:-}"
-    [[ -n $message ]] && printf "${error_color}error: %s$reset\\n" "$(__trim $message)" 1>&2
+    [[ -n $message ]] && printf "${clr_error}error: %s$reset\\n" "$(__trim $message)" 1>&2
 }
 
 log::warn() {
     local -r message="${1:-}"
-    [[ -n $message ]] && printf "${warn_color}%s$reset\\n" "$(__trim $message)"  1>&2
+    [[ -n $message ]] && printf "${clr_warn}%s$reset\\n" "$(__trim $message)"  1>&2
+}
+
+log::debug() {
+    local -r message="${1:-}"
+    if [[ ${DEVKIT_DEBUG:-} = 1 ]] && [[ -w ${DEVKIT_DEBUG_FILE:-} ]]; then
+        [[ -n $message ]] && printf "${clr_debug}[debug] %s$reset\\n" "$(__trim $message)"  1>&2 >> $DEVKIT_DEBUG_FILE;
+    fi
 }

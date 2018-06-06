@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-source $DEVKIT_LIB/configuration.lib.sh
-source $DEVKIT_LIB/template.lib.sh
+import lib::configuration
+import lib::template
 
-declare EUREKA_REGISTER_DOCUMENT_FILE="$DEVKIT_MODULE/eureka/resources/eureka-register-app.json"
+EUREKA_REGISTER_DOCUMENT_FILE="$DEVKIT_MODULE/eureka/resources/eureka-register-app.json"
 
 register_service() {
     declare service_name="$1"

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 source $(dirname $(sourcedir "$BASH_SOURCE"))/.rc
+source "$DEVKIT_LIB/import.lib.sh"
 
 # execute module microservice
-exec $DEVKIT_HOME/module/eureka/main.sh "$@"
+source $DEVKIT_HOME/module/eureka/main.sh "$@"

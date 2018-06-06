@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source $DEVKIT_LIB/configuration.lib.sh
+import lib::configuration
 
 function error_project_not_found() {
     printf "error: '%s' workspace could not be found in current directory [%s]\\n" "$slug" "$(find_microservice_workspace)" 1>&2

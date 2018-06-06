@@ -1,18 +1,22 @@
 #!/usr/bin/env bash
 
-source $DEVKIT_BIN/sourcedir
-source $DEVKIT_LIB/color.lib.sh
+import lib::color
 
 # minimal information: invocation, file & lineno
-declare -r error_info_min_elements=3
+error_info_min_elements=3
+
+debug=${DEBUG:-0}
+
+# prefix to relativize paths
+path_prefix=""
 
 # colors
-declare -r clr_exit_code=$bred$reverse$bold
-declare -r clr_text=$bwhite
-declare -r clr_code=$bblue
-declare -r clr_code_args=$blue
-declare -r clr_function=
-declare -r clr_line=$white
+clr_exit_code=$bred$reverse$bold
+clr_text=$bwhite
+clr_code=$bblue
+clr_code_args=$blue
+clr_function=
+clr_line=$white
 
 exit_code() {
   local sig_name code="$1"
@@ -59,6 +63,7 @@ trap_handler() {
 
     local frame=0
     local argv_offset=0
+    local argc_frames=${#BASH_ARGC[@]}
 
     while caller_info=( $(caller $frame) ) ; do
 
@@ -68,14 +73,18 @@ trap_handler() {
             declare argc
             declare frame_argc
 
-            for ((frame_argc=${BASH_ARGC[frame]},frame_argc--,argc=0; frame_argc >= 0; argc++, frame_argc--)) ; do
-                argv[argc]=${BASH_ARGV[argv_offset+frame_argc]}
-                case "${argv[argc]}" in
-                    *[[:space:]]*) argv[argc]="'${argv[argc]}'" ;;
-                esac
-            done
-            argv_offset=$((argv_offset + ${BASH_ARGC[frame]}))
-            print_line "${caller_info[@]}" -- "${FUNCNAME[frame]:-}" "${argv[*]:-}"
+            if [[ $frame -lt $argc_frames ]]; then
+                for ((frame_argc=${BASH_ARGC[frame]},frame_argc--,argc=0; frame_argc >= 0; argc++, frame_argc--)) ; do
+                    argv[argc]=${BASH_ARGV[argv_offset+frame_argc]}
+                    case "${argv[argc]}" in
+                        *[[:space:]]*) argv[argc]="'${argv[argc]}'" ;;
+                    esac
+                done
+                argv_offset=$((argv_offset + ${BASH_ARGC[frame]}))
+                print_line "${caller_info[@]}" -- "${FUNCNAME[frame]:-}" "${argv[*]:-}"
+            else
+                print_line "${caller_info[@]}"
+            fi
         fi
 
         frame=$((frame+1))
@@ -115,9 +124,6 @@ print_line(){
         printf "$reset $clr_line[$underline%s:%s$remove_underline]$reset\\n" "$file" "$lineno"
     fi
 }
-
-declare debug=${DEBUG:-0}
-declare path_prefix=""
 
 enable_traps() {
     # find wether path prefix has been configured

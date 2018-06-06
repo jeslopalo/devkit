@@ -2,8 +2,6 @@
 
 source $DEVKIT_LIB/template.lib.sh
 
-declare -i DEVKIT_VERSION=1;
-
 assert_configuration_file_exists() {
     local -r file="${1:-$DEVKIT_CONFIG_FILE}"
 

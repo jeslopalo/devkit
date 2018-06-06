@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # export vars
+export DEVKIT_VERSION=1
 export DEVKIT_HOME=$(sourcedir "$BASH_SOURCE")
 export DEVKIT_BIN="${DEVKIT_HOME}/bin"
 export DEVKIT_LIB="${DEVKIT_HOME}/lib"

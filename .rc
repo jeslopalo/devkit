@@ -8,6 +8,7 @@ export DEVKIT_LIB="${DEVKIT_HOME}/lib"
 export DEVKIT_THIRDPARTY="${DEVKIT_HOME}/third_party"
 export DEVKIT_MODULE="${DEVKIT_HOME}/module"
 export DEVKIT_CUSTOM_CONFIG_DESCRIPTOR="${DEVKIT_HOME}/.environment"
+export DEVKIT_COLORS=0
 
 # set config file if it's not set before
 if [[ -z $DEVKIT_CONFIG_FILE ]]; then

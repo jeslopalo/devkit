@@ -10,6 +10,7 @@ _devkit() {
          '-c[Set config file location]:filename:_files' \
          '-l[Print a list of available commands]' \
          '-t[Print a color test]' \
+         '-E[Print devkit environment values]' \
          '-h[Print help message]' \
          '*: :' && ret=0
 

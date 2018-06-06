@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #=|
 #=| SYNOPSIS
-#>|   devkit [-h] [-v | -e | -c | -l | -t]
+#>|   devkit [-h] [-v | -e | -c | -l | -t | -E]
 #=|
 #=| DESCRIPTION
 #%|   Devkit configuration tool
@@ -15,6 +15,7 @@
 #+|   -c          Set config file location
 #+|   -l          Print a list of available commands
 #+|   -t          Print a color test
+#+|   -E          Print devkit's environment vars
 #+|   -h          Print this help message
 #-|
 #-| AUTHORING
@@ -42,6 +43,13 @@ version() {
     printf "$white// author:$reset\\t\\t$cyan@jeslopalo$reset\\n"
 
     return 0
+}
+
+print_environment() {
+    printf "Devkit environment values:\\n\\n"
+    env \
+        | grep -E "^_?DEVKIT_" \
+        | perl -pe 's/^(\w+)(=)(.*)$/\033[32m$1\033[m $2 $3/'
 }
 
 edit_config() {
@@ -94,8 +102,6 @@ test_colors() {
     white "white\\n"
 
     color::test
-#    color::test "regular"
-#    color::test "background"
 
     return 0
 }
@@ -109,7 +115,7 @@ main() {
         exit 1
     fi
 
-    while getopts ":velhtc:" opt; do
+    while getopts ":veElhtc:" opt; do
         case "${opt}" in
             v)
                 version
@@ -117,6 +123,10 @@ main() {
             ;;
             c)
                 set_config_file "$OPTARG"
+                exit $?
+            ;;
+            E)
+                print_environment
                 exit $?
             ;;
             e)

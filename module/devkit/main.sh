@@ -38,9 +38,9 @@ version() {
 
     printf "$bold%s$reset\\n" "$(cat $DEVKIT_MODULE/devkit/assets/banner.txt)"
     printf "$white/* (%d) Devkit v%s */$reset\\n\\n" "$(date +%Y)" "$DEVKIT_VERSION"
-    printf "$white// config version:$reset\\t${cyan}v%d$reset\\n" "$(find_version)"
-    printf "$white// config file:$reset\\t\\t${cyan}%s$reset\\n" "$DEVKIT_CONFIG_FILE"
-    printf "$white// author:$reset\\t\\t$cyan@jeslopalo$reset\\n"
+    printf "$white// config version :$reset ${cyan}v%d$reset\\n" "$(find_version)"
+    printf "$white// config file    :$reset ${cyan}%s$reset\\n" "$DEVKIT_CONFIG_FILE"
+    printf "$white// author         :$reset $cyan@jeslopalo$reset\\n"
 
     return 0
 }

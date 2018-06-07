@@ -10,18 +10,18 @@ if [[ ${DEVKIT_COLORS:-0} = 1 ]] && test -t 1; then
 fi
 
 color::test() {
-    local -i ncolors=${_number_of_colors:-0}
-    printf "Printing %d colors...\\n" "$ncolors"
+    local -i max_color="(( ${_number_of_colors:-1}-1 ))"
 
-    for((c=0; c < $ncolors; c++)); do
+    printf "Printing %d colors...\\n" "$max_color"
+    for c in $(seq 0 $max_color); do
         printf "%s %-3d $reset%s %-3d $reset" "$($_tput setaf $c)" "$c" "$($_tput setab $c)" "$c"
 
         if (( c == 7 )); then
-            printf "$reset\\n"
+            printf "\\n"
         fi
 
         if (( c == 15 )) || (( c > 15 )) && (( (c-15) % 6 == 0 )); then
-            printf "$reset\\n"
+            printf "\\n"
         fi
     done
     printf "$reset\\n"

@@ -1,6 +1,9 @@
 ### Environment file
 .environment
 
+### VSCode ide
+.vscode/
+
 ### Eclipse template
 
 .metadata

@@ -5,15 +5,13 @@ _devkit() {
     local -i ret=1
 
     _arguments -C : \
-         '-v[Print out devkit version]' \
-         '-e[Edit config file]' \
-         '-c[Set config file location]:filename:_files' \
-         '-l[Print a list of available commands]' \
-         '-t[Print a color test]' \
-         '-E[Print devkit environment values]' \
-         '-h[Print help message]' \
-         '*: :' && ret=0
-
+    '-v[Print out devkit version]: :' \
+    '-e[Edit config file]: :' \
+    '-c[Set config file location]:filename:_files' \
+    '-l[Print a list of available commands]: :' \
+    '-t[Print a color test]: :' \
+    '-E[Print devkit environment values]: :' \
+    '-h[Print help message]: :' && ret=0
     return $ret
 }
 

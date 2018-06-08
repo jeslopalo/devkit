@@ -25,6 +25,7 @@
 #+|   names             Print every configured microservice's name
 #+|   registerables     Print every configured microservice's name that is registerable in eureka server
 #+|   ports             Print every configured microservice's port
+#+|   defaults          Print microservice configuration defaults
 #+|
 #+| EXAMPLES
 #+|   ms microservice1
@@ -115,6 +116,10 @@ main() {
             ;;
             ports)
                 find_microservice_ports_in_use
+                exit $?
+            ;;
+            defaults)
+                find_with_colors ".microservices.defaults" | less -FRX
                 exit $?
             ;;
             *)

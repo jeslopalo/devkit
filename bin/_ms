@@ -38,7 +38,7 @@ _ms() {
             -q)
                 if [[ $line[1] = $words[CURRENT-1] ]]; then
                     _alternative \
-                        'named-query:named queries:(all names registerables ports)' \
+                        'named-query:named queries:(all names registerables ports defaults)' \
                         'query:: :' && ret=0
                 fi
             ;;

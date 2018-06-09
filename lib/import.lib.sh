@@ -18,6 +18,7 @@ import::assert_that_is_valid() {
     case $libid in
     lib::*)         return 0;;
     module::*::*)   return 0;;
+    main::*)        return 0;;
     *)
         printf "error: %s: unkown library identifier\\n" "$libid"
         return 1
@@ -37,12 +38,18 @@ import::location() {
             echo "$DEVKIT_MODULE/${BASH_REMATCH[1]}/lib"
         fi
     ;;
+    main::*)
+        if [[ $libid =~ ^main::(.+)$ ]]; then
+            echo "$DEVKIT_MODULE/${BASH_REMATCH[1]}"
+        fi
+    ;;
     esac
 }
 
 import::filename() {
     local -r filename="${1##*::}"
-    echo "${filename}.lib.sh"
+    local -r extension="${2:-.sh}"
+    echo "${filename}${extension}"
 }
 
 # contains(string, array)
@@ -64,6 +71,23 @@ import::contains() {
     return 1
 }
 
+execute() {
+    local -r libid="${1:-}"
+    shift
+
+    import::assert_that_is_valid "$libid" || exit 1
+
+    local -r location=$(import::location "$libid")
+    local -r filename=$(import::filename "main")
+
+    if [[ ! -r $location/$filename ]]; then
+        printf "error: '%s/%s': file not found" "$location" "$filename"
+        exit 1
+    fi
+
+    source "$location/$filename" "$@"
+}
+
 import() {
     local -r libid="${1:-}"
     shift
@@ -71,7 +95,7 @@ import() {
     import::assert_that_is_valid "$libid" || exit 1
 
     local -r location=$(import::location "$libid")
-    local -r filename=$(import::filename "$libid")
+    local -r filename=$(import::filename "$libid" ".lib.sh")
 
     if [[ ! -r $location/$filename ]]; then
         printf "error: '%s/%s': file not found" "$location" "$filename"
@@ -99,7 +123,7 @@ include() {
     import::assert_that_is_valid "$libid" || exit 1
 
     local -r location=$(import::location "$libid")
-    local -r filename=$(import::filename "$libid")
+    local -r filename=$(import::filename "$libid" ".lib.sh")
 
     if [[ ! -r $location/$filename ]]; then
         printf "error: '%s/%s': file not found" "$location" "$filename"

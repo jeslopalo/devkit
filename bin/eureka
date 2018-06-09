@@ -3,5 +3,5 @@
 source $(dirname $(sourcedir "$BASH_SOURCE"))/.rc
 source "$DEVKIT_LIB/import.lib.sh"
 
-# execute module microservice
-source $DEVKIT_HOME/module/eureka/main.sh "$@"
+# execute module eureka
+execute main::eureka "$@"

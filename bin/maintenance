@@ -3,5 +3,5 @@
 source $(dirname $(sourcedir "$BASH_SOURCE"))/.rc
 source "$DEVKIT_LIB/import.lib.sh"
 
-# execute module microservice
-source $DEVKIT_HOME/module/maintenance/main.sh "$@"
+# execute module maintenance
+execute main::maintenance "$@"

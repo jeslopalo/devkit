@@ -15,7 +15,7 @@ clr_exit_code=$bred$reverse$bold
 clr_text=$bwhite
 clr_code=$bblue
 clr_code_args=$blue
-clr_function=
+clr_function=$bold
 clr_line=$white
 
 exit_code() {
@@ -117,7 +117,7 @@ print_line(){
             file=${file#$path_prefix/}
         fi
 
-        printf "${reset}  at $bold$clr_function%s()$reset" "$invocation"
+        printf "${reset}  at $clr_function%s$reset" "$invocation"
         if [[ ${separator} = '--' ]] && [[ ${command} != "trap_handler" ]]; then
             printf "$reset invoking $clr_code%s($clr_code_args%s$reset$clr_code)$reset" "$command" "${arguments[@]}"
         fi

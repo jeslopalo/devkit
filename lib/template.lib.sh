@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
-replace_var() {
+#
+# usage: template::replace_var $template "varname" ["value"]
+#
+template::replace_var() {
     local template="${1}"
     local -r var_name="${2}"
     local -r var_value="${3:-${!var_name}}"

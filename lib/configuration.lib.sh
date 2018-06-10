@@ -175,8 +175,8 @@ find_microservice_endpoint_url() {
     port=$(find_microservice_port "$name")
 
     endpoint_url=$(find ".microservices.url.$environment")
-    endpoint_url=$(replace_var "$endpoint_url" "name")
-    endpoint_url=$(replace_var "$endpoint_url" "port")
+    endpoint_url=$(template::replace_var "$endpoint_url" "name")
+    endpoint_url=$(template::replace_var "$endpoint_url" "port")
     echo "$endpoint_url"
 }
 

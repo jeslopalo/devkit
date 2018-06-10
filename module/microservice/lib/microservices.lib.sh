@@ -2,12 +2,12 @@
 
 import lib::configuration
 
-function error_project_not_found() {
+error_project_not_found() {
     printf "error: '%s' workspace could not be found in current directory [%s]\\n" "$slug" "$(find_microservice_workspace)" 1>&2
     exit 1
 }
 
-function go_to_slug() {
+go_to_slug() {
     local -r slug="$1"
     local -r ms_workspace="$(find_microservice_workspace)"
 
@@ -15,7 +15,7 @@ function go_to_slug() {
     cd "$ms_workspace/$slug"
 }
 
-function version() {
+version() {
 	local slug="$1"
     local version_line
 
@@ -42,7 +42,7 @@ function version() {
     echo "$version"
 }
 
-function clean() {
+clean() {
     local slug="$1"
 
     go_to_slug "$slug"
@@ -51,7 +51,7 @@ function clean() {
     gradle clean
 }
 
-function build() {
+build() {
     local -r slug="$1"
     local -r parameters="${2:-}"
 
@@ -66,7 +66,7 @@ function build() {
     gradle build $parameters
 }
 
-function run() {
+run() {
 	local slug="$1"
 	shift
 

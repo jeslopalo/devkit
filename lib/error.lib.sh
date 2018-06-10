@@ -2,8 +2,8 @@
 
 import lib::color
 
-# minimal information: invocation, file & lineno
-error_info_min_elements=3
+# minimal information: frame, invocation, file & lineno
+error_info_min_elements=4
 
 debug=${DEBUG:-0}
 
@@ -69,9 +69,10 @@ trap_handler() {
 
         if shopt -q extdebug ; then
 
-            declare argv=()
-            declare argc
-            declare frame_argc
+            local argv=()
+            local argc
+            local frame_argc
+            local last_frame=$(if (( $frame == $argc_frames-1 )); then echo "--last-frame"; else echo "--${frame}-frame"; fi)
 
             if [[ $frame -lt $argc_frames ]]; then
                 for ((frame_argc=${BASH_ARGC[frame]},frame_argc--,argc=0; frame_argc >= 0; argc++, frame_argc--)) ; do
@@ -81,9 +82,9 @@ trap_handler() {
                     esac
                 done
                 argv_offset=$((argv_offset + ${BASH_ARGC[frame]}))
-                print_line "${caller_info[@]}" -- "${FUNCNAME[frame]:-}" "${argv[*]:-}"
+                print_line "$last_frame" "${caller_info[@]}" -- "${FUNCNAME[frame]:-}" "${argv[*]:-}"
             else
-                print_line "${caller_info[@]}"
+                print_line "$last_frame" "${caller_info[@]}"
             fi
         fi
 
@@ -100,21 +101,27 @@ trap_handler() {
 }
 
 print_line(){
-
     local info=("$@")
-    local lineno="${info[0]:-?}"
-    local invocation="${info[1]:-}"
-    local file="${info[2]:-}"
 
-    local separator="${info[3]:-}"
-    local command="${info[4]:-}"
-    local arguments="${info[@]:5}"
+    local frame="${info[0]:-0}"
+    local lineno="${info[1]:-?}"
+    local invocation="$(if [[ $last_frame == --last-frame ]]; then echo ${info[3]##*/}; else echo ${info[2]:-}; fi)"
+    local file="${info[3]:-}"
+
+    local separator="${info[4]:-}"
+
+    local command="${info[5]:-}"
+    local arguments="${info[@]:6}"
 
     if [[ $file != ${BASH_SOURCE[0]} ]] && (( ${#info[@]} >= $error_info_min_elements )); then
 
         if [[ -n $file ]]; then
             file="$(sourcedir $file)/$(basename $file)"
             file=${file#$path_prefix/}
+        fi
+
+        if [[ $last_frame == --last-frame ]]; then
+            invocation=${file##*/}
         fi
 
         printf "${reset}  at $clr_function%s$reset" "$invocation"

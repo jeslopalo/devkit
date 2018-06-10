@@ -22,20 +22,14 @@
 #-|   author          @jeslopalo <Jesús López Alonso>
 #-|   year            2018
 #=|
-source $DEVKIT_LIB/error.lib.sh
+include lib::usage "$@"
 
-# configure exception traps
-enable_traps --path-prefix=$DEVKIT_HOME
-
-source $DEVKIT_LIB/usage.lib.sh
-source $DEVKIT_LIB/color.lib.sh
-source $DEVKIT_LIB/log.lib.sh
-source $DEVKIT_LIB/configuration.lib.sh
-source $DEVKIT_MODULE/devkit/lib/dependencies.lib.sh
-
+import lib::color
+import lib::log
+import lib::configuration
+import module::devkit::dependencies
 
 version() {
-
     printf "$bold%s$reset\\n" "$(cat $DEVKIT_MODULE/devkit/assets/banner.txt)"
     printf "$white/* (%d) Devkit v%s */$reset\\n\\n" "$(date +%Y)" "$DEVKIT_VERSION"
     printf "$white// config version :$reset ${cyan}v%d$reset\\n" "$(find_version)"
@@ -106,7 +100,7 @@ test_colors() {
     blue blue-
     purple purple-
     cyan cyan-
-    white "white\\n"
+    white "white\\n\\n"
 
     color::test
 

@@ -1,18 +1,22 @@
 #!/usr/bin/env bash
 
-source $DEVKIT_BIN/sourcedir
-source $DEVKIT_LIB/color.lib.sh
+import lib::color
 
-# minimal information: invocation, file & lineno
-declare -r error_info_min_elements=3
+# minimal information: frame, invocation, file & lineno
+error_info_min_elements=4
+
+debug=${DEBUG:-0}
+
+# prefix to relativize paths
+path_prefix=""
 
 # colors
-declare -r clr_exit_code=$bred$reverse$bold
-declare -r clr_text=$bwhite
-declare -r clr_code=$bblue
-declare -r clr_code_args=$blue
-declare -r clr_function=
-declare -r clr_line=$white
+clr_exit_code=$bred$reverse$bold
+clr_text=$bwhite
+clr_code=$bblue
+clr_code_args=$blue
+clr_function=$bold
+clr_line=$white
 
 exit_code() {
   local sig_name code="$1"
@@ -59,23 +63,29 @@ trap_handler() {
 
     local frame=0
     local argv_offset=0
+    local argc_frames=${#BASH_ARGC[@]}
 
     while caller_info=( $(caller $frame) ) ; do
 
         if shopt -q extdebug ; then
 
-            declare argv=()
-            declare argc
-            declare frame_argc
+            local argv=()
+            local argc
+            local frame_argc
+            local last_frame=$(if (( $frame == $argc_frames-1 )); then echo "--last-frame"; else echo "--${frame}-frame"; fi)
 
-            for ((frame_argc=${BASH_ARGC[frame]},frame_argc--,argc=0; frame_argc >= 0; argc++, frame_argc--)) ; do
-                argv[argc]=${BASH_ARGV[argv_offset+frame_argc]}
-                case "${argv[argc]}" in
-                    *[[:space:]]*) argv[argc]="'${argv[argc]}'" ;;
-                esac
-            done
-            argv_offset=$((argv_offset + ${BASH_ARGC[frame]}))
-            print_line "${caller_info[@]}" -- "${FUNCNAME[frame]:-}" "${argv[*]:-}"
+            if [[ $frame -lt $argc_frames ]]; then
+                for ((frame_argc=${BASH_ARGC[frame]},frame_argc--,argc=0; frame_argc >= 0; argc++, frame_argc--)) ; do
+                    argv[argc]=${BASH_ARGV[argv_offset+frame_argc]}
+                    case "${argv[argc]}" in
+                        *[[:space:]]*) argv[argc]="'${argv[argc]}'" ;;
+                    esac
+                done
+                argv_offset=$((argv_offset + ${BASH_ARGC[frame]}))
+                print_line "$last_frame" "${caller_info[@]}" -- "${FUNCNAME[frame]:-}" "${argv[*]:-}"
+            else
+                print_line "$last_frame" "${caller_info[@]}"
+            fi
         fi
 
         frame=$((frame+1))
@@ -91,15 +101,17 @@ trap_handler() {
 }
 
 print_line(){
-
     local info=("$@")
-    local lineno="${info[0]:-?}"
-    local invocation="${info[1]:-}"
-    local file="${info[2]:-}"
 
-    local separator="${info[3]:-}"
-    local command="${info[4]:-}"
-    local arguments="${info[@]:5}"
+    local frame="${info[0]:-0}"
+    local lineno="${info[1]:-?}"
+    local invocation="$(if [[ $last_frame == --last-frame ]]; then echo ${info[3]##*/}; else echo ${info[2]:-}; fi)"
+    local file="${info[3]:-}"
+
+    local separator="${info[4]:-}"
+
+    local command="${info[5]:-}"
+    local arguments="${info[@]:6}"
 
     if [[ $file != ${BASH_SOURCE[0]} ]] && (( ${#info[@]} >= $error_info_min_elements )); then
 
@@ -108,16 +120,17 @@ print_line(){
             file=${file#$path_prefix/}
         fi
 
-        printf "${reset}  at $bold$clr_function%s()$reset" "$invocation"
+        if [[ $last_frame == --last-frame ]]; then
+            invocation=${file##*/}
+        fi
+
+        printf "${reset}  at $clr_function%s$reset" "$invocation"
         if [[ ${separator} = '--' ]] && [[ ${command} != "trap_handler" ]]; then
             printf "$reset invoking $clr_code%s($clr_code_args%s$reset$clr_code)$reset" "$command" "${arguments[@]}"
         fi
         printf "$reset $clr_line[$underline%s:%s$remove_underline]$reset\\n" "$file" "$lineno"
     fi
 }
-
-declare debug=${DEBUG:-0}
-declare path_prefix=""
 
 enable_traps() {
     # find wether path prefix has been configured

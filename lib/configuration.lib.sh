@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source $DEVKIT_LIB/template.lib.sh
+import lib::template
 
 assert_configuration_file_exists() {
     local -r file="${1:-$DEVKIT_CONFIG_FILE}"

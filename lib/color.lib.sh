@@ -83,9 +83,6 @@ underline=$($_tput smul)
 remove_underline=$($_tput rmul)
 reverse=$($_tput rev)
 
-error_color="$bwhite$bold"
-warn_color="$white$bold"
-
 color::println() { printf "${1:-}${@:2}${reset}"; }
 
 black()  { color::println $black  "$@"; }

@@ -38,17 +38,14 @@
 #-|   author          @jeslopalo <Jesús López Alonso>
 #-|   year            2018
 #=|
-source $DEVKIT_LIB/error.lib.sh
+include lib::usage "$@"
 
-# configure exception traps
-enable_traps --path-prefix=$DEVKIT_HOME
+import lib::color
+import lib::log
+import lib::configuration
 
-source $DEVKIT_LIB/usage.lib.sh
-source $DEVKIT_LIB/color.lib.sh
-source $DEVKIT_LIB/log.lib.sh
-source $DEVKIT_LIB/configuration.lib.sh
-source $DEVKIT_MODULE/microservice/lib/dependencies.lib.sh
-source $DEVKIT_MODULE/microservice/lib/microservices.lib.sh
+import module::microservice::dependencies
+import module::microservice::microservices
 
 microservice_usage() {
     ms --help

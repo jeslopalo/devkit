@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 
 source $(dirname $(sourcedir "$BASH_SOURCE"))/.rc
+source "$DEVKIT_LIB/import.lib.sh"
+
+import lib::error
+
+# configure exception traps
+enable_traps --path-prefix=$DEVKIT_HOME
 
 # execute module microservice
-exec $DEVKIT_HOME/module/microservice/main.sh "$@"
+execute main::microservice "$@"

@@ -10,12 +10,8 @@
 #-|   author          @jeslopalo <Jesús López Alonso>
 #-|   year            2018
 #=|
-import lib::error
-
-# configure exception traps
-enable_traps --path-prefix=$DEVKIT_HOME
-
 include lib::usage "$@"
+
 import lib::configuration
 
 IDEA_CACHE_HOME=$(find_maintenance_idea_cache_dir)

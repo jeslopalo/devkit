@@ -13,8 +13,8 @@ _ms() {
     local curcontext="$curcontext" state line _opts ret=1
 
     _arguments -C \
-      '1: :->cmds' \
-      '*:: :->args' && ret=0
+        '1: :->cmds' \
+        '*:: :->args' && ret=0
 
     case $state in
     cmds)

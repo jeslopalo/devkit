@@ -10,7 +10,7 @@ export DEVKIT_MODULE="${DEVKIT_HOME}/module"
 export DEVKIT_CUSTOM_CONFIG_DESCRIPTOR="${DEVKIT_HOME}/.environment"
 export DEVKIT_COLORS=${DEVKIT_COLORS:-1}
 export DEVKIT_DEBUG=${DEVKIT_DEBUG:-0}
-export DEVKIT_DEBUG_FILE=${DEVKIT_DEBUG_FILE:-/var/log/devkit.log}
+export DEVKIT_DEBUG_FILE="${DEVKIT_DEBUG_FILE:-/var/log/devkit.log}"
 
 # set config file if it's not set before
 if [[ -z $DEVKIT_CONFIG_FILE ]]; then

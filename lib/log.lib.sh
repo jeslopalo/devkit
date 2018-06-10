@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+import lib::color
+
 # colors
 clr_usage="${bblue:-}"
 clr_error="${bwhite:-}${bold:-}"

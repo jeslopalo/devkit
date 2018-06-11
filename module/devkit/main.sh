@@ -110,12 +110,6 @@ test_colors() {
 main() {
     check_for_dependencies
 
-    if [[ "$#" -lt 1 ]]; then
-        log::warn "Sorry! I need something more to continue :("
-        log::usage "$(devkit --synopsis)"
-        exit 1
-    fi
-
     while getopts ":veElhtc:" opt; do
         case "${opt}" in
             v)

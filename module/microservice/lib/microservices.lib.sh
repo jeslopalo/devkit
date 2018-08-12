@@ -3,13 +3,13 @@
 import lib::configuration
 
 error_project_not_found() {
-    printf "error: '%s' workspace could not be found in current directory [%s]\\n" "$slug" "$(find_microservice_workspace)" 1>&2
+    printf "error: '%s' workspace could not be found in current directory [%s]\\n" "$slug" "$(ms::find_workspace)" 1>&2
     exit 1
 }
 
 go_to_slug() {
     local -r slug="$1"
-    local -r ms_workspace="$(find_microservice_workspace)"
+    local -r ms_workspace="$(ms::find_workspace)"
 
     [ -d "$ms_workspace/$slug" ] || error_project_not_found
     cd "$ms_workspace/$slug"

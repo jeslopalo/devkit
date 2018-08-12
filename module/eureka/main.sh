@@ -34,12 +34,13 @@ import lib::log
 import lib::configuration
 
 import module::eureka::dependencies
+import module::eureka::configuration
 import module::eureka::eureka
 
 eureka_usage() {
     eureka --help
     printf "\\nAVAILABLE SERVICES\\n"
-    find_eureka_registerable_microservices_in_columns
+    ms -q registerables
 }
 
 main() {
@@ -49,6 +50,7 @@ main() {
     local unregister=()
 
     check_for_dependencies
+    eureka::assert_configuration_exists
 
     if [ "$#" = 0 ]; then
         log::warn "Sorry! I need something more to continue :("
@@ -61,14 +63,14 @@ main() {
             e) IFS=', ' read -r -a exclusions <<< "${OPTARG}";;
             r)
                 if [ "${OPTARG}" = "all" ]; then
-                    register=( $(find_eureka_registerable_microservices) )
+                    register=( $(ms -q registerables) )
                 else
                     IFS=', ' read -r -a register <<< "${OPTARG}"
                 fi
             ;;
             u)
                 if [ "${OPTARG}" = "all" ]; then
-                    unregister=( $(find_eureka_registerable_microservices) )
+                    unregister=( $(ms -q registerables) )
                 else
                     IFS=', ' read -r -a unregister <<< "${OPTARG}"
                 fi

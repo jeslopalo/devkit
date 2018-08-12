@@ -1,15 +1,7 @@
 {
   "version": 1,
-  "properties": {
-    "workspaces-dir": "~/development",
-    "idea-cache-dir": "~/.IntelliJIdea14/system"
-  },
-  "eureka": {
-    "register-url": "http://localhost:8761/eureka/apps/${service_name}",
-    "unregister-url": "http://localhost:8761/eureka/apps/${service_name}/PARADTRA04.corpme.es:${service_name}"
-  },
   "microservices": {
-    "workspace": "~/development/tradis",
+    "workspace": "~/workspace/development/temporal/tradis",
     "url": {
       "local": "http://localhost:${port}",
       "dev": "http://${name}-desarrollo.osrouter.dev.corpme.int",
@@ -39,7 +31,7 @@
           "spring.zipkin.enabled": false
         }
       },
-      "eureka-registerable": true
+      "registerable": true
     },
     "data": [
       {
@@ -54,7 +46,7 @@
             "server.port": 8761
           }
         },
-        "eureka-registerable": false
+        "registerable": false
       },
       {
         "name": "config-server",
@@ -72,7 +64,7 @@
             "spring.cloud.config.server.git.uri": "file:///home/jesus/development/tradis/infrastructure/config-repo"
           }
         },
-        "eureka-registerable": false
+        "registerable": false
       },
       {
         "name": "registry-site",
@@ -91,7 +83,7 @@
             "spring.redis.sentinel.nodes": "10.100.251.48:26379,10.100.251.49:26379"
           }
         },
-        "eureka-registerable": false
+        "registerable": false
       },
       {
         "name": "management-site",
@@ -102,7 +94,7 @@
             "-XX:MaxMetaspaceSize=200M"
           ]
         },
-        "eureka-registerable": false
+        "registerable": false
       },
       {
         "name": "wallet",

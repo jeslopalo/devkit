@@ -6,8 +6,8 @@ _devkit() {
 
     _arguments -C : \
         '-v[Print out devkit version]: :' \
-        '-e[Edit config file]: :' \
-        '-c[Set config file location]:filename:_files' \
+        '-e[Edit config file]:config name:(devkit eureka ms)' \
+        '-c[Set config file location]:directory:_files -/' \
         '-l[Print a list of available commands]: :' \
         '-t[Print a color test]: :' \
         '-E[Print devkit environment values]: :' \

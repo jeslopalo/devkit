@@ -1,0 +1,12 @@
+{
+    "version": 1,
+    "config_file_ids": [
+        "devkit",
+        "eureka",
+        "ms"
+    ],
+    "properties": {
+        "workspaces-dir": "~/workspace/development",
+        "idea-cache-dir": "~/.IntelliJIdea14/system"
+    }
+}

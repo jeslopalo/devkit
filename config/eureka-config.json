@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "eureka": {
+    "register-url": "http://localhost:8761/eureka/apps/${service_name}",
+    "unregister-url": "http://localhost:8761/eureka/apps/${service_name}/PARADTRA04.corpme.es:${service_name}"
+  }
+}

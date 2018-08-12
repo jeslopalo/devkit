@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
 #=|
 #=| SYNOPSIS
-#>|   devkit [-h] [-v | -e | -c | -l | -t | -E]
+#>|   devkit [-h] [-v | -l | -t | -E] [-e <name>] [-c <dir>]
 #=|
 #=| DESCRIPTION
 #%|   Devkit configuration tool
 #+|
 #+| USAGE
-#+|   devkit [-velh]
+#+|   devkit [-vltEh] [-e <module name>] [-c <dir>]
 #+|
 #+| OPTIONS
 #+|   -v          Print out devkit version
-#+|   -e          Edit config file
-#+|   -c          Set config file location
+#+|   -e          Edit a config file (available: devkit eureka ms)
+#+|   -c          Set configuration path location
 #+|   -l          Print a list of available commands
 #+|   -t          Print a color test
 #+|   -E          Print devkit's environment vars
@@ -26,13 +26,13 @@ include lib::usage "$@"
 
 import lib::color
 import lib::log
-import lib::configuration
+import module::devkit::configuration
 import module::devkit::dependencies
 
 version() {
     printf "$bold%s$reset\\n" "$(cat $DEVKIT_MODULE/devkit/assets/banner.txt)"
     printf "$white/* (%d) Devkit v%s */$reset\\n\\n" "$(date +%Y)" "$DEVKIT_VERSION"
-    printf "$white// config version :$reset ${cyan}v%d$reset\\n" "$(find_version)"
+    printf "$white// config version :$reset ${cyan}v%d$reset\\n" "$(devkit::find_version)"
     printf "$white// config file    :$reset ${cyan}%s$reset\\n" "$DEVKIT_CONFIG_FILE"
     printf "$white// author         :$reset $cyan@jeslopalo$reset\\n"
 
@@ -53,23 +53,16 @@ print_environment() {
     fi
 }
 
-edit_config() {
-    log::info "Open '$DEVKIT_CONFIG_FILE' config file in editor..."
+set_configuration_path_location() {
+    local -r config_path="${1:-$DEVKIT_CONFIG_PATH}"
 
-    ${FCEDIT:-${VISUAL:-${EDITOR:-vi}}} "$DEVKIT_CONFIG_FILE";
-    return $?;
-}
-
-set_config_file() {
-    local -r config_file="${1:-$DEVKIT_CONFIG}"
-
-    if [[ -r $config_file ]]; then
-        echo "$config_file" > "$DEVKIT_CUSTOM_CONFIG_DESCRIPTOR"
-        export DEVKIT_CONFIG_FILE="$config_file"
-        log::info "Set '$config_file' as devkit configuration file"
+    if [[ -d $config_path ]]; then
+        local -r absolute_path="$(sourcedir $config_path)/$config_path"
+        echo "$absolute_path" > "$DEVKIT_DOT_ENVIRONMENT_FILE"
+        log::info "Set '$absolute_path' as devkit configuration location"
         return 0
     else
-        log::error "'$config_file' cannot be opened or it does not exist"
+        log::error "'$config_path' is not a directory, cannot be opened or it does not exist"
         return 1
     fi
 }
@@ -110,14 +103,14 @@ test_colors() {
 main() {
     check_for_dependencies
 
-    while getopts ":veElhtc:" opt; do
+    while getopts ":vElhtc:e:" opt; do
         case "${opt}" in
             v)
                 version
                 exit $?
             ;;
             c)
-                set_config_file "$OPTARG"
+                set_configuration_path_location "$OPTARG"
                 exit $?
             ;;
             E)
@@ -125,7 +118,7 @@ main() {
                 exit $?
             ;;
             e)
-                edit_config
+                devkit::edit_config_file "$OPTARG"
                 exit $?
             ;;
             l)

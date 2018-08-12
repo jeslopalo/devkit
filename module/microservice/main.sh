@@ -32,7 +32,7 @@
 #+|   ms -cbr microservice1
 #+|   ms -r -a log=debug microservice1
 #+|   ms -q ports
-#+|   ms -q ".workspace"
+#+|   ms -q ".microservices.workspace"
 #-|
 #-| AUTHORING
 #-|   author          @jeslopalo <Jesús López Alonso>
@@ -42,21 +42,22 @@ include lib::usage "$@"
 
 import lib::color
 import lib::log
-import lib::configuration
+import lib::output
 
+import module::microservice::configuration
 import module::microservice::dependencies
 import module::microservice::microservices
 
 microservice_usage() {
     ms --help
     printf "\\nAVAILABLE SERVICES:\\n"
-    find_microservice_names_in_columns
+    output::columnize $(ms::find_microservice_names)
 }
 
 main() {
 
     check_for_dependencies
-    assert_configuration_file_exists
+    ms::assert_configuration_exists
 
     if [ "$#" = 0 ]; then
         log::warn "Sorry! I need something more to continue :("
@@ -100,27 +101,27 @@ main() {
     if [[ -n ${QUERY:-} ]]; then
         case "${QUERY}" in
             all)
-                find_with_colors ".microservices" | less -FRX
+                ms::find_with_colors "." | less -FRX
                 exit $?
             ;;
             names)
-                find_microservice_names_in_columns
+                output::columnize $(ms::find_microservice_names)
                 exit $?
             ;;
             registerables)
-                find_eureka_registerable_microservices_in_columns
+                output::columnize $(ms::find_registerables)
                 exit $?
             ;;
             ports)
-                find_microservice_ports_in_use
+                ms::find_ports_in_use
                 exit $?
             ;;
             defaults)
-                find_with_colors ".microservices.defaults" | less -FRX
+                ms::find_with_colors ".microservices.defaults" | less -FRX
                 exit $?
             ;;
             *)
-                find_with_colors ".microservices$QUERY" | less -FRX
+                ms::find_with_colors "$QUERY" | less -FRX
                 exit $?
             ;;
         esac
@@ -135,8 +136,8 @@ main() {
     name="$1"
     if [[ -z ${CLEAN:-} ]] && [[ -z ${BUILD:-} ]] && [[ -z ${RUN:-} ]]; then
 
-        if exists_microservice_by_name "$name"; then
-            find_microservice_by_name "$name"
+        if ms::exists_by_name "$name"; then
+            ms::find_by_name "$name"
             exit 0
         else
             log::error "Sorry! I can't find a '$name' microservice configuration :("
@@ -144,7 +145,7 @@ main() {
         fi
     fi
 
-    slug="$(find_microservice_slug_by_name $name)"
+    slug="$(ms::find_slug_by_name $name)"
     if [[ -z $slug ]] || [[ $slug = "null" ]]; then
 
         log::error "Sorry! I can't find a '$name' slug in microservice configuration :("
@@ -157,8 +158,8 @@ main() {
     }
 
     [[ -n ${BUILD:-} ]] && {
-        build_parameters=($(find_microservice_build_parameters $name))
-        build_javaopts=($(find_microservice_build_javaopts "$name" "${JAVA_OPTS:-}"))
+        build_parameters=($(ms::find_build_parameters $name))
+        build_javaopts=($(ms::find_build_javaopts "$name" "${JAVA_OPTS:-}"))
 
         JAVA_OPTS="${build_javaopts[*]}";
 
@@ -166,10 +167,10 @@ main() {
     }
 
     [[ -n ${RUN:-} ]] && {
-        run_arguments=($(find_microservice_run_arguments "$name" "${RUN_ARGUMENTS:-}"))
-        run_javaopts=($(find_microservice_run_javaopts "$name" "${JAVA_OPTS:-}"))
+        run_arguments=($(ms::find_run_arguments "$name" "${RUN_ARGUMENTS:-}"))
+        run_javaopts=($(ms::find_run_javaopts "$name" "${JAVA_OPTS:-}"))
 
-        if is_microservice_registerable_in_eureka "$name"; then
+        if ms::is_registerable "$name"; then
             if ! eureka -u "$name"; then
                 #TODO include in log::warn messsage
                 printf "\\n"

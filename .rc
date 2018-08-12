@@ -5,17 +5,17 @@ export DEVKIT_VERSION=1
 export DEVKIT_HOME=$(sourcedir "$BASH_SOURCE")
 export DEVKIT_BIN="${DEVKIT_HOME}/bin"
 export DEVKIT_LIB="${DEVKIT_HOME}/lib"
-export DEVKIT_THIRDPARTY="${DEVKIT_HOME}/third_party"
+export DEVKIT_THIRD_PARTY="${DEVKIT_HOME}/third_party"
 export DEVKIT_MODULE="${DEVKIT_HOME}/module"
-export DEVKIT_CUSTOM_CONFIG_DESCRIPTOR="${DEVKIT_HOME}/.environment"
+export DEVKIT_DOT_ENVIRONMENT_FILE="${DEVKIT_HOME}/.environment"
 export DEVKIT_COLORS=${DEVKIT_COLORS:-1}
 export DEVKIT_DEBUG=${DEVKIT_DEBUG:-0}
 export DEVKIT_DEBUG_FILE="${DEVKIT_DEBUG_FILE:-/var/log/devkit.log}"
 
-# set config file if it's not set before
-if [[ -z $DEVKIT_CONFIG_FILE ]]; then
+# set config path if it's not set before
+if [[ -z $DEVKIT_CONFIG_PATH ]]; then
 
-    [[ -f $DEVKIT_CUSTOM_CONFIG_DESCRIPTOR ]] && custom_config_file=$(<$DEVKIT_CUSTOM_CONFIG_DESCRIPTOR)
-    [[ -f $custom_config_file ]] && export DEVKIT_CONFIG_FILE="$custom_config_file"
-    [[ -z $DEVKIT_CONFIG_FILE ]] && export DEVKIT_CONFIG_FILE="$DEVKIT_HOME/config/config.json"
+    [[ -r $DEVKIT_DOT_ENVIRONMENT_FILE ]] && custom_config_path=$(<$DEVKIT_DOT_ENVIRONMENT_FILE)
+    [[ -d $custom_config_path ]] && export DEVKIT_CONFIG_PATH="$custom_config_path"
+    [[ -z $DEVKIT_CONFIG_PATH ]] && export DEVKIT_CONFIG_PATH="$DEVKIT_HOME/config"
 fi

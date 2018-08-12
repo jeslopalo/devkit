@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-import lib::configuration
 import lib::template
+import module::eureka::configuration
 
 EUREKA_REGISTER_DOCUMENT_FILE="$DEVKIT_MODULE/eureka/resources/eureka-register-app.json"
 
@@ -21,7 +21,7 @@ register_service() {
     declare document=$(<"$EUREKA_REGISTER_DOCUMENT_FILE")
 
     document=$(template::replace_var "$document" "service_name")
-    url=$(template::replace_var $(find_eureka_register_url_pattern) "service_name")
+    url=$(template::replace_var $(eureka::find_register_url_pattern) "service_name")
 
     printf "Registering service in local eureka: %s\\n" "$service_name"
     curl -g --request POST \
@@ -39,7 +39,7 @@ unregister_service() {
     	exit 1
     fi
 
-    url=$(template::replace_var $(find_eureka_unregister_url_pattern) "service_name")
+    url=$(template::replace_var $(eureka::find_unregister_url_pattern) "service_name")
 
     printf "Unregistering service in local eureka: %s\\n" "$service_name"
     curl -g --request DELETE \

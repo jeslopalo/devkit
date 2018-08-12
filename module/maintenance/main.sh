@@ -12,7 +12,17 @@
 #=|
 include lib::usage "$@"
 
-import lib::configuration
+import module::devkit::configuration
+
+find_maintenance_workspace() {
+    local -r workspace=$(find_property "workspaces-dir" "$DEVKIT_CONFIG_FILE")
+    echo "${workspace/#\~/$HOME}"
+}
+
+find_maintenance_idea_cache_dir() {
+    local -r cache_dir=$(find_property "idea-cache-dir" "$DEVKIT_CONFIG_FILE")
+    echo "${cache_dir/#\~/$HOME}"
+}
 
 IDEA_CACHE_HOME=$(find_maintenance_idea_cache_dir)
 DEVELOPMENT_HOME=$(find_maintenance_workspace)

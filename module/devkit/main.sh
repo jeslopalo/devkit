@@ -56,8 +56,8 @@ print_environment() {
 set_configuration_path_location() {
     local -r config_path="${1:-$DEVKIT_CONFIG_PATH}"
 
-    if [[ -d $config_path ]]; then
-        local -r absolute_path="$(sourcedir $config_path)/$config_path"
+    if [[ -d $config_path ]]; then        
+        local -r absolute_path="$(cd "$(dirname "$config_path")"; pwd)/$(basename "$config_path")"
         echo "$absolute_path" > "$DEVKIT_DOT_ENVIRONMENT_FILE"
         log::info "Set '$absolute_path' as devkit configuration location"
         return 0

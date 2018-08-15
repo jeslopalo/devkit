@@ -57,7 +57,7 @@ microservice_usage() {
 main() {
 
     check_for_dependencies
-    ms::assert_configuration_exists
+    ms::assert_file_exists
 
     if [ "$#" = 0 ]; then
         log::warn "Sorry! I need something more to continue :("

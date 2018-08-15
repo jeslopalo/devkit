@@ -1,19 +1,18 @@
 #!/usr/bin/env bash
 
-import lib::template
-import lib::lang
 import lib::log
 import lib::json
 
-assert_configuration_file_exists() {
-    local -r file="${1:-}"
+config::assert_file_exists() {
+    local -r identifier="${1:-}"
+    local -r file=$(config::file_path "$identifier")
 
     if [ ! -f "$file" ]; then
         printf "error: I can read configuration file [%s] :(\\n\\n" "$file" 1>&2
         exit 1
     fi
 
-    version=$(find ".version" "$file")
+    version=$(config::find ".version" "$identifier")
     if [[ $version != $DEVKIT_VERSION ]]; then
         printf "bad config: [%s] declares wrong version: %s (expected %s)\\n\\n" \
          "$file" "$version" "$DEVKIT_VERSION" 1>&2
@@ -21,32 +20,39 @@ assert_configuration_file_exists() {
     fi
 }
 
-find_with_colors() {
+config::file_path() {
+    local -r identifier="${1:-devkit}"
+
+    echo "${DEVKIT_CONFIG_PATH}/$identifier-config.json"
+}
+
+config::find_with_colors() {
     local -r filter="${1:-.}"
-    local -r file="${2:-}"
+    local -r file="$(config::file_path ${2:-})"
 
     json::query -Cr "$filter" "$file"
 }
 
-find() {
+config::find() {
     local -r filter="${1:-.}"
-    local -r file="${2:-}"
+    local -r file="$(config::file_path ${2:-})"
 
     json::query -r "$filter" "$file"
 }
 
-find_property() {
+config::find_property() {
     local -r name="$1"
-    local -r file="${2:-}"
+    local -r identifier="${2:-}"
+    local -r file="$(config::file_path $identifier)"
 
     if [ -n "$name" ]; then
-        find ".properties.\"$name\"" "$file"
+        config::find ".properties.\"$name\"" "$identifier"
     fi
 }
 
-edit_config_file() {
+config::edit_file() {
     local -r name="${1:-}"
-    local -r config_file="${DEVKIT_CONFIG_PATH}/$name-config.json"
+    local -r config_file="$(config::file_path $name)"
 
     log::info "Open '$name' config file in editor [$config_file]..."
 

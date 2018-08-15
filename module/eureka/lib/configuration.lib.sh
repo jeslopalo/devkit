@@ -2,21 +2,25 @@
 
 import lib::configuration
 
-# set config file if it's not set before
-is_var_not_defined "EUREKA_CONFIG_FILE" && export EUREKA_CONFIG_FILE="${DEVKIT_CONFIG_PATH}/eureka-config.json"
+eureka_config_identifier="eureka"
 
 eureka::find_version() {
-    find ".version" "$EUREKA_CONFIG_FILE"
+    config::find ".version" "$eureka_config_identifier"
 }
 
-eureka::assert_configuration_exists() {
-    assert_configuration_file_exists "$EUREKA_CONFIG_FILE"
+eureka::assert_file_exists() {
+    config::assert_file_exists "$eureka_config_identifier"
+}
+
+# customize configuration file identifier
+eureka::find() {
+    config::find "$@" "$eureka_config_identifier"
 }
 
 eureka::find_register_url_pattern() {
-    find '.eureka."register-url"' "$EUREKA_CONFIG_FILE"
+    eureka::find '.eureka."register-url"'
 }
 
 eureka::find_unregister_url_pattern() {
-    find '.eureka."unregister-url"' "$EUREKA_CONFIG_FILE"
+    eureka::find '.eureka."unregister-url"'
 }

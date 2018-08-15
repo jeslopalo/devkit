@@ -1,34 +1,31 @@
 #!/usr/bin/env bash
 
 import lib::configuration
-import lib::template
-import lib::lang
 import lib::log
 
-# set config file if it's not set before
-is_var_not_defined "DEVKIT_CONFIG_FILE" && export DEVKIT_CONFIG_FILE="${DEVKIT_CONFIG_PATH}/devkit-config.json"
+devkit_config_identifier="devkit"
 
-devkit::assert_configuration_file_exists() {
-    assert_configuration_file_exists "$DEVKIT_CONFIG_FILE"
+devkit::assert_file_exists() {
+    config::assert_file_exists "$devkit_config_identifier"
 }
 
 devkit::find_version() {
-    find ".version" "$DEVKIT_CONFIG_FILE"
+    config::find ".version" "$devkit_config_identifier"
 }
 
 devkit::find_configurable_modules() {
-    find ".config_file_ids[]?" "$DEVKIT_CONFIG_FILE"
+    config::find ".config_file_ids[]?" "$devkit_config_identifier"
 }
 
-devkit::edit_config_file() {
+devkit::edit_file() {
     local -r name="${1:-}"
 
     local -a modules=$(devkit::find_configurable_modules)
 
     for module in $modules; do
         if [[ $module = $name ]]; then
-            edit_config_file "$name"
-            return
+            config::edit_file "$name"
+            return $?
         fi
     done
 

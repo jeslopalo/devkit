@@ -26,6 +26,7 @@ include lib::usage "$@"
 
 import lib::color
 import lib::log
+
 import module::devkit::configuration
 import module::devkit::dependencies
 
@@ -33,7 +34,7 @@ version() {
     printf "$bold%s$reset\\n" "$(cat $DEVKIT_MODULE/devkit/assets/banner.txt)"
     printf "$white/* (%d) Devkit v%s */$reset\\n\\n" "$(date +%Y)" "$DEVKIT_VERSION"
     printf "$white// config version :$reset ${cyan}v%d$reset\\n" "$(devkit::find_version)"
-    printf "$white// config file    :$reset ${cyan}%s$reset\\n" "$DEVKIT_CONFIG_FILE"
+    printf "$white// config path    :$reset ${cyan}%s$reset\\n" "$DEVKIT_CONFIG_PATH"
     printf "$white// author         :$reset $cyan@jeslopalo$reset\\n"
 
     return 0
@@ -56,7 +57,7 @@ print_environment() {
 set_configuration_path_location() {
     local -r config_path="${1:-$DEVKIT_CONFIG_PATH}"
 
-    if [[ -d $config_path ]]; then        
+    if [[ -d $config_path ]]; then
         local -r absolute_path="$(cd "$(dirname "$config_path")"; pwd)/$(basename "$config_path")"
         echo "$absolute_path" > "$DEVKIT_DOT_ENVIRONMENT_FILE"
         log::info "Set '$absolute_path' as devkit configuration location"
@@ -102,6 +103,7 @@ test_colors() {
 
 main() {
     check_for_dependencies
+    devkit::assert_file_exists
 
     while getopts ":vElhtc:e:" opt; do
         case "${opt}" in
@@ -118,7 +120,7 @@ main() {
                 exit $?
             ;;
             e)
-                devkit::edit_config_file "$OPTARG"
+                devkit::edit_file "$OPTARG"
                 exit $?
             ;;
             l)

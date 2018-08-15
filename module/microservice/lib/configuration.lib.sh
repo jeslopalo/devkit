@@ -2,28 +2,26 @@
 
 import lib::configuration
 import lib::template
-import lib::output
 import lib::json
 
-# set config file if it's not set before
-is_var_not_defined "MS_CONFIG_FILE" && export MS_CONFIG_FILE="${DEVKIT_CONFIG_PATH}/ms-config.json"
+ms_config_identifier="ms"
 
 ms::find_version() {
-    find ".version" "$MS_CONFIG_FILE"
+    config::find ".version" "$ms_config_identifier"
 }
 
-ms::assert_configuration_exists() {
-    assert_configuration_file_exists "$MS_CONFIG_FILE"
+ms::assert_file_exists() {
+    config::assert_file_exists "$ms_config_identifier"
 }
 
-# customize configuration file location
+# customize configuration file identifier
 ms::find() {
-    find "$@" "$MS_CONFIG_FILE"
+    config::find "$@" "$ms_config_identifier"
 }
 
-# customize configuration file location
+# customize configuration file identifier
 ms::find_with_colors() {
-    find_with_colors "$@" "$MS_CONFIG_FILE"
+    config::find_with_colors "$@" "$ms_config_identifier"
 }
 
 ms::find_registerables() {

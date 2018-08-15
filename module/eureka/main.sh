@@ -50,7 +50,7 @@ main() {
     local unregister=()
 
     check_for_dependencies
-    eureka::assert_configuration_exists
+    eureka::assert_file_exists
 
     if [ "$#" = 0 ]; then
         log::warn "Sorry! I need something more to continue :("

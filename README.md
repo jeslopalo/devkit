@@ -22,8 +22,8 @@ zplug jeslopalo/devkit, from:github, use:"bin/*", as:command
 ```
 
 ## Configuring
-If you need to set a custom config file, then you can use ```devkit -c``` command.
+If you need to customize configuration files location, then you can use ```devkit -c``` command.
 
 ```sh
-$ devkit -c ~/path/to/file/config.json
+$ devkit -c ~/path/to/custom/location
 ```

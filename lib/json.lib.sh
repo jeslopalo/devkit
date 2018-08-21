@@ -13,7 +13,7 @@ json::merge_maps() {
     elif [ -z "$json_b" ]; then
         echo $json_a
     else
-        json::query -n --argjson json_a "$json_a" --argjson json_b "$json_b" '$json_a + $json_b'
+        jq -n --argjson json_a "$json_a" --argjson json_b "$json_b" '$json_a + $json_b'
     fi
 }
 

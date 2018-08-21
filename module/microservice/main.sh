@@ -137,7 +137,7 @@ main() {
     if [[ -z ${CLEAN:-} ]] && [[ -z ${BUILD:-} ]] && [[ -z ${RUN:-} ]]; then
 
         if ms::exists_by_name "$name"; then
-            ms::find_by_name "$name"
+            ms::find_by_name "$name" --prettify
             exit 0
         else
             log::error "Sorry! I can't find a '$name' microservice configuration :("

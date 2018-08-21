@@ -29,7 +29,7 @@ json::prettify() {
     local -r document="$@"
 
     if json::is_valid "$document"; then
-        jq '.' <(echo "$document")
+        jq -C '.' <(echo "$document")
     else
         echo "$document"
     fi

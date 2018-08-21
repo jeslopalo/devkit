@@ -24,3 +24,18 @@ json::map_to_array_of_arguments() {
         jq -r ". | to_entries | map(\"--\(.key)=\(.value|tostring)\") | .[]?" <<< "$map"
     fi
 }
+
+json::prettify() {
+    local -r document="$@"
+
+    if json::is_valid "$document"; then
+        jq '.' <(echo "$document")
+    else
+        echo "$document"
+    fi
+}
+
+json::is_valid() {
+    local -r document="$@"
+    jq -e . >/dev/null 2>&1 <<<"$document"
+}

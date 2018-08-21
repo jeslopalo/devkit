@@ -101,7 +101,7 @@ main() {
     if [[ -n ${QUERY:-} ]]; then
         case "${QUERY}" in
             all)
-                ms::find_with_colors "." | less -FRX
+                ms::find --filter="." --prettify | less -FRX
                 exit $?
             ;;
             names)
@@ -117,11 +117,11 @@ main() {
                 exit $?
             ;;
             defaults)
-                ms::find_with_colors ".microservices.defaults" | less -FRX
+                ms::find --filter=".microservices.defaults" --prettify | less -FRX
                 exit $?
             ;;
             *)
-                ms::find_with_colors "$QUERY" | less -FRX
+                ms::find --filter="$QUERY" --prettify | less -FRX
                 exit $?
             ;;
         esac

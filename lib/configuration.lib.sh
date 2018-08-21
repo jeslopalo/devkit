@@ -14,7 +14,7 @@ config::assert_file_exists() {
         exit 1
     fi
 
-    version=$(config::find ".version" "$identifier")
+    version=$(config::find --filter=".version" --identifier="$identifier")
     if [[ $version != $DEVKIT_VERSION ]]; then
         printf "bad config: [%s] declares wrong version: %s (expected %s)\\n\\n" \
          "$file" "$version" "$DEVKIT_VERSION" 1>&2
@@ -28,14 +28,7 @@ config::file_path() {
     echo "${DEVKIT_CONFIG_PATH}/$identifier-config.json"
 }
 
-config::find_with_colors() {
-    local -r filter="${1:-.}"
-    local -r file="$(config::file_path ${2:-})"
-
-    json::query -Cr "$filter" "$file"
-}
-
-config::_find() {
+config::find() {
     local -r filter=$(argument::value 'filter' "$@")
     local -r identifier=$(argument::value 'identifier' "$@")
     local -r file=$(config::file_path "$identifier")
@@ -53,15 +46,6 @@ config::_find() {
     fi
 }
 
-config::find() {
-    local -r filter="${1:-.}"
-    local -r identifier="${2:-}"
-    local -r interpolate=$(argument::get "interpolate" "$@")
-    local -r prettify=$(argument::get "prettify" "$@")
-
-    config::_find --filter="$filter" --identifier="$identifier" "$interpolate" "$prettify"
-}
-
 config::find_property() {
     local -r name="$1"
     local -r identifier="${2:-}"
@@ -69,9 +53,9 @@ config::find_property() {
     local value
 
     if [ -n "$name" ]; then
-        value=$(config::_find --filter=".properties.\"$name\"" --identifier="$identifier")
+        value=$(config::find --filter=".properties.\"$name\"" --identifier="$identifier")
         if [[ $value == null ]] && [[ $identifier != 'devkit' ]]; then
-            value=$(config::_find --filter=".properties.\"$name\"")
+            value=$(config::find --filter=".properties.\"$name\"")
         fi
     fi
     [[ $value != null ]] && echo $value
@@ -82,14 +66,14 @@ config::interpolate() {
     local -r identifier="${2:-}"
     local partial="$document"
 
-    keys=( $(config::_find --filter=".properties | keys | .[]" --identifier="$identifier") )
+    keys=( $(config::find --filter=".properties | keys | .[]" --identifier="$identifier") )
     for key in "${keys[@]}"; do
         partial=$(template::replace_var "$partial" "$key" "$(config::find_property $key $identifier)")
     done
 
     # try to find properties in base configuration with not empty identifier
     if [[ $identifier != "" ]]; then
-        keys=($(config::_find --filter=".properties | keys | .[]"))
+        keys=($(config::find --filter=".properties | keys | .[]"))
         for key in "${keys[@]}"; do
             partial=$(template::replace_var "$partial" "$key" "$(config::find_property $key $identifier)")
         done

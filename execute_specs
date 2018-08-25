@@ -20,6 +20,8 @@ spec_name() {
 
 execute_specs() {
     local -r slug="${1:-}"
+    local total_failures=0
+    local -a suites_with_failures=()
 
     while read -d '' filename; do
 
@@ -31,7 +33,19 @@ execute_specs() {
 
         printf "\\n[%s] executing <%s>...\\n" "${slug:-all}" "$(spec_name $filename)"
         execute_spec "${filename}"
+        if [ $? -gt 0 ]; then
+            suites_with_failures=( "${suites_with_failures[@]}" "$(spec_name $filename)" )
+            ((total_failures++))
+        fi
+
     done < <(find $specs_root_path -name "*$specs_extension" -not -path "$specs_root_path/test_helper/*" -maxdepth 2000 -type f -print0)
+
+    if [[ $total_failures -gt 0 ]]; then
+        printf "\\nWarning, there are %s suites with failures!!\\n" "$total_failures"
+        printf " > %s\\n" ${suites_with_failures[@]}
+    fi
+
+    return $total_failures
 }
 
 execute_specs "$@"

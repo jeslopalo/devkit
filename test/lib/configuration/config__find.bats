@@ -2,29 +2,56 @@
 
 load _init
 
+@test "$(testcase) should get all without filter" {
+    run config::find
+
+    query_config "." | assert_output
+}
+
+@test "$(testcase) should find in base configuration without identifier" {
+    run config::find --filter=".properties.known_property"
+
+    assert_output "known"
+}
+
+@test "$(testcase) should find in specific configuration with identifier" {
+    run config::find --filter=".properties.known_property" --identifier="module"
+
+    assert_output "overriden known property"
+}
+
+## interpolation behavior
+
+@test "$(testcase) should not interpolate configuration (as default)" {
+    run config::find --filter=".properties.interpolable_property"
+
+    assert_output "{{known_property}} value"
+}
+
+@test "$(testcase) should interpolate configuration (with flag)" {
+    run config::find --filter=".properties.interpolable_property" --interpolate
+
+    assert_output "known value"
+}
+
+@test "$(testcase) should interpolate configuration recursively (with flag)" {
+    run config::find --filter=".properties.super_interpolable_property" --identifier="module" --interpolate
+
+    assert_output "recursively value interpolated!"
+}
+
 ## prettify behavior
 
 @test "$(testcase) should not prettify the result" {
     run config::find --filter=".services"
 
-    [[ "$output" == '{"workspace":"{{known_property}}/path","data":[{"name":"service_one","type":"spring-boot"},{"name":"service_two","type":"docker"}]}' ]]
+    assert_success
+    query_config ".services" | assert_output
 }
 
 @test "$(testcase) should prettify the result" {
     run config::find --filter=".services" --prettify
 
-    [[ "${lines[0]}" == '{' ]]
-    [[ "${lines[1]}" == '  "workspace": "{{known_property}}/path",' ]]
-    [[ "${lines[2]}" == '  "data": [' ]]
-    [[ "${lines[3]}" == '  {' ]]
-    [[ "${lines[4]}" == '      "name": "service_one",' ]]
-    [[ "${lines[5]}" == '      "type": "spring-boot"' ]]
-    [[ "${lines[6]}" == '  },' ]]
-    [[ "${lines[7]}" == '  {' ]]
-    [[ "${lines[8]}" == '      "name": "service_two",' ]]
-    [[ "${lines[9]}" == '      "type": "docker"' ]]
-    [[ "${lines[10]}" == '  }' ]]
-    [[ "${lines[11]}" == '  ]' ]]
-    [[ "${lines[12]}" == '}' ]]
-    [ "$status" -eq 0 ]
+    assert_success
+    query_config_prettified ".services" | assert_output
 }

@@ -6,19 +6,19 @@ arguments=("-C" "--color" "--module=devkit" "-m" "ms" "--with-spaces" "this is a
 
 @test "$(testcase) should get argument (as is)" {
     run argument::get 'module' "${arguments[@]}"
-    assert_equals "--module=devkit"
+    assert_output "--module=devkit"
 
     run argument::get 'f' "${arguments[@]}"
-    assert_equals "-f=1"
+    assert_output "-f=1"
 
     run argument::get 'C' "${arguments[@]}"
-    assert_equals "-C"
+    assert_output "-C"
 
     run argument::get 'color' "${arguments[@]}"
-    assert_equals "--color"
+    assert_output "--color"
 }
 
 @test "$(testcase) should get only argument name (as is) with space separated arguments" {
     run argument::get 'm' "${arguments[@]}"
-    assert_equals "-m"
+    assert_output "-m"
 }

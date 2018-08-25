@@ -13,7 +13,7 @@ arguments=("-C" "--color" "--module=devkit" "-m" "ms" "--with-spaces" "this is a
 @test "$(testcase) should check that long flag argument not exists" {
     run argument::exists 'colors' "${arguments[@]}"
 
-    assert_false
+    assert_failure
 }
 
 @test "$(testcase) should check that short flag argument exists" {
@@ -25,7 +25,7 @@ arguments=("-C" "--color" "--module=devkit" "-m" "ms" "--with-spaces" "this is a
 @test "$(testcase) should check that short flag argument not exists" {
     run argument::exists 'c' "${arguments[@]}"
 
-    assert_false
+    assert_failure
 }
 
 @test "$(testcase) should check that long argument exists" {

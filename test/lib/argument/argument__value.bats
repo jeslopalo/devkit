@@ -7,23 +7,23 @@ arguments=("-C" "--color" "--module=devkit" "-m" "ms" "--with-spaces" "this is a
 @test "$(testcase) should get long argument value" {
     run argument::value 'module' "${arguments[@]}"
 
-    assert_equals "devkit"
+    assert_output "devkit"
 }
 
 @test "$(testcase) should get short argument value" {
     run argument::value 'm' "${arguments[@]}"
 
-    assert_equals "ms"
+    assert_output "ms"
 }
 
 @test "$(testcase) should get argument value with spaces" {
     run argument::value 'with-spaces' "${arguments[@]}"
 
-    assert_equals "this is a message"
+    assert_output "this is a message"
 }
 
 @test "$(testcase) should get argument value (--arg=value)" {
     run argument::value 'f' "${arguments[@]}"
 
-    assert_equals "1"
+    assert_output "1"
 }

@@ -31,7 +31,7 @@ execute_specs() {
 
         printf "\\n[%s] executing <%s>...\\n" "${slug:-all}" "$(spec_name $filename)"
         execute_spec "${filename}"
-    done < <(find . -name "*$specs_extension" -maxdepth 2000 -type f -print0)
+    done < <(find $specs_root_path -name "*$specs_extension" -not -path "$specs_root_path/test_helper/*" -maxdepth 2000 -type f -print0)
 }
 
 execute_specs "$@"

@@ -10,11 +10,11 @@ devkit::assert_file_exists() {
 }
 
 devkit::find_version() {
-    config::find ".version" "$devkit_config_identifier"
+    config::find --filter=".version" --identifier="$devkit_config_identifier"
 }
 
 devkit::find_configurable_modules() {
-    config::find ".config_file_ids[]?" "$devkit_config_identifier"
+    config::find --filter=".config_file_ids[]?" --identifier="$devkit_config_identifier"
 }
 
 devkit::edit_file() {

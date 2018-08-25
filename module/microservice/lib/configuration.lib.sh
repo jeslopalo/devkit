@@ -6,37 +6,32 @@ import lib::json
 
 ms_config_identifier="ms"
 
-ms::find_version() {
-    config::find ".version" "$ms_config_identifier"
-}
-
 ms::assert_file_exists() {
     config::assert_file_exists "$ms_config_identifier"
 }
 
-# customize configuration file identifier
-ms::find() {
-    config::find "$@" "$ms_config_identifier"
+ms::find_version() {
+    config::find --filter=".version" --identifier="$ms_config_identifier"
 }
 
 # customize configuration file identifier
-ms::find_with_colors() {
-    config::find_with_colors "$@" "$ms_config_identifier"
+ms::find() {
+    config::find "$@" --identifier="$ms_config_identifier"
 }
 
 ms::find_registerables() {
-    ms::find '.microservices.defaults.registerable as $default|.microservices.data[]|{name:.name,registerable:(if .registerable == null then $default else .registerable end)}|select(.registerable==true)|.name' | sort
+    ms::find --interpolate --filter='.microservices.defaults.registerable as $default|.microservices.data[]|{name:.name,registerable:(if .registerable == null then $default else .registerable end)}|select(.registerable==true)|.name' | sort
 }
 
 ms::is_registerable() {
     local -r name="${1:-}"
 
-    registerable=$(ms::find '.microservices.defaults."eureka-registerable" as $default|.microservices.data[]|select(.name == "'$name'")|{name:.name,registerable:(if ."eureka-registerable" == null then $default else ."eureka-registerable" end)}|.registerable')
+    registerable=$(ms::find --interpolate --filter='.microservices.defaults."registerable" as $default|.microservices.data[]|select(.name == "'$name'")|{name:.name,registerable:(if ."registerable" == null then $default else ."registerable" end)}|.registerable')
     [[ $registerable == "true" ]]
 }
 
 ms::find_ports_in_use() {
-    ms::find '[.microservices.data[]|select(.run.arguments."server.port" != null)|{ key: .name, value: .run.arguments."server.port"}]|sort_by(.value)|map("  \(.value):\t\(.key)")|.[]'
+    ms::find --interpolate --filter='[.microservices.data[]|select(.run.arguments."server.port" != null)|{ key: .name, value: .run.arguments."server.port"}]|sort_by(.value)|map("  \(.value):\t\(.key)")|.[]'
 }
 
 ms::find_port () {
@@ -52,30 +47,30 @@ ms::find_port () {
 }
 
 ms::find_workspace() {
-    local -r workspace=$(ms::find ".microservices.workspace")
+    local -r workspace=$(ms::find --interpolate --filter=".microservices.workspace")
 
     echo "${workspace/#\~/$HOME}"
 }
 
 ms::find_default_build_params() {
-    ms::find ".microservices.defaults.build?.params[]?"
+    ms::find --interpolate --filter=".microservices.defaults.build?.params[]?"
 }
 
 ms::find_default_build_javaopts() {
-    ms::find ".microservices.defaults.build?.javaopts[]?"
+    ms::find --interpolate --filter=".microservices.defaults.build?.javaopts[]?"
 }
 
 ms::find_default_run_arguments() {
-    ms::find ".microservices.defaults.run?.arguments?"
+    ms::find --interpolate --filter=".microservices.defaults.run?.arguments?"
 }
 
 ms::find_default_run_javaopts() {
-    ms::find ".microservices.defaults.run?.javaopts[]?"
+    ms::find --interpolate --filter=".microservices.defaults.run?.javaopts[]?"
 }
 
 ms::find_microservice_names() {
     local -r separator="${1:- }"
-    local -r names=$(ms::find ".microservices.data[].name")
+    local -r names=$(ms::find --interpolate --filter=".microservices.data[].name")
     local -r sorted=$(sort <<< "${names[*]}")
 
     echo $(IFS="$separator"; echo "${sorted[*]}")
@@ -83,14 +78,15 @@ ms::find_microservice_names() {
 
 ms::find_by_name() {
     local name="$1"
+    local -r prettify=$(argument::get "prettify" "$@")
 
-    ms::find ".microservices.data[] | select(.name == \"$name\")"
+    ms::find --interpolate --filter=".microservices.data[] | select(.name == \"$name\")" "$prettify"
 }
 
 ms::exists_by_name() {
     local name="$1"
 
-    [[ $(ms::find ".microservices.data[] | select(.name == \"$name\") | [.] | length") = 1 ]]
+    [[ $(ms::find "--filter=.microservices.data[] | select(.name == \"$name\") | [.] | length") = 1 ]]
 }
 
 ms::find_slug_by_name() {
@@ -112,9 +108,9 @@ ms::find_endpoint_url() {
 
     port=$(ms::find_port "$name")
 
-    endpoint_url=$(ms::find ".microservices.url.$environment")
-    endpoint_url=$(template::replace_var "$endpoint_url" "name")
-    endpoint_url=$(template::replace_var "$endpoint_url" "port")
+    endpoint_url=$(ms::find --interpolate --filter=".microservices.url.$environment")
+    endpoint_url=$(template::replace_var --text="$endpoint_url" --name="name")
+    endpoint_url=$(template::replace_var --text="$endpoint_url" --name="port")
     echo "$endpoint_url"
 }
 

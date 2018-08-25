@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 json::query() {
-    jq "$@"
+    jq -cM "$@"
 }
 
 json::merge_maps() {
@@ -13,7 +13,7 @@ json::merge_maps() {
     elif [ -z "$json_b" ]; then
         echo $json_a
     else
-        json::query -n --argjson json_a "$json_a" --argjson json_b "$json_b" '$json_a + $json_b'
+        jq -n --argjson json_a "$json_a" --argjson json_b "$json_b" '$json_a + $json_b'
     fi
 }
 
@@ -23,4 +23,19 @@ json::map_to_array_of_arguments() {
     if [ -n "$map" ] && [ "$map" != null ]; then
         jq -r ". | to_entries | map(\"--\(.key)=\(.value|tostring)\") | .[]?" <<< "$map"
     fi
+}
+
+json::prettify() {
+    local -r document="$@"
+
+    if json::is_valid "$document"; then
+        jq -C '.' <(echo "$document")
+    else
+        echo "$document"
+    fi
+}
+
+json::is_valid() {
+    local -r document="$@"
+    jq -e . >/dev/null 2>&1 <<<"$document"
 }

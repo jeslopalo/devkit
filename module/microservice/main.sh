@@ -101,7 +101,7 @@ main() {
     if [[ -n ${QUERY:-} ]]; then
         case "${QUERY}" in
             all)
-                ms::find_with_colors "." | less -FRX
+                ms::find --filter="." --prettify | less -FRX
                 exit $?
             ;;
             names)
@@ -113,15 +113,15 @@ main() {
                 exit $?
             ;;
             ports)
-                ms::find_ports_in_use
+                ms::find_ports_in_use | xargs -n2 | xargs -I {} echo " {}"
                 exit $?
             ;;
             defaults)
-                ms::find_with_colors ".microservices.defaults" | less -FRX
+                ms::find --filter=".microservices.defaults" --prettify | less -FRX
                 exit $?
             ;;
             *)
-                ms::find_with_colors "$QUERY" | less -FRX
+                ms::find --filter="$QUERY" --prettify | less -FRX
                 exit $?
             ;;
         esac
@@ -137,7 +137,7 @@ main() {
     if [[ -z ${CLEAN:-} ]] && [[ -z ${BUILD:-} ]] && [[ -z ${RUN:-} ]]; then
 
         if ms::exists_by_name "$name"; then
-            ms::find_by_name "$name"
+            ms::find_by_name "$name" --prettify
             exit 0
         else
             log::error "Sorry! I can't find a '$name' microservice configuration :("

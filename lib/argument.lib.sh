@@ -36,18 +36,39 @@ argument::value() {
     for option in "$@"; do
 
         case ${option:-} in
-        "$name="*|-"$name="*|--"$name="*)
-            echo "${option#*=}"
-            break
-        ;;
-        -"$name"|--"$name")
-            echo "$2"
-            break
-        ;;
-
+            "$name="*|-"$name="*|--"$name="*)
+                echo "${option#*=}"
+                break
+            ;;
+            -"$name"|--"$name")
+                echo "$2"
+                break
+            ;;
         esac
 
         shift
     done
 }
 
+# Get the $name argument if exists in the rest of arguments.
+# Usage:
+#   argument::get 'name' "$@"
+#
+# 'name' presence can occur in different forms:
+#   --name=value -name=value name=value --name -name
+#
+# Warning! if the argument is in '(--)name value' form then
+# it only returns the '(--)name' part.
+#
+# return the argument if exists
+argument::get() {
+    local -r name="${1:-}"
+    shift
+
+    for option in "$@"; do
+        case ${option:-} in
+            "$name="*|-"$name="*|--"$name="*) echo "$option";;
+            -"$name"|--"$name") echo "$option";;
+        esac
+    done
+}

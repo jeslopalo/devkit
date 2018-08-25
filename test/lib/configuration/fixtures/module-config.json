@@ -1,0 +1,9 @@
+{
+    "version": 1,
+    "properties": {
+        "known_property": "overriden known property",
+        "plain_property": "value",
+        "interpolable_property": "{{plain_property}} interpolated!",
+        "super_interpolable_property": "recursively {{interpolable_property}}"
+    }
+}

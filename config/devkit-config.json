@@ -1,12 +1,15 @@
 {
     "version": 1,
+
+    "properties": {
+        "home" : "$HOME",
+        "workspace" : "~/workspace/development",
+        "idea-cache-dir": "~/.IntelliJIdea14/system"
+    },
+
     "config_file_ids": [
         "devkit",
         "eureka",
         "ms"
-    ],
-    "properties": {
-        "workspaces-dir": "~/workspace/development",
-        "idea-cache-dir": "~/.IntelliJIdea14/system"
-    }
+    ]
 }

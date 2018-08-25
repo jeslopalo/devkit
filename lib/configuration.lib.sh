@@ -2,6 +2,8 @@
 
 import lib::log
 import lib::json
+import lib::template
+import lib::argument
 
 config::assert_file_exists() {
     local -r identifier="${1:-}"
@@ -12,7 +14,7 @@ config::assert_file_exists() {
         exit 1
     fi
 
-    version=$(config::find ".version" "$identifier")
+    version=$(config::find --filter=".version" --identifier="$identifier")
     if [[ $version != $DEVKIT_VERSION ]]; then
         printf "bad config: [%s] declares wrong version: %s (expected %s)\\n\\n" \
          "$file" "$version" "$DEVKIT_VERSION" 1>&2
@@ -26,27 +28,80 @@ config::file_path() {
     echo "${DEVKIT_CONFIG_PATH}/$identifier-config.json"
 }
 
-config::find_with_colors() {
-    local -r filter="${1:-.}"
-    local -r file="$(config::file_path ${2:-})"
-
-    json::query -Cr "$filter" "$file"
-}
-
 config::find() {
-    local -r filter="${1:-.}"
-    local -r file="$(config::file_path ${2:-})"
+    local -r filter=$(argument::value 'filter' "$@")
+    local -r identifier=$(argument::value 'identifier' "$@")
+    local -r file=$(config::file_path "$identifier")
 
-    json::query -r "$filter" "$file"
+    local document=$(json::query -r "$filter" "$file")
+
+    if argument::exists "interpolate" "$@"; then
+        document=$(config::interpolate --text="$document" --identifier="$identifier")
+    fi
+
+    if argument::exists "prettify" "$@"; then
+        json::prettify "$document"
+    else
+        echo "$document"
+    fi
 }
 
-config::find_property() {
-    local -r name="$1"
-    local -r identifier="${2:-}"
-    local -r file="$(config::file_path $identifier)"
+config::property() {
+    local -r name=$(argument::value 'name' "$@")
+    local -r identifier=$(argument::value 'identifier' "$@")
+    local value=""
 
     if [ -n "$name" ]; then
-        config::find ".properties.\"$name\"" "$identifier"
+        value=$(config::find --filter=".properties.\"$name\"" --identifier="$identifier")
+        if [[ $value == null ]] && [[ $identifier != 'devkit' ]]; then
+            value=$(config::find --filter=".properties.\"$name\"")
+        fi
+    fi
+
+    if argument::exists "interpolate" "$@"; then
+        config::interpolate --text="$value" --identifier="$identifier"
+    elif [[ $value != null ]]; then
+        echo $value
+    fi
+}
+
+config::exists_property() {
+    local -r name=$(argument::value 'name' "$@")
+    local -r identifier=$(argument::value 'identifier' "$@")
+    local -r filter=".properties | has(\"$name\")"
+
+    local value="false"
+
+    if [ -n "$name" ]; then
+        value=$(config::find --filter="$filter" --identifier="$identifier")
+        if [[ $value == "false" ]] && [[ $identifier != 'devkit' ]]; then
+            value=$(config::find --filter="$filter")
+        fi
+    fi
+
+    [[ $value == "true" ]]
+}
+
+config::interpolate() {
+    local -r identifier=$(argument::value 'identifier' "$@")
+    local text=$(argument::value 'text' "$@")
+    local found_vars="false"
+
+    if [[ $text != "" ]]; then
+        for var in $(template::get_vars --text="$text"); do
+            if config::exists_property --name="$var" --identifier="$identifier"; then
+                value=$(config::property --name="$var" --identifier="$identifier")
+                text=$(template::replace_var --text="$text" --name="$var" --value="$value")
+                found_vars="true"
+            fi
+        done
+    fi
+
+    # if at least one var has been interpolated, then recurse to found more vars
+    if [[ $found_vars == true ]]; then
+        config::interpolate --text="$text" --identifier="$identifier"
+    else
+        echo $text
     fi
 }
 

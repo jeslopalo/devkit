@@ -41,6 +41,6 @@ testcase() {
 #   0 - on success
 #   1 - otherwise
 load_lib() {
-  local name="$1"
-  load "$DEVKIT_TEST_ROOT/test_helper/${name}/load.bash"
+    local name="$1"
+    load "$DEVKIT_TEST_ROOT/test_helper/${name}/load.bash"
 }

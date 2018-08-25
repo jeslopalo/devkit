@@ -2,26 +2,26 @@
 
 load _init
 
-@test "$(testcase) should return 1 with unknown property" {
+@test "$(testcase) should fail with unknown property" {
     run config::exists_property --name="unknown_property"
 
-    [ "$status" -eq 1 ]
+    assert_failure
 }
 
-@test "$(testcase) should return 1 with unknown property (when overriding)" {
+@test "$(testcase) should fail with unknown property (when overriding)" {
     run config::exists_property --name="unknown_property" --identifier="module"
 
-    [ "$status" -eq 1 ]
+    assert_failure
 }
 
-@test "$(testcase) should return 0 with known property" {
+@test "$(testcase) should success with known property" {
     run config::exists_property --name="known_property"
 
-    [ "$status" -eq 0 ]
+    assert_success
 }
 
-@test "$(testcase) should return 0 with known property (when overriding)" {
+@test "$(testcase) should success with known property (when overriding)" {
     run config::exists_property --name="known_property" --identifier="module"
 
-    [ "$status" -eq 0 ]
+    assert_success
 }

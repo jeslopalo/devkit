@@ -20,5 +20,6 @@ arguments=("-C" "--color" "--module=devkit" "-m" "ms" "--with-spaces" "this is a
 
 @test "$(testcase) should get only argument name (as is) with space separated arguments" {
     run argument::get 'm' "${arguments[@]}"
+
     assert_output "-m"
 }

@@ -88,9 +88,6 @@ config::interpolate() {
     local found_vars="false"
 
     if [[ $text != "" ]]; then
-#        local -a varsiii=( $(template::get_vars --text="$text") )
-
-#        for var in ${varsiii[@]}; do
         for var in $(template::get_vars --text="$text"); do
             if config::exists_property --name="$var" --identifier="$identifier"; then
                 value=$(config::property --name="$var" --identifier="$identifier")

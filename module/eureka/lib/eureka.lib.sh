@@ -20,8 +20,8 @@ register_service() {
 
     declare document=$(<"$EUREKA_REGISTER_DOCUMENT_FILE")
 
-    document=$(template::replace_var "$document" "service_name")
-    url=$(template::replace_var $(eureka::find_register_url_pattern) "service_name")
+    document=$(template::replace_var --text="$document" --name="service_name")
+    url=$(template::replace_var --text="$(eureka::find_register_url_pattern)" --name="service_name")
 
     printf "Registering service in local eureka: %s\\n" "$service_name"
     curl -g --request POST \
@@ -39,7 +39,7 @@ unregister_service() {
     	exit 1
     fi
 
-    url=$(template::replace_var $(eureka::find_unregister_url_pattern) "service_name")
+    url=$(template::replace_var --text="$(eureka::find_unregister_url_pattern)" --name="service_name")
 
     printf "Unregistering service in local eureka: %s\\n" "$service_name"
     curl -g --request DELETE \

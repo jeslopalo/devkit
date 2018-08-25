@@ -1,0 +1,27 @@
+{
+    "version": 1,
+
+    "properties": {
+        "known_property": "known",
+        "interpolable_property": "{{known_property}} value"
+    },
+
+    "config_file_ids": [
+        "devkit",
+        "module"
+    ],
+
+    "services" : {
+        "workspace": "{{known_property}}/path",
+        "data" : [
+            {
+                "name" : "service_one",
+                "type" : "spring-boot"
+            },
+            {
+                "name" : "service_two",
+                "type" : "docker"
+            }
+        ]
+    }
+}

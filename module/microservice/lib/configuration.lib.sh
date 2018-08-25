@@ -109,8 +109,8 @@ ms::find_endpoint_url() {
     port=$(ms::find_port "$name")
 
     endpoint_url=$(ms::find --interpolate --filter=".microservices.url.$environment")
-    endpoint_url=$(template::replace_var "$endpoint_url" "name")
-    endpoint_url=$(template::replace_var "$endpoint_url" "port")
+    endpoint_url=$(template::replace_var --text="$endpoint_url" --name="name")
+    endpoint_url=$(template::replace_var --text="$endpoint_url" --name="port")
     echo "$endpoint_url"
 }
 

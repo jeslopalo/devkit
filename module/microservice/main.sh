@@ -113,7 +113,7 @@ main() {
                 exit $?
             ;;
             ports)
-                ms::find_ports_in_use
+                ms::find_ports_in_use | xargs -n2 | xargs -I {} echo " {}"
                 exit $?
             ;;
             defaults)

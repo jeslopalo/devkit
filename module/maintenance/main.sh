@@ -15,12 +15,12 @@ include lib::usage "$@"
 import lib::configuration
 
 find_maintenance_workspace() {
-    local -r workspace=$(config::find_property "workspaces-dir")
+    local -r workspace=$(config::property --name="workspaces-dir")
     echo "${workspace/#\~/$HOME}"
 }
 
 find_maintenance_idea_cache_dir() {
-    local -r cache_dir=$(config::find_property "idea-cache-dir")
+    local -r cache_dir=$(config::property --name="idea-cache-dir")
     echo "${cache_dir/#\~/$HOME}"
 }
 

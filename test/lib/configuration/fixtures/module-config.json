@@ -1,0 +1,9 @@
+{
+    "version": 1,
+    "properties": {
+        "known_property": "overriden kwown property",
+        "plain_property": "value",
+        "interpolable_property": "{{plain_property}} interpolated!",
+        "super_interpolable_property": "{{interpolable_property}}"
+    }
+}

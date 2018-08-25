@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 json::query() {
-    jq "$@"
+    jq -cM "$@"
 }
 
 json::merge_maps() {

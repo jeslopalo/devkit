@@ -36,7 +36,7 @@ config::find() {
     local document=$(json::query -r "$filter" "$file")
 
     if argument::exists "interpolate" "$@"; then
-        document=$(config::interpolate "$document" "$identifier")
+        document=$(config::interpolate --text="$document" --identifier="$identifier")
     fi
 
     if argument::exists "prettify" "$@"; then
@@ -46,11 +46,10 @@ config::find() {
     fi
 }
 
-config::find_property() {
-    local -r name="$1"
-    local -r identifier="${2:-}"
-    local -r file="$(config::file_path $identifier)"
-    local value
+config::property() {
+    local -r name=$(argument::value 'name' "$@")
+    local -r identifier=$(argument::value 'identifier' "$@")
+    local value=""
 
     if [ -n "$name" ]; then
         value=$(config::find --filter=".properties.\"$name\"" --identifier="$identifier")
@@ -58,28 +57,55 @@ config::find_property() {
             value=$(config::find --filter=".properties.\"$name\"")
         fi
     fi
-    [[ $value != null ]] && echo $value
+
+    if argument::exists "interpolate" "$@"; then
+        config::interpolate --text="$value" --identifier="$identifier"
+    elif [[ $value != null ]]; then
+        echo $value
+    fi
+}
+
+config::exists_property() {
+    local -r name=$(argument::value 'name' "$@")
+    local -r identifier=$(argument::value 'identifier' "$@")
+    local -r filter=".properties | has(\"$name\")"
+
+    local value="false"
+
+    if [ -n "$name" ]; then
+        value=$(config::find --filter="$filter" --identifier="$identifier")
+        if [[ $value == "false" ]] && [[ $identifier != 'devkit' ]]; then
+            value=$(config::find --filter="$filter")
+        fi
+    fi
+
+    [[ $value == "true" ]]
 }
 
 config::interpolate() {
-    local -r document="${1:-}"
-    local -r identifier="${2:-}"
-    local partial="$document"
+    local -r identifier=$(argument::value 'identifier' "$@")
+    local text=$(argument::value 'text' "$@")
+    local found_vars="false"
 
-    keys=( $(config::find --filter=".properties | keys | .[]" --identifier="$identifier") )
-    for key in "${keys[@]}"; do
-        partial=$(template::replace_var "$partial" "$key" "$(config::find_property $key $identifier)")
-    done
+    if [[ $text != "" ]]; then
+#        local -a varsiii=( $(template::get_vars --text="$text") )
 
-    # try to find properties in base configuration with not empty identifier
-    if [[ $identifier != "" ]]; then
-        keys=($(config::find --filter=".properties | keys | .[]"))
-        for key in "${keys[@]}"; do
-            partial=$(template::replace_var "$partial" "$key" "$(config::find_property $key $identifier)")
+#        for var in ${varsiii[@]}; do
+        for var in $(template::get_vars --text="$text"); do
+            if config::exists_property --name="$var" --identifier="$identifier"; then
+                value=$(config::property --name="$var" --identifier="$identifier")
+                text=$(template::replace_var --text="$text" --name="$var" --value="$value")
+                found_vars="true"
+            fi
         done
     fi
 
-    echo $partial
+    # if at least one var has been interpolated, then recurse to found more vars
+    if [[ $found_vars == true ]]; then
+        config::interpolate --text="$text" --identifier="$identifier"
+    else
+        echo $text
+    fi
 }
 
 config::edit_file() {

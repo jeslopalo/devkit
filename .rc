@@ -19,3 +19,6 @@ if [[ -z $DEVKIT_CONFIG_PATH ]]; then
     [[ -d $custom_config_path ]] && export DEVKIT_CONFIG_PATH="$custom_config_path"
     [[ -z $DEVKIT_CONFIG_PATH ]] && export DEVKIT_CONFIG_PATH="$DEVKIT_HOME/config"
 fi
+
+# Load import library
+source "$DEVKIT_LIB/import.lib.sh"

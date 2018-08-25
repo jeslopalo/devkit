@@ -7,37 +7,37 @@ load _init
 @test "$(testcase) should return '' with unknown property" {
     run config::property --name="unknown_property"
 
-    [[ $output == '' ]]
+    assert_output ""
 }
 
 @test "$(testcase) should return '' with unknown property (when overriding)" {
     run config::property --name="unknown_property" --identifier="module"
 
-    [[ $output == '' ]]
+    assert_output ""
 }
 
 @test "$(testcase) should return the value of known property" {
     run config::property --name="known_property"
 
-    [[ $output == 'known' ]]
+    assert_output "known"
 }
 
 @test "$(testcase) should return empty value with a module without properties node" {
     run config::property --name="a_property" --identifier="no_properties_module"
 
-    [[ $output == '' ]]
+    assert_output ""
 }
 
 @test "$(testcase) should return empty value with a module with empty properties node" {
     run config::property --name="a_property" --identifier="empty_properties_module"
 
-    [[ $output == '' ]]
+    assert_output ""
 }
 
 @test "$(testcase) should return the overriden value of known property (when overriding)" {
     run config::property --name="known_property" --identifier="module"
 
-    [[ $output == 'overriden kwown property' ]]
+    assert_output 'overriden known property'
 }
 
 ## interpolation behavior
@@ -45,11 +45,11 @@ load _init
 @test "$(testcase) should not replace existant vars with property values (without flag)" {
     run config::property --name="interpolable_property"
 
-    [[ "$output" == '{{known_property}}'* ]]
+    assert_output --regexp '^{{known_property}}.*'
 }
 
 @test "$(testcase) should replace existant vars with property values (with flag)" {
     run config::property --name="interpolable_property" --interpolate
 
-    [[ "$output" == 'known value' ]]
+    assert_output 'known value'
 }

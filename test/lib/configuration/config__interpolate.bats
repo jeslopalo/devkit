@@ -6,7 +6,7 @@ load _init
 
     run config::interpolate
 
-    [[ $output == "" ]]
+    assert_output ""
 }
 
 @test "$(testcase) should replace existant vars with property values" {
@@ -14,8 +14,8 @@ load _init
 
     run config::interpolate --text="$template" --identifier="module"
 
-    ! [[ $output == "$template" ]]
-    [[ $output == 'value will not contains vars!' ]]
+    refute_output "$template"
+    assert_output 'value will not contains vars!'
 }
 
 @test "$(testcase) should replace all existant vars with property values" {
@@ -23,8 +23,8 @@ load _init
 
     run config::interpolate --text="$template" --identifier="module"
 
-    ! [[ $output == "$template" ]]
-    [[ $output == 'value, overriden kwown property, value will not contains vars!' ]]
+    refute_output "$template"
+    assert_output 'value, overriden known property, value will not contains vars!'
 }
 
 @test "$(testcase) should interpolate interpolable property values" {
@@ -32,8 +32,8 @@ load _init
 
     run config::interpolate --text="$template" --identifier="module"
 
-    ! [[ $output == "$template" ]]
-    [[ $output == 'value interpolated! should be equal to "value interpolated!"' ]]
+    refute_output "$template"
+    assert_output 'value interpolated! should be equal to "value interpolated!"'
 }
 
 @test "$(testcase) should interpolate until there are no more interpolable property values" {
@@ -41,6 +41,6 @@ load _init
 
     run config::interpolate --text="$template" --identifier="module"
 
-    ! [[ $output == "$template" ]]
-    [[ $output == 'value interpolated! should be equal to "value interpolated!"' ]]
+    refute_output "$template"
+    assert_output 'value interpolated! should be equal to "value interpolated!"'
 }

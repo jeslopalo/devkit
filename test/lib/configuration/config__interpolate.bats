@@ -37,10 +37,10 @@ load _init
 }
 
 @test "$(testcase) should interpolate until there are no more interpolable property values" {
-    template='{{super_interpolable_property}} should be equal to "value interpolated!"'
+    template='{{super_interpolable_property}} should be equal to "recursively value interpolated!"'
 
     run config::interpolate --text="$template" --identifier="module"
 
     refute_output "$template"
-    assert_output 'value interpolated! should be equal to "value interpolated!"'
+    assert_output 'recursively value interpolated! should be equal to "recursively value interpolated!"'
 }

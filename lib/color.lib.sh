@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+using tput, perl
+
 _tput=":"
 # Use colors, but only if connected to a terminal, and that terminal supports them.
 if [[ ${DEVKIT_COLORS:-0} = 1 ]] && test -t 1; then

@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+using grep, sed
+
 #>|          mark 'synopsis' line
 #+|          mark 'help' lines
 #%|          mark 'purpose' line

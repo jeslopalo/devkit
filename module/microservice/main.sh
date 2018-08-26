@@ -40,12 +40,13 @@
 #=|
 include lib::usage "$@"
 
+using less, eureka
+
 import lib::color
 import lib::log
 import lib::output
 
 import module::microservice::configuration
-import module::microservice::dependencies
 import module::microservice::microservices
 
 microservice_usage() {
@@ -55,8 +56,6 @@ microservice_usage() {
 }
 
 main() {
-
-    check_for_dependencies
     ms::assert_file_exists
 
     if [ "$#" = 0 ]; then

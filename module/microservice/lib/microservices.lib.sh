@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+using gradle, java
+
 import lib::configuration
 
 error_project_not_found() {

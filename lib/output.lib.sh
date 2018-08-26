@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+using column
+
 output::columnize() {
     local -a elements=$@
 

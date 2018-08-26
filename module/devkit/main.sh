@@ -24,11 +24,12 @@
 #=|
 include lib::usage "$@"
 
+using grep, perl
+
 import lib::color
 import lib::log
 
 import module::devkit::configuration
-import module::devkit::dependencies
 
 version() {
     printf "$bold%s$reset\\n" "$(cat $DEVKIT_MODULE/devkit/assets/banner.txt)"
@@ -102,7 +103,6 @@ test_colors() {
 }
 
 main() {
-    check_for_dependencies
     devkit::assert_file_exists
 
     while getopts ":vElhtc:e:" opt; do

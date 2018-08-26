@@ -29,11 +29,12 @@
 #=|
 include lib::usage "$@"
 
+using ms
+
 import lib::color
 import lib::log
 import lib::configuration
 
-import module::eureka::dependencies
 import module::eureka::configuration
 import module::eureka::eureka
 
@@ -45,12 +46,11 @@ eureka_usage() {
 
 main() {
 
+    eureka::assert_file_exists
+
     local exclusions=()
     local register=()
     local unregister=()
-
-    check_for_dependencies
-    eureka::assert_file_exists
 
     if [ "$#" = 0 ]; then
         log::warn "Sorry! I need something more to continue :("

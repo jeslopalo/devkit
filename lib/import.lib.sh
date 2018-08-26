@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
+source $DEVKIT_LIB/command.lib.sh
+
 # When a source file is imported, it is also cached to be included only once
-CACHED_IMPORTS=( "lib:import" )
+CACHED_IMPORTS=( "lib::import" "lib::command" )
 
 import::list() {
     printf "[trace] imported libraries: %s\\n" "${CACHED_IMPORTS[*]}"
@@ -16,13 +18,13 @@ import::assert_that_is_valid() {
     fi
 
     case $libid in
-    lib::*)         return 0;;
-    module::*::*)   return 0;;
-    main::*)        return 0;;
-    *)
-        printf "error: %s: unkown library identifier\\n" "$libid"
-        return 1
-    ;;
+        lib::*)         return 0;;
+        module::*::*)   return 0;;
+        main::*)        return 0;;
+        *)
+            printf "error: %s: unkown library identifier\\n" "$libid"
+            return 1
+        ;;
     esac
 }
 
@@ -30,19 +32,19 @@ import::location() {
     local -r libid="${1:-}"
 
     case $libid in
-    lib::*)
-        echo "$DEVKIT_LIB"
-    ;;
-    module::*::*)
-        if [[ $libid =~ ^module::(.+)::.+$ ]]; then
-            echo "$DEVKIT_MODULE/${BASH_REMATCH[1]}/lib"
-        fi
-    ;;
-    main::*)
-        if [[ $libid =~ ^main::(.+)$ ]]; then
-            echo "$DEVKIT_MODULE/${BASH_REMATCH[1]}"
-        fi
-    ;;
+        lib::*)
+            echo "$DEVKIT_LIB"
+        ;;
+        module::*::*)
+            if [[ $libid =~ ^module::(.+)::.+$ ]]; then
+                echo "$DEVKIT_MODULE/${BASH_REMATCH[1]}/lib"
+            fi
+        ;;
+        main::*)
+            if [[ $libid =~ ^main::(.+)$ ]]; then
+                echo "$DEVKIT_MODULE/${BASH_REMATCH[1]}"
+            fi
+        ;;
     esac
 }
 
@@ -131,4 +133,8 @@ include() {
     fi
 
     source "$location/$filename" "$@"
+}
+
+using() {
+    command::assert "${@//,/ }"
 }

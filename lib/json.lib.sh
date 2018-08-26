@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+using jq
+
 json::query() {
     jq -cM "$@"
 }

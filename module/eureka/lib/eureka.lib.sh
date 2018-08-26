@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+using curl
+
 import lib::template
 import module::eureka::configuration
 

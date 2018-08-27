@@ -1,12 +1,12 @@
 {
   "instance": {
-    "instanceId": "PARADTRA04.corpme.es:${service_name}",
-    "app": "${service_name}",
-    "hostName": "${service_name}-desarrollo.osrouter.dev.corpme.int",
-    "ipAddr": "http://${service_name}-desarrollo.osrouter.dev.corpme.int",
-    "homePageUrl": "http://${service_name}-desarrollo.osrouter.dev.corpme.int",
-    "statusPageUrl": "http://${service_name}-desarrollo.osrouter.dev.corpme.int/info",
-    "healthCheckUrl": "http://${service_name}-desarrollo.osrouter.dev.corpme.int/health",
+    "instanceId": "PARADTRA04.corpme.es:{{service_name}}",
+    "app": "{{service_name}}",
+    "hostName": "{{service_name}}-desarrollo.osrouter.dev.corpme.int",
+    "ipAddr": "http://{{service_name}}-desarrollo.osrouter.dev.corpme.int",
+    "homePageUrl": "http://{{service_name}}-desarrollo.osrouter.dev.corpme.int",
+    "statusPageUrl": "http://{{service_name}}-desarrollo.osrouter.dev.corpme.int/info",
+    "healthCheckUrl": "http://{{service_name}}-desarrollo.osrouter.dev.corpme.int/health",
     "port": {
       "$": 80,
       "@enabled": false
@@ -15,7 +15,7 @@
       "renewalIntervalInSecs": 10000,
       "durationInSecs": 10000
     },
-    "vipAddress": "${service_name}",
+    "vipAddress": "{{service_name}}",
     "dataCenterInfo": {
       "@class": "com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo",
       "name": "MyOwn"

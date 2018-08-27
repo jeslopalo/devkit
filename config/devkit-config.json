@@ -3,8 +3,8 @@
 
     "properties": {
         "home" : "$HOME",
-        "workspace" : "~/workspace/development",
-        "idea-cache-dir": "~/.IntelliJIdea14/system"
+        "workspace" : "{{home}}/workspace/development",
+        "idea-cache-dir": "{{home}}/.IntelliJIdea14/system"
     },
 
     "config_file_ids": [

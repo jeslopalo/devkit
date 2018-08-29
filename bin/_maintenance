@@ -1,0 +1,14 @@
+#compdef _maintenance maintenance
+#@IgnoreInspection BashAddShebang
+
+_maintenance() {
+    local -i ret=1
+
+    _arguments -C : \
+        '-c[Execute a clean job]:clean job:(all builds caches)' \
+        '-h[Print help message]: :' && ret=0
+
+    return $ret
+}
+
+_maintenance "$@"

@@ -1,10 +1,26 @@
 #!/usr/bin/env bash
 #=|
 #=| SYNOPSIS
-#>|   maintenance
+#>|   maintenance [-h] [-c <clean job>]
 #=|
 #=| DESCRIPTION
-#%|   Clean IntelliJ (ie. metadata & cache folder) and execute clean (maven, gradle, ant) in every workspace project
+#%|   Maintenance operations: cleaning caches, workspaces, etc.
+#+|
+#+| USAGE
+#+|   maintenance [-h] [-c <clean job>]
+#+|
+#+| OPTIONS
+#+|   -c <clean job>        Execute a clean job
+#+|   -h                    Print this help message
+#+|
+#+| CLEAN JOBS
+#+|   builds                Clean project workspaces
+#+|   caches                Clean caches (IDEA, etc)
+#+|   all                   Execute all clean jobs
+#+|
+#+| EXAMPLES
+#+|   maintenance -c builds
+#+|   maintenance -h
 #-|
 #-| AUTHORING
 #-|   author          @jeslopalo <Jesús López Alonso>
@@ -12,32 +28,77 @@
 #=|
 include lib::usage "$@"
 
-import lib::configuration
+include lib::log
 
-find_maintenance_workspace() {
-    local -r workspace=$(config::property --name="workspaces-dir")
-    echo "${workspace/#\~/$HOME}"
+import module::maintenance::configuration
+import module::maintenance::maintenance
+
+clean() {
+    local -r opt="${1:-}"
+
+    case "${opt}" in
+        caches)
+            maintenance::clean_intellij_caches
+        ;;
+        builds)
+            maintenance::clean_workspace
+        ;;
+        all)
+            maintenance::clean_intellij_caches
+            printf "\\n"
+            maintenance::clean_workspace
+        ;;
+        *)
+            log::error "invalid option: $option"
+            exit 1
+        ;;
+    esac
+
+    exit $?
 }
 
-find_maintenance_idea_cache_dir() {
-    local -r cache_dir=$(config::property --name="idea-cache-dir")
-    echo "${cache_dir/#\~/$HOME}"
+main() {
+    maintenance::assert_file_exists
+
+    if [ "$#" = 0 ]; then
+        log::warn "Sorry! I need something more to continue :("
+        log::usage "$(maintenance --synopsis)"
+        exit 1
+    fi
+
+    local clean="none"
+
+    while getopts ":hc:" opt; do
+        case "${opt}" in
+            c)
+                clean "${OPTARG}"
+                exit $?
+            ;;
+            h)
+                maintenance --help
+                exit 0
+            ;;
+            :)
+                log::error "invalid option: -$OPTARG requires an argument"
+                log::usage "$(maintenance --synopsis)"
+                exit 1
+            ;;
+            \?|*)
+                log::error "invalid option: $OPTARG"
+                log::usage "$(maintenance --synopsis)"
+                exit 1
+            ;;
+        esac
+    done
+
+    shift $((OPTIND-1))
+
+    # It's an error if there are more parameters
+    if [ "$#" -gt 0 ]; then
+        log::error "invalid option: $*"
+        log::usage "$(maintenance --synopsis)"
+        exit 1
+    fi
 }
 
-IDEA_CACHE_HOME=$(find_maintenance_idea_cache_dir)
-DEVELOPMENT_HOME=$(find_maintenance_workspace)
-
-printf "\\nCleaning intellij metadata: %s...\\n" "$IDEA_CACHE_HOME"
-rm -vrf $IDEA_CACHE_HOME/caches/*
-rm -vrf $IDEA_CACHE_HOME/jars/*
-rm -vrf $IDEA_CACHE_HOME/js_caches/*
-rm -vrf $IDEA_CACHE_HOME/jsp_related_caches/*
-rm -vrf $IDEA_CACHE_HOME/compiler/*
-
-printf "\\nCleaning projects: %s...\\n" "$DEVELOPMENT_HOME"
-#/usr/bin/find $DEVELOPMENT_HOME -name "build.xml" -printf '\n\033[32m> %h ...\033[0m\n\n' -execdir ant clean ';'
-#/usr/bin/find $DEVELOPMENT_HOME -name "pom.xml" -printf '\n\033[32m> %h ...\033[0m\n\n' -execdir mvn clean ';'
-#/usr/bin/find $DEVELOPMENT_HOME -name "build.gradle" -printf '\n\033[32m> %h ...\033[0m\n\n' -execdir gradle clean ';'
-/usr/bin/find $DEVELOPMENT_HOME -name "build.xml" -execdir ant clean ';'
-/usr/bin/find $DEVELOPMENT_HOME -name "pom.xml" -execdir mvn clean ';'
-/usr/bin/find $DEVELOPMENT_HOME -name "build.gradle" -execdir gradle clean ';'
+main "$@"

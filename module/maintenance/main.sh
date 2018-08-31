@@ -28,7 +28,7 @@
 #=|
 include lib::usage "$@"
 
-include lib::log
+import lib::log
 
 import module::maintenance::configuration
 import module::maintenance::maintenance

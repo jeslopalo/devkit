@@ -8,11 +8,11 @@ import lib::argument
 # usage: template::replace_var --text="$template" --name="varname" [--value="value"]
 #
 template::replace_var() {
-    local template=$(argument::value "text" "$@")
+    local template=$(argument::value "text" -- "$@")
 
-    if argument::exists "name" "$@"; then
-        local -r var_name=$(argument::value "name" "$@")
-        local -r var_value=$(argument::value "value" "$@")
+    if argument::exists "name" -- "$@"; then
+        local -r var_name=$(argument::value "name" -- "$@")
+        local -r var_value=$(argument::value "value" -- "$@")
 
         shopt -s extglob
         template="${template//\{\{*([[:space:]])${var_name}*([[:space:]])\}\}/${var_value:-${!var_name}}}"
@@ -28,7 +28,7 @@ template::replace_var() {
 # usage: template::get_vars --text="$text"
 #
 template::get_vars() {
-    local -r text=$(argument::value "text" "$@")
+    local -r text=$(argument::value "text" -- "$@")
 
     local -r replacement=" {{"
     local -r sanitized="${text//\{\{/$replacement}"

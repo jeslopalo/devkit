@@ -2,24 +2,34 @@
 
 load _init
 
-arguments=("-C" "--color" "--module=devkit" "-m" "ms" "--with-spaces" "this is a message" "-f=1")
-
 @test "$(testcase) should get argument (as is)" {
-    run argument::get 'module' "${arguments[@]}"
+    run argument::get 'module' -- "${arguments[@]}"
+    assert_success
     assert_output "--module=devkit"
 
-    run argument::get 'f' "${arguments[@]}"
+    run argument::get 'f' -- "${arguments[@]}"
+    assert_success
     assert_output "-f=1"
 
-    run argument::get 'C' "${arguments[@]}"
+    run argument::get 'C' -- "${arguments[@]}"
+    assert_success
     assert_output "-C"
 
-    run argument::get 'color' "${arguments[@]}"
+    run argument::get 'color' -- "${arguments[@]}"
+    assert_success
     assert_output "--color"
 }
 
 @test "$(testcase) should get only argument name (as is) with space separated arguments" {
-    run argument::get 'm' "${arguments[@]}"
+    run argument::get 'm' -- "${arguments[@]}"
 
+    assert_success
     assert_output "-m"
+}
+
+@test "$(testcase) should ignore positional arguments (everything after '--')" {
+    run argument::get 'positional_argument' -- "${arguments[@]}"
+
+    assert_failure
+    assert_output ""
 }

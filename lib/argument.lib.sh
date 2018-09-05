@@ -68,7 +68,45 @@ argument::get() {
 
 _lambda_echo() { echo $1; }
 
+#
+# usage:
+#   argument::get_argument_at [-p <n | all>][--join] -- "${@}"
+#
+argument::get_argument_at() {
+    local -ra arguments=("${@}")
+    local -r position=$(argument::value p -- "${arguments[@]}")
 
+    # skip function's options
+    for arg in "${@}"; do
+        shift
+        if [[ $arg = "--" ]]; then break; fi
+    done
+
+    # skip arguments in the invocation arguments
+    for arg in "${@}"; do
+        shift
+        if [[ $arg = "--" ]]; then break; fi
+    done
+
+    if argument::exists 'join' -- "${arguments[@]}"; then
+        echo "${@}"
+        return 0
+    fi
+
+    case ${position:-} in
+        all)
+            printf '%s\0' "${@}"
+            return 0
+        ;;
+        [0-9]|[0-9][0-9])
+            [[ "$#" -lt $position ]] && return 1
+            echo "${!position}"
+            return 0
+        ;;
+    esac
+
+    return 1
+}
 
 argument::map_if_present() {
     local name="${1:-}"

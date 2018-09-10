@@ -3,9 +3,15 @@
 specs_root_path="./test"
 specs_extension=".bats"
 
+usage() {
+    printf "usage: %s [-h/--help] [-p | --tap] -- [spec pattern]\\n" "$0"
+}
+
 execute_spec() {
     local -r filename="${1:-}"
-    bats -p $filename
+    local -r mode="${2:---p}"
+
+    [[ -n $filename ]] && bats $mode $filename
 }
 
 spec_name() {
@@ -19,7 +25,18 @@ spec_name() {
 }
 
 execute_specs() {
+    local mode=""
+
+    for arg in "${@}"; do
+        shift
+        if [[ $arg = "--tap" ]]; then mode="--tap"; fi
+        if [[ $arg = "-p" ]]; then mode="-p"; fi
+        if [[ $arg = "-h" ]] || [[ $arg = "--help" ]]; then usage; exit 0; fi
+        if [[ $arg = "--" ]]; then break; fi
+    done
+
     local -r slug="${1:-}"
+
     local total_failures=0
     local -a suites_with_failures=()
 
@@ -32,7 +49,7 @@ execute_specs() {
         fi
 
         printf "\\n[%s] executing <%s>...\\n" "${slug:-all}" "$(spec_name $filename)"
-        execute_spec "${filename}"
+        execute_spec "${filename}" "${mode}"
         if [ $? -gt 0 ]; then
             suites_with_failures=( "${suites_with_failures[@]}" "$(spec_name $filename)" )
             ((total_failures++))

@@ -78,7 +78,7 @@ ms::find_microservice_names() {
 
 ms::find_by_name() {
     local name="$1"
-    local -r prettify=$(argument::get "prettify" "$@")
+    local -r prettify=$(argument::get "prettify" -- "$@")
 
     ms::find --interpolate --filter=".microservices.data[] | select(.name == \"$name\")" "$prettify"
 }

@@ -29,17 +29,17 @@ config::file_path() {
 }
 
 config::find() {
-    local -r filter=$(argument::value 'filter' "$@")
-    local -r identifier=$(argument::value 'identifier' "$@")
+    local -r filter=$(argument::value 'filter' -- "$@")
+    local -r identifier=$(argument::value 'identifier' -- "$@")
     local -r file=$(config::file_path "$identifier")
 
     local document=$(json::query -r "$filter" "$file")
 
-    if argument::exists "interpolate" "$@"; then
+    if argument::exists "interpolate" -- "$@"; then
         document=$(config::interpolate --text="$document" --identifier="$identifier")
     fi
 
-    if argument::exists "prettify" "$@"; then
+    if argument::exists "prettify" -- "$@"; then
         json::prettify "$document"
     else
         echo "$document"
@@ -47,8 +47,8 @@ config::find() {
 }
 
 config::property() {
-    local -r name=$(argument::value 'name' "$@")
-    local -r identifier=$(argument::value 'identifier' "$@")
+    local -r name=$(argument::value 'name' -- "$@")
+    local -r identifier=$(argument::value 'identifier' -- "$@")
     local value=""
 
     if [ -n "$name" ]; then
@@ -58,7 +58,7 @@ config::property() {
         fi
     fi
 
-    if argument::exists "interpolate" "$@"; then
+    if argument::exists "interpolate" -- "$@"; then
         config::interpolate --text="$value" --identifier="$identifier"
     elif [[ $value != null ]]; then
         echo $value
@@ -66,8 +66,8 @@ config::property() {
 }
 
 config::exists_property() {
-    local -r name=$(argument::value 'name' "$@")
-    local -r identifier=$(argument::value 'identifier' "$@")
+    local -r name=$(argument::value 'name' -- "$@")
+    local -r identifier=$(argument::value 'identifier' -- "$@")
     local -r filter=".properties | has(\"$name\")"
 
     local value="false"
@@ -83,8 +83,8 @@ config::exists_property() {
 }
 
 config::interpolate() {
-    local -r identifier=$(argument::value 'identifier' "$@")
-    local text=$(argument::value 'text' "$@")
+    local -r identifier=$(argument::value 'identifier' -- "$@")
+    local text=$(argument::value 'text' -- "$@")
     local found_vars="false"
 
     if [[ $text != "" ]]; then

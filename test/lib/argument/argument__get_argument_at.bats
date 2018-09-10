@@ -57,7 +57,7 @@ load _init
 }
 
 @test "$(testcase) should get all positional arguments after '--' as array with -p all" {
-    declare -a arguments=( --option -- "positional arguments" should be returned "with spaces")
+    declare -a arguments=(--option -- "positional arguments" should be returned "with spaces")
 
     declare -a output=()
     while IFS='' read -r -d '' element; do

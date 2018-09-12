@@ -48,3 +48,28 @@ template::get_vars() {
         echo ${var_names[@]} | xargs -n1 | sort -u | xargs
     fi
 }
+
+template::replace_calls() {
+    local text=$(argument::value "text" -- "$@")
+
+    local -r start="(("
+    local -r end="))"
+    local -r regex='\(\((.*)\)\)'
+
+    if [[ -n $text ]] && [[ $text =~ $regex ]]; then
+
+        command=$(echo $text | sed -e "s/^\(.*\)$start//1" -e "s/$end\(.*\)//1")
+        if [[ -n $command ]]; then
+            result=$($command)
+
+            shopt -s extglob
+            template="${text//\(\($command\)\)/$result}"
+            shopt -u extglob
+
+            template::replace_calls --text="$template"
+            return $?
+        fi
+    fi
+
+    echo "$text"
+}

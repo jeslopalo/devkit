@@ -33,6 +33,9 @@
 #+|   ms -r -a log=debug microservice1
 #+|   ms -q ports
 #+|   ms -q ".microservices.workspace"
+#+|
+#+| AVAILABLE SERVICES
+#+| ((ms -q names))
 #-|
 #-| AUTHORING
 #-|   author          @jeslopalo <Jesús López Alonso>
@@ -48,12 +51,6 @@ import lib::output
 
 import module::microservice::configuration
 import module::microservice::microservices
-
-microservice_usage() {
-    ms --help
-    printf "\\nAVAILABLE SERVICES:\\n"
-    output::columnize $(ms::find_microservice_names)
-}
 
 main() {
     ms::assert_file_exists
@@ -79,7 +76,7 @@ main() {
             a) RUN_ARGUMENTS="$RUN_ARGUMENTS $OPTARG";;
             q) QUERY="$OPTARG";;
             h)
-                microservice_usage
+                ms --help
                 exit 0
             ;;
             :)

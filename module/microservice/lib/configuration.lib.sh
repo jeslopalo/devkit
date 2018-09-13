@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+using xargs, sort
+
 import lib::configuration
 import lib::template
 import lib::json
@@ -20,7 +22,11 @@ ms::find() {
 }
 
 ms::find_registerables() {
-    ms::find --interpolate --filter='.microservices.defaults.registerable as $default|.microservices.data[]|{name:.name,registerable:(if .registerable == null then $default else .registerable end)}|select(.registerable==true)|.name' | sort
+    ms::find \
+        --interpolate \
+        --filter='.microservices.defaults.registerable as $default|.microservices.data[]|{name:.name,registerable:(if .registerable == null then $default else .registerable end)}|select(.registerable==true)|.name' | \
+    xargs -n1 | \
+    sort -n
 }
 
 ms::is_registerable() {
@@ -71,7 +77,7 @@ ms::find_default_run_javaopts() {
 ms::find_microservice_names() {
     local -r separator="${1:- }"
     local -r names=$(ms::find --interpolate --filter=".microservices.data[].name")
-    local -r sorted=$(sort <<< "${names[*]}")
+    local -r sorted=$(echo "${names[@]}" | xargs -n1 | sort -n)
 
     echo $(IFS="$separator"; echo "${sorted[*]}")
 }

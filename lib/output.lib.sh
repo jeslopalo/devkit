@@ -8,12 +8,12 @@ output::columnize() {
 
     for value in ${elements[@]}; do
         printf "  %-${length}s\n" "${value}"
-    done | column -x -c "$(__max_width)"
+    done | column -c "$(__max_width)"
 }
 
 __max_width() {
     local -r cols="$(tput cols)"
-    local -r max=180
+    local -r max=150
 
     echo $((cols < max ? cols : max))
 }

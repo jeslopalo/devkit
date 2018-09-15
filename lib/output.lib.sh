@@ -4,7 +4,7 @@ using column, xargs, sort, head, read, wc
 
 output::columnize() {
     local -a elements="$@"
-    local -r length=$(__most_longest_element "${elements[@]}")
+    local -r length=$(__longest_element "${elements[@]}")
 
     for value in ${elements[@]}; do
         printf "  %-${length}s\n" "${value}"
@@ -18,7 +18,7 @@ __max_width() {
     echo $((cols < max ? cols : max))
 }
 
-__most_longest_element() {
+__longest_element() {
     echo "$@" | \
     xargs -n1 -I{} sh -c 'echo $(echo -n {} | wc -c)\\t{}' | \
     sort -nr | \

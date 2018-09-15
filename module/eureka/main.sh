@@ -22,6 +22,9 @@
 #+|   eureka -u all
 #+|   eureka -u service1,service2
 #+|   eureka -r service1 -u service2
+#+|
+#+| AVAILABLE SERVICES
+#+| ((ms -q registerables))
 #-|
 #-| AUTHORING
 #-|   author          @jeslopalo <Jesús López Alonso>
@@ -38,14 +41,7 @@ import lib::configuration
 import module::eureka::configuration
 import module::eureka::eureka
 
-eureka_usage() {
-    eureka --help
-    printf "\\nAVAILABLE SERVICES\\n"
-    ms -q registerables
-}
-
 main() {
-
     eureka::assert_file_exists
 
     local exclusions=()
@@ -76,7 +72,7 @@ main() {
                 fi
             ;;
             h)
-                eureka_usage
+                eureka --help
                 exit 0
             ;;
             :)

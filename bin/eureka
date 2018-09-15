@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source $(dirname $(sourcedir "$BASH_SOURCE"))/.rc
+source $(sourcedir --base)/.rc
 
 import lib::error
 import lib::lang

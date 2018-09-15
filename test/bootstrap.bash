@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source $(dirname $(sourcedir "$BASH_SOURCE"))/.rc
+source $(sourcedir --base)/.rc
 
 export DEVKIT_TEST_ROOT="$DEVKIT_HOME/test"
 

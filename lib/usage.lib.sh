@@ -2,6 +2,8 @@
 
 using grep, sed
 
+import lib::template
+
 #>|          mark 'synopsis' line
 #+|          mark 'help' lines
 #%|          mark 'purpose' line
@@ -14,7 +16,10 @@ usage::extract_from_header() {
     local -r source_file="${2:-}"
 
     [[ -r $source_file ]] || exit 1
-    grep -e "$pattern" ${source_file} | sed -e "s/$pattern//g" -e "s/^ //" ;
+
+    grep -e "$pattern" ${source_file} | \
+    sed -e "s/$pattern//g" -e "s/^ //" | \
+    while IFS= read -r line; do template::replace_calls --text="$line"; done
 }
 
 usage::extract_command_main_source() {

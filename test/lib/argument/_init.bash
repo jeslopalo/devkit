@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source $(dirname $(sourcedir "$BASH_SOURCE"))/../bootstrap.bash
+source $(sourcedir --base)/test/bootstrap.bash
 
 load_lib bats-support
 load_lib bats-assert

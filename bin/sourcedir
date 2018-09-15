@@ -1,7 +1,48 @@
 #!/usr/bin/env bash
 
+#
+# usages: sourcedir [--base] [-<depth>] [<path>]
+#
+# # without params:
+# $ sourcedir
+# /path/to/devkit/bin
+#
+# # with file:
+# $ sourcedir /path/to/file
+# /path/to
+#
+# # with symlinks
+# $ sourcedir /path/to/symlink-file
+# /path/to/file
+#
+# # with directories
+# $ sourcedir /path/to/directory
+# /path/to
+#
+
+
 source_dir() {
+    local depth="1"
+
+    for arg in "${@}"; do
+        shift
+        if [[ $arg =~ ^-([0-9]+)$ ]]; then
+            depth="${BASH_REMATCH[1]}"
+        elif [[ $arg =~ ^--base$ ]]; then
+            depth=2
+            set --
+            break
+        else
+            set -- "$@" "$arg"
+        fi
+    done
+
     SOURCE="${1:-${BASH_SOURCE[0]}}"
+    if ! [[ -e $SOURCE ]]; then
+        printf "error: %s: file or directory not found" "$SOURCE" >&2
+        exit 1
+    fi
+
     # resolve $SOURCE until the file is no longer a symlink
     while [ -h "$SOURCE" ]; do
         DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
@@ -10,7 +51,14 @@ source_dir() {
         # relative to the path where the symlink file was located
         [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
     done
-    DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+    DIR="$(cd -P "$(dirname "$SOURCE")" && pwd )"
+
+    if (( depth > 1 )); then
+        for i in $(seq 2 $depth); do
+            DIR="$(dirname "$DIR")"
+        done
+    fi
+
     echo "$DIR"
 }
 

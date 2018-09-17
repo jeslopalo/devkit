@@ -7,7 +7,7 @@ output::columnize() {
     local -r length=$(__longest_element "${elements[@]}")
 
     for value in ${elements[@]}; do
-        printf "  %-${length}s\n" "${value}"
+        printf "  %-${length}s\\n" "${value}"
     done | column -c "$(__max_width)"
 }
 

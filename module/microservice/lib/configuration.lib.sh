@@ -75,11 +75,7 @@ ms::find_default_run_javaopts() {
 }
 
 ms::find_microservice_names() {
-    local -r separator="${1:- }"
-    local -r names=$(ms::find --interpolate --filter=".microservices.data[].name")
-    local -r sorted=$(echo "${names[@]}" | xargs -n1 | sort -n)
-
-    echo $(IFS="$separator"; echo "${sorted[*]}")
+    ms::find --interpolate --filter=".microservices.data[].name" | xargs -n1 | sort -n
 }
 
 ms::find_by_name() {

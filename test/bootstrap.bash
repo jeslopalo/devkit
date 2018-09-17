@@ -2,6 +2,10 @@
 
 source $(sourcedir --base)/.rc
 
+# override PATH because we want to test commands
+# from project's workspace and not from the system PATH
+export PATH="$DEVKIT_BIN:$PATH"
+
 export DEVKIT_TEST_ROOT="$DEVKIT_HOME/test"
 
 fixtures() {

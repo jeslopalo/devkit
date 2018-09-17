@@ -101,11 +101,11 @@ main() {
                 exit $?
             ;;
             names)
-                output::columnize $(ms::find_microservice_names)
+                output::columnize "$(ms::find_microservice_names)"
                 exit $?
             ;;
             registerables)
-                output::columnize $(ms::find_registerables)
+                output::columnize "$(ms::find_registerables)"
                 exit $?
             ;;
             ports)

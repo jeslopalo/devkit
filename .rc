@@ -2,7 +2,7 @@
 
 # export vars
 export DEVKIT_VERSION=1
-export DEVKIT_HOME=$(sourcedir --base)
+export DEVKIT_HOME=$(cd -P "$(dirname ${BASH_SOURCE})" && pwd)
 export DEVKIT_BIN="${DEVKIT_HOME}/bin"
 export DEVKIT_LIB="${DEVKIT_HOME}/lib"
 export DEVKIT_THIRD_PARTY="${DEVKIT_HOME}/third_party"

@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 
-specs_root_path="./test"
-specs_extension=".bats"
-
 source $(dirname ${BASH_SOURCE})/.rc
+
 # override PATH because we want to test commands
 # from project's workspace and not from the system PATH
 export PATH="$DEVKIT_BIN:$PATH"
+
+specs_root_path="./test"
+specs_extension=".bats"
 
 usage() {
     printf "usage: %s [-h/--help] [-p | --tap] -- [spec pattern]\\n" "$0"

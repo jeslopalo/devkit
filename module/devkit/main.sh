@@ -42,16 +42,16 @@ version() {
 }
 
 print_environment() {
-    printf "Devkit environment values:\\n\\n"
+    printf "\\nDevkit environment values:\\n"
 
     if [[ ${DEVKIT_COLORS:-} = 1 ]]; then
         env \
             | grep -E "^_?DEVKIT_" \
-            | perl -pe 's/^(\w+)(=)(.*)$/\033[32m$1\033[m $2 $3/'
+            | perl -pe 's/^(\w+)(=)(.*)$/  \033[32m$1\033[m$2$3/'
     else
         env \
             | grep -E "^_?DEVKIT_" \
-            | perl -pe 's/^(\w+)(=)(.*)$/$1 $2 $3/'
+            | perl -pe 's/^(\w+)(=)(.*)$/  $1$2$3/'
     fi
 }
 

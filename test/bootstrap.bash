@@ -16,13 +16,12 @@ fixtures() {
     RELATIVE_FIXTURE_ROOT="${FIXTURE_ROOT#$BATS_CWD/}"
 }
 
-trace_output() {
-    printf "# status: %s\\n" "$status" >&3
-    printf "# output: %s\\n" "$output" >&3
-    if [[ ${#lines[@]} -gt 0 ]]; then
-        printf "# lines:\\n" >&3
-        printf "# |%s\\n" "${lines[@]}" >&3
-    fi
+unset_configuration_path() {
+    export DEVKIT_CONFIG_PATH="/var/tmp"
+}
+
+trace() {
+    printf "# |%s|\\n" $@ >&3
 }
 
 testcase() {

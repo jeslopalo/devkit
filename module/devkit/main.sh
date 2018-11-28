@@ -24,7 +24,7 @@
 #=|
 include lib::usage "$@"
 
-using grep, perl
+using grep, perl, env
 
 import lib::color
 import lib::log

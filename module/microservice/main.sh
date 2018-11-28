@@ -73,7 +73,7 @@ main() {
             c) CLEAN="--clean";;
             b) BUILD="--build";;
             r) RUN="--run";;
-            a) RUN_ARGUMENTS="$RUN_ARGUMENTS $OPTARG";;
+            a) RUN_ARGUMENTS="${RUN_ARGUMENTS:-} $OPTARG";;
             q) QUERY="$OPTARG";;
             h)
                 ms --help

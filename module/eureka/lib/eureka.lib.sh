@@ -9,6 +9,8 @@ EUREKA_REGISTER_DOCUMENT_FILE="$DEVKIT_MODULE/eureka/resources/eureka-register-a
 
 register_service() {
     declare service_name="$1"
+    declare instance_hostname_pattern=$(eureka::instance_hostname_pattern)
+    declare register_url_pattern=$(eureka::register_url_pattern)
 
     if [ -z "$service_name" ]; then
     	usage
@@ -22,8 +24,9 @@ register_service() {
 
     declare document=$(<"$EUREKA_REGISTER_DOCUMENT_FILE")
 
+    document=$(template::replace_var --text="$document" --name="instance_hostname_pattern")
     document=$(template::replace_var --text="$document" --name="service_name")
-    url=$(template::replace_var --text="$(eureka::find_register_url_pattern)" --name="service_name")
+    url=$(template::replace_var --text="${register_url_pattern}" --name="service_name")
 
     printf "Registering service in local eureka: %s\\n" "$service_name"
     curl -g --request POST \
@@ -35,13 +38,14 @@ register_service() {
 
 unregister_service() {
     declare service_name="$1"
+    declare unregister_url_pattern=$(eureka::unregister_url_pattern)
 
     if [ -z "$service_name" ]; then
     	usage
     	exit 1
     fi
 
-    url=$(template::replace_var --text="$(eureka::find_unregister_url_pattern)" --name="service_name")
+    url=$(template::replace_var --text="${unregister_url_pattern}" --name="service_name")
 
     printf "Unregistering service in local eureka: %s\\n" "$service_name"
     curl -g --request DELETE \

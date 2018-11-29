@@ -2,7 +2,8 @@
     "version": 1,
 
     "properties": {
-        "eureka_base_url": "http://localhost:8761/eureka"
+        "eureka_base_url": "http://localhost:8761/eureka",
+        "environment": "desarrollo"
     },
 
     "eureka": {

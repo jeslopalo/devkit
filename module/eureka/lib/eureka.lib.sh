@@ -9,6 +9,7 @@ EUREKA_REGISTER_DOCUMENT_FILE="$DEVKIT_MODULE/eureka/resources/eureka-register-a
 
 register_service() {
     declare service_name="$1"
+    declare environment=$(eureka::environment)
 
     if [ -z "$service_name" ]; then
     	usage
@@ -23,6 +24,7 @@ register_service() {
     declare document=$(<"$EUREKA_REGISTER_DOCUMENT_FILE")
 
     document=$(template::replace_var --text="$document" --name="service_name")
+    document=$(template::replace_var --text="$document" --name="environment")
     url=$(template::replace_var --text="$(eureka::find_register_url_pattern)" --name="service_name")
 
     printf "Registering service in local eureka: %s\\n" "$service_name"

@@ -12,6 +12,10 @@ eureka::find_version() {
     config::find --filter=".version" --identifier="$eureka_config_identifier"
 }
 
+eureka::environment() {
+    config::property --name="environment" --identifier="$eureka_config_identifier"
+}
+
 eureka::find_register_url_pattern() {
     config::find --filter='.eureka."register-url"' --interpolate --identifier="$eureka_config_identifier"
 }

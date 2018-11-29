@@ -2,11 +2,11 @@
     "instance": {
         "instanceId": "PARADTRA04.corpme.es:{{service_name}}",
         "app": "{{service_name}}",
-        "hostName": "{{service_name}}-{{environment}}.osrouter.dev.corpme.int",
-        "ipAddr": "http://{{service_name}}-{{environment}}.osrouter.dev.corpme.int",
-        "homePageUrl": "http://{{service_name}}-{{environment}}.osrouter.dev.corpme.int",
-        "statusPageUrl": "http://{{service_name}}-{{environment}}.osrouter.dev.corpme.int/info",
-        "healthCheckUrl": "http://{{service_name}}-{{environment}}.osrouter.dev.corpme.int/health",
+        "hostName": "{{instance_hostname_pattern}}",
+        "ipAddr": "http://{{instance_hostname_pattern}}",
+        "homePageUrl": "http://{{instance_hostname_pattern}}",
+        "statusPageUrl": "http://{{instance_hostname_pattern}}/info",
+        "healthCheckUrl": "http://{{instance_hostname_pattern}}/health",
         "port": {
             "$": 80,
             "@enabled": false

@@ -7,7 +7,8 @@
     },
 
     "eureka": {
-        "register-url": "{{eureka_base_url}}/apps/{{service_name}}",
-        "unregister-url": "{{eureka_base_url}}/apps/{{service_name}}/PARADTRA04.corpme.es:{{service_name}}"
+        "instance-hostname-pattern": "{{service_name}}-{{environment}}.osrouter.dev.corpme.int",
+        "register-url-pattern": "{{eureka_base_url}}/apps/{{service_name}}",
+        "unregister-url-pattern": "{{eureka_base_url}}/apps/{{service_name}}/PARADTRA04.corpme.es:{{service_name}}"
     }
 }
